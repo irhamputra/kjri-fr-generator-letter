@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import useValidation from "./useValidation";
-import sleep from "../../utils/sleep";
+import sleep from "../utils/sleep";
 
 interface InitialValues {
   [k: string]: string;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
-import useAuthForm from "./hooks/useAuthForm";
+import useAuthForm from "../hooks/useAuthForm";
 
 const Login: NextPage = () => {
   const {

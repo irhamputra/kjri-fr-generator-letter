@@ -5,7 +5,7 @@ import DefaultErrorPage from "next/error";
 import { useFormik } from "formik";
 import { useMemo } from "react";
 import sleep from "../../utils/sleep";
-import useValidation from "../hooks/useValidation";
+import useValidation from "../../hooks/useValidation";
 
 const LetterType: NextPage = () => {
   const { query } = useRouter();
