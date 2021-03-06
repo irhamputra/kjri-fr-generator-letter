@@ -17,6 +17,12 @@ const schema = (type: string) => {
         )
         .required("Password wajib diisi");
 
+    case "archiveId":
+      return string()
+        .trim()
+        .min(2, "Arsip ID min 2 karakter")
+        .required("Arsip ID wajin diisi");
+
     // TODO: tambah lagi validation untuk di form surat
     default:
       return undefined;

@@ -1,23 +1,18 @@
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import useValidation from "./useValidation";
+import sleep from "../../utils/sleep";
 
-interface LoginForm {
-  email: string;
-  password: string;
+interface InitialValues {
+  [k: string]: string;
 }
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const useAuthForm = () => {
+const useAuthForm = (initialValues: InitialValues) => {
   const { replace } = useRouter();
-  const validationSchema = useValidation(["email", "password"]);
+  const validationSchema = useValidation(Object.keys(initialValues));
 
-  return useFormik<LoginForm>({
-    initialValues: {
-      email: "",
-      password: "",
-    },
+  return useFormik<InitialValues>({
+    initialValues,
     validationSchema,
     onSubmit: async (v, { setSubmitting }) => {
       setSubmitting(true);
