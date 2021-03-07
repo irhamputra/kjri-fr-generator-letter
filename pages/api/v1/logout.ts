@@ -8,10 +8,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
    * @body idToken
    */
   if (req.method === "POST") {
-    const { idToken } = req.body;
-    const verifyIdToken = await auth.verifyIdToken(idToken, true);
-    await auth.revokeRefreshTokens(verifyIdToken.uid);
+    try {
+      const { idToken } = req.body;
+      const verifyIdToken = await auth.verifyIdToken(idToken, true);
+      await auth.revokeRefreshTokens(verifyIdToken.uid);
 
-    res.status(200).json({ message: "Logout berhasil" });
+      await verifyIdToken;
+
+      res.status(200).json({ message: "Logout berhasil" });
+      res.end();
+    } catch (e) {
+      res.status(400).json({ message: "Tidak ada akun yang terautentikasi" });
+      res.end();
+    }
   }
 };

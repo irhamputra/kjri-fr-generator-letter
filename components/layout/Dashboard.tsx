@@ -1,47 +1,28 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMutation } from "react-query";
 import axios from "axios";
 import cookie from "js-cookie";
 import { toast } from "react-hot-toast";
 
-const cookies = cookie.get("KJRIFR-U");
-
 const DashboardLayout: React.FC = ({ children }) => {
   const { replace } = useRouter();
 
-  const { mutateAsync } = useMutation(
-    ["logoutUser"],
-    async (idToken: string) => {
-      try {
-        const { data } = await axios.post("/api/v1/logout", {
-          idToken,
-        });
-
-        return data;
-      } catch (e) {
-        throw new Error(e);
-      }
-    },
-    {
-      onSuccess: (data) => {
-        cookie.remove("KJRIFR-U");
-        toast.success(data.message);
-      },
-    }
-  );
-
   const handleLogout = async () => {
     try {
-      if (cookies) {
-        const value = JSON.parse(cookies ?? "");
-        await mutateAsync(value.idToken);
-      }
+      const cookies = cookie.get("KJRIFR-U");
+      const value = JSON.parse(cookies ?? "");
+
+      const { data } = await axios.post("/api/v1/logout", {
+        idToken: value?.idToken,
+      });
+
+      toast.success(data.message);
     } catch (e) {
-      throw new Error(e);
+      console.log({ e });
     }
 
+    cookie.remove("KJRIFR-U");
     await replace("/login");
   };
 
