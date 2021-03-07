@@ -1,20 +1,18 @@
 import admin from "firebase-admin";
 import { serviceAccount } from "./serviceAccount";
 
-if (!admin.app.length) {
-  try {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: serviceAccount.project_id,
-        privateKey: serviceAccount.private_key,
-        clientEmail: serviceAccount.client_email,
-      }),
+try {
+  admin.initializeApp({
+    credential: admin.credential.cert({
       projectId: serviceAccount.project_id,
-      storageBucket: "kjri-fr-dev.appspot.com",
-    });
-  } catch (error) {
-    console.log("Firebase admin initialization error", error.stack);
-  }
+      privateKey: serviceAccount.private_key,
+      clientEmail: serviceAccount.client_email,
+    }),
+    projectId: serviceAccount.project_id,
+    storageBucket: "kjri-fr-dev.appspot.com",
+  });
+} catch (error) {
+  console.log("Firebase admin initialization error", error.stack);
 }
 
 const db = admin.firestore();
