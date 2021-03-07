@@ -34,6 +34,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             }
           );
 
+          await authInstance.post("/accounts:sendOobCode", {
+            requestType: "VERIFY_EMAIL",
+            idToken: data.idToken,
+          });
+
           try {
             await db.collection("Users").doc(data.localId).set({
               email,
