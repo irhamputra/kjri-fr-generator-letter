@@ -3,7 +3,7 @@ import authInstance from "../../../utils/firebase/authInstance";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   /**
-   * Reset Password User
+   * Forget Password User
    * @method POST
    * @body idToken
    */
