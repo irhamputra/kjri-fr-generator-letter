@@ -12,7 +12,7 @@ try {
     storageBucket: "kjri-fr-dev.appspot.com",
   });
 } catch (error) {
-  console.log("Firebase admin initialization error", error.stack);
+  admin.app();
 }
 
 const db = admin.firestore();

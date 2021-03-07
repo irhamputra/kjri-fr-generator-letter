@@ -19,11 +19,11 @@ const useAuthForm = (
     validationSchema,
     onSubmit: async (v, { setSubmitting }) => {
       setSubmitting(true);
+
       try {
         await mutateAsync(v);
       } catch (e) {
-        toast.error("Login bermasalah, coba lain waktu!");
-        throw new Error(e);
+        return toast.error(e.message);
       }
 
       await replace("/dashboard");

@@ -21,9 +21,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           returnSecureToken: true,
         }
       );
-      return res.status(200).json(data);
+      res.status(200).json(data);
+      res.end();
     } catch (e) {
-      return res.status(500).json(e);
+      res.status(500).json({ message: "Email tidak ditemukan" });
+      res.end();
     }
   }
 };

@@ -1,16 +1,48 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import sleep from "../../utils/sleep";
+import { useMutation } from "react-query";
+import axios from "axios";
+import cookie from "js-cookie";
+import { toast } from "react-hot-toast";
+
+const cookies = cookie.get("KJRIFR-U");
 
 const DashboardLayout: React.FC = ({ children }) => {
   const { replace } = useRouter();
 
+  const { mutateAsync } = useMutation(
+    ["logoutUser"],
+    async (idToken: string) => {
+      try {
+        const { data } = await axios.post("/api/v1/logout", {
+          idToken,
+        });
+
+        return data;
+      } catch (e) {
+        throw new Error(e);
+      }
+    },
+    {
+      onSuccess: (data) => {
+        cookie.remove("KJRIFR-U");
+        toast.success(data.message);
+      },
+    }
+  );
+
   const handleLogout = async () => {
     try {
-      await sleep(1500);
-      await replace("/login");
-    } catch (e) {}
+      if (cookies) {
+        const value = JSON.parse(cookies ?? "");
+        await mutateAsync(value.idToken);
+      }
+    } catch (e) {
+      throw new Error(e);
+    }
+
+    await replace("/login");
   };
 
   return (
