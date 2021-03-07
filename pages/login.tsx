@@ -10,7 +10,7 @@ const Login: NextPage = () => {
     errors,
     touched,
     isSubmitting,
-  } = useAuthForm({ email: "", password: "" });
+  } = useAuthForm({ email: "", password: "" }, "login");
 
   return (
     <>

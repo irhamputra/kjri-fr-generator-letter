@@ -1,12 +1,23 @@
+import { AppProps } from "next/app";
+import { QueryClientProvider, QueryClient } from "react-query";
+import { Toaster } from "react-hot-toast";
+
 import "../styles/globals.css";
 import MainLayout from "../components/layout/MainLayout";
-import { AppProps } from "next/app";
+
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <MainLayout>
-      <Component {...pageProps} />
-    </MainLayout>
+    <QueryClientProvider client={queryClient}>
+      <MainLayout>
+        <Component {...pageProps} />
+        <Toaster
+          position="top-right"
+          toastOptions={{ success: { duration: 2000 } }}
+        />
+      </MainLayout>
+    </QueryClientProvider>
   );
 }
 
