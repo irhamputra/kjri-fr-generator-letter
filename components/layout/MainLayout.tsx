@@ -1,12 +1,10 @@
 import * as React from "react";
-import Navigation from "../Navigation";
 
 const MainLayout: React.FC = ({ children }) => {
   return (
-    <>
-      <Navigation />
-      {children}
-    </>
+    <div className="container-fluid h-100">
+      <div className="row h-100">{children}</div>
+    </div>
   );
 };
 

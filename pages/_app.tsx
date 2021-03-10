@@ -1,8 +1,9 @@
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/globals.css";
 import { AppProps } from "next/app";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { Toaster } from "react-hot-toast";
 
-import "../styles/globals.css";
 import MainLayout from "../components/layout/MainLayout";
 
 const queryClient = new QueryClient();
