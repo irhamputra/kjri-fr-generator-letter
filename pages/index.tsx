@@ -19,16 +19,19 @@ const Home: NextPage = () => {
   } = useAuthForm(initialValues, "login");
 
   return (
-    <div className="d-flex justify-content-center align-items-center">
-      <form onSubmit={handleSubmit}>
+    <div className="d-flex mt-5 justify-content-center align-items-center">
+      <form className="mt-5" onSubmit={handleSubmit}>
         <div className="text-center">
           <img src="/kjri-frankfurt.jpg" width="50%" alt="logo" />
           <h1>KJRI Frankfurt</h1>
+          <p className="fw-bold">Sistem Aplikasi Penomoran Surat</p>
         </div>
 
         <div className="mb-3">
           <input
-            className={`form-control ${errors.email ? "border-danger" : ""}`}
+            className={`form-control ${
+              errors.email && touched.email ? "border-danger" : ""
+            }`}
             id="email"
             name="email"
             type="email"
@@ -45,7 +48,9 @@ const Home: NextPage = () => {
 
         <div className="mb-3">
           <input
-            className={`form-control ${errors.password ? "border-danger" : ""}`}
+            className={`form-control ${
+              errors.password && touched.password ? "border-danger" : ""
+            }`}
             id="password"
             name="password"
             type="password"

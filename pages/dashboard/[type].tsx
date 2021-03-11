@@ -1,16 +1,23 @@
 import * as React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import DefaultErrorPage from "next/error";
 import { useFormik } from "formik";
-import { useMemo } from "react";
-import sleep from "../../utils/sleep";
+import { v4 } from "uuid";
 import useValidation from "../../hooks/useValidation";
+import DashboardLayout from "../../components/layout/Dashboard";
 
 const LetterType: NextPage = () => {
+  const [disabled, setDisabled] = React.useState(false);
   const { query } = useRouter();
 
-  const validationSchema = useValidation(["archiveId"]);
+  const initialValues = {
+    referenceNumber: "",
+    recipient: "",
+    subject: "",
+    records: "",
+  };
+
+  const validationSchema = useValidation(initialValues);
 
   const {
     handleChange,
@@ -19,51 +26,122 @@ const LetterType: NextPage = () => {
     errors,
     touched,
     isSubmitting,
+    setValues,
   } = useFormik({
-    initialValues: {
-      archiveId: "",
-    },
+    initialValues,
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
 
-      // TODO: make a request
-      await sleep(1200);
       console.log({ values });
 
       setSubmitting(false);
     },
   });
 
-  if (!["spd", "sppd"].includes(query.type as string)) {
-    return <DefaultErrorPage statusCode={404} />;
-  }
+  const handleGenerateReferenceNumber = () => {
+    setValues({
+      recipient: "",
+      records: "",
+      subject: "",
+      referenceNumber: v4(),
+    });
 
-  const typeOfLetter = useMemo(() => (query.type as string).toUpperCase(), [
-    query,
-  ]);
+    setDisabled(true);
+  };
 
   return (
-    <>
-      <h1>{typeOfLetter}</h1>
+    <DashboardLayout>
+      <h1>{query.type}</h1>
+      <p>Layanan pembuatan nomer untuk {query.type}</p>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="archiveId">Archive ID</label>
-          <input
-            value={values.archiveId}
-            onChange={handleChange}
-            name="archiveId"
-            id="archiveId"
-            disabled={isSubmitting}
-          />
-          {errors.archiveId && touched.archiveId && <p>{errors.archiveId}</p>}
+        <div className="row">
+          <div className="col-4">
+            <input
+              className="form-control"
+              value={values.referenceNumber}
+              onChange={handleChange}
+              name="referenceNumber"
+              id="referenceNumber"
+              disabled
+            />
+          </div>
+
+          <div className="col">
+            <button
+              className="btn btn-secondary"
+              disabled={disabled}
+              type="button"
+              onClick={handleGenerateReferenceNumber}
+            >
+              Generate Nomor {query.type}
+            </button>
+          </div>
+          {errors.referenceNumber && touched.referenceNumber && (
+            <small className="text-danger">{errors.referenceNumber}</small>
+          )}
+
+          <div className="mt-3">
+            <label htmlFor="records" className="form-label">
+              Arsip
+            </label>
+            <select
+              onChange={handleChange}
+              name="records"
+              className="form-select w-25"
+              id="records"
+              value={values.records}
+            >
+              <option value="" label="Pilih Jenis Arsip" />
+              <option value="1" label="Satu" />
+              <option value="2" label="Dua" />
+              <option value="3" label="Tiga" />
+            </select>
+            {errors.records && touched.records && (
+              <small className="text-danger">{errors.records}</small>
+            )}
+          </div>
+
+          <div className="my-3">
+            <label htmlFor="recipient" className="form-label">
+              Kepada
+            </label>
+            <input
+              className="form-control w-25"
+              name="recipient"
+              onChange={handleChange}
+              value={values.recipient}
+              disabled={isSubmitting}
+              id="recipient"
+            />
+            {errors.recipient && touched.recipient && (
+              <small className="text-danger">{errors.recipient}</small>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="recipient" className="form-label">
+              Isi Surat
+            </label>
+            <input
+              className="form-control w-25"
+              name="subject"
+              onChange={handleChange}
+              value={values.subject}
+              disabled={isSubmitting}
+              id="subject"
+            />
+            {errors.subject && touched.subject && (
+              <small className="text-danger">{errors.subject}</small>
+            )}
+          </div>
         </div>
 
-        <button disabled={isSubmitting} type="submit">
-          Submit {typeOfLetter}
+        <button className="btn btn-dark mt-3" type="submit">
+          Submit Nomor {query.type}
         </button>
       </form>
-    </>
+    </DashboardLayout>
   );
 };
 

@@ -17,11 +17,17 @@ const schema = (type: string) => {
         )
         .required("Password wajib diisi");
 
-    case "archiveId":
-      return string()
-        .trim()
-        .min(2, "Arsip ID min 2 karakter")
-        .required("Arsip ID wajin diisi");
+    case "referenceNumber":
+      return string().trim().required("Mohon reservasi nomor surat!");
+
+    case "recipient":
+      return string().trim().min(2).required("Input Penerima wajib diisi!");
+
+    case "subject":
+      return string().trim().min(2).required("Isi Surat wajib diisi!");
+
+    case "records":
+      return string().trim().required("Arsip wajib diisi!");
 
     // TODO: tambah lagi validation untuk di form surat
     default:

@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <MainLayout>
         <Component {...pageProps} />
         <Toaster
-          position="top-right"
+          position="bottom-right"
           toastOptions={{ success: { duration: 2000 } }}
         />
       </MainLayout>
