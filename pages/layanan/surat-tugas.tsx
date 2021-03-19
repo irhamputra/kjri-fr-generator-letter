@@ -106,7 +106,7 @@ const SuratTugas: NextPage = () => {
 
   return (
     <DashboardLayout>
-      <h1>Surat Tugas (SPD)</h1>
+      <h1>Surat Tugas (SPPD)</h1>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <label className="form-label">Nomor Surat Arsip</label>

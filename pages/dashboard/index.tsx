@@ -17,10 +17,10 @@ const Dashboard: NextPage = (
         <h3 className="mb-3">Layanan Sistem Aplikasi Surat</h3>
         <ul>
           <li>
-            <Link href="/layanan/surat-tugas">Surat Tugas (SPD)</Link>
+            <Link href="/layanan/surat-tugas">Surat Tugas (SPPD)</Link>
           </li>
           <li>
-            <Link href="/layanan/penugasan">Surat Penugasan (SPPD)</Link>
+            <Link href="/layanan/penugasan">Surat Penugasan (SPD)</Link>
           </li>
         </ul>
       </div>
