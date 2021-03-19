@@ -17,17 +17,14 @@ const schema = (type: string) => {
         )
         .required("Password wajib diisi");
 
-    case "referenceNumber":
-      return string().trim().required("Mohon reservasi nomor surat!");
-
-    case "recipient":
-      return string().trim().min(2).required("Input Penerima wajib diisi!");
-
-    case "subject":
-      return string().trim().min(2).required("Isi Surat wajib diisi!");
-
-    case "records":
+    case "arsipId":
       return string().trim().required("Arsip wajib diisi!");
+
+    case "nomorSurat":
+      return string().trim().required("Mohon reservasi nomor surat");
+
+    case "tujuanDinas":
+      return string().trim().required("Nama Dinas / Tujuan Dinas Wajib diisi");
 
     // TODO: tambah lagi validation untuk di form surat
     default:
@@ -35,10 +32,11 @@ const schema = (type: string) => {
   }
 };
 
-const createSchema = (keySchema: string[]) => {
-  return !Array.isArray(keySchema) || keySchema.length === 0
+const createSchema = (initialValues: Record<string, string>) => {
+  const fieldNames = Object.keys(initialValues);
+  return !Array.isArray(fieldNames) || fieldNames.length === 0
     ? undefined
-    : keySchema.reduce((acc, type) => {
+    : fieldNames.reduce((acc, type) => {
         return {
           ...acc,
           [type]: schema(type),
