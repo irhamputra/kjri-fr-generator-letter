@@ -11,7 +11,7 @@ const useAuthForm = (
   type: "login" | "register"
 ) => {
   const { replace } = useRouter();
-  const validationSchema = useValidation(Object.keys(initialValues));
+  const validationSchema = useValidation(initialValues);
   const { mutateAsync } = useAuthMutation(type);
 
   return useFormik<InitialValues>({

@@ -6,7 +6,7 @@ import {
 } from "next";
 import DashboardLayout from "../../components/layout/Dashboard";
 import parseCookies from "../../utils/parseCookies";
-import Card from "../../components/Card";
+import Link from "next/link";
 
 const Dashboard: NextPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
@@ -15,38 +15,14 @@ const Dashboard: NextPage = (
     <DashboardLayout>
       <div className="row mt-3">
         <h3 className="mb-3">Layanan Sistem Aplikasi Surat</h3>
-        <div className="col-3">
-          <Card
-            title="Surat Tugas"
-            subtitle="Lorem ipsum dolor"
-            content="sit amet"
-            link="surat-tugas"
-          />
-        </div>
-        <div className="col-3">
-          <Card
-            title="Surat Tugas"
-            subtitle="Lorem ipsum dolor"
-            content="sit amet"
-            link="surat-tugas"
-          />
-        </div>
-        <div className="col-3">
-          <Card
-            title="Surat Tugas"
-            subtitle="Lorem ipsum dolor"
-            content="sit amet"
-            link="surat-tugas"
-          />
-        </div>
-        <div className="col-3">
-          <Card
-            title="Surat Tugas"
-            subtitle="Lorem ipsum dolor"
-            content="sit amet"
-            link="surat-tugas"
-          />
-        </div>
+        <ul>
+          <li>
+            <Link href="/layanan/surat-tugas">Surat Tugas (SPD)</Link>
+          </li>
+          <li>
+            <Link href="/layanan/penugasan">Surat Penugasan (SPPD)</Link>
+          </li>
+        </ul>
       </div>
     </DashboardLayout>
   );
