@@ -15,13 +15,15 @@ import { toast } from "react-hot-toast";
 import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 
 const Penugasan: NextPage = () => {
-  const { data: listSuratTugas } = useQuerySuratTugas();
+  const { data: listSuratTugas, isLoading } = useQuerySuratTugas();
   const { data: listJalDir } = useQueryJalDir();
 
   const initialValues = {
     namaPegawai: [],
     nomorSurat: "",
   };
+
+  if (isLoading) return <h4>Loading...</h4>;
 
   const optionsGolongan = listJalDir?.map((v) => ({
     label: v.golongan,

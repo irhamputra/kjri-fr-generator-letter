@@ -77,15 +77,15 @@ const mockOptions = mockStaff.map(({ name, ...rest }) => ({
 const SelectStaff = ({ placeholder, form, field, value }) => {
   // reconstruct option from value
 
-  const SingleValue = ({ children, data, ...props }) => {
+  const SingleValue = (props) => {
     const { nip, golongan, bidang, jabatan } = value;
 
     return (
       <components.SingleValue {...props}>
         <div>
-          <div>{children}</div>
+          <div>{props.children}</div>
           <div style={{ fontSize: 10, color: "rgba(0, 0, 0, 0.6)" }}>
-            {`${nip} | Gol ${golongan} | ${jabatan} ${bidang}`}
+            {`${nip} | Gol ${golongan} | ${jabatan} | ${bidang}`}
           </div>
         </div>
       </components.SingleValue>

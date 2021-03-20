@@ -11,6 +11,18 @@ import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 
 const SuratTugas: NextPage = () => {
+  const { data, isLoading } = useQuery(
+    "fetchSuratTugas",
+    async () => {
+      const { data } = await axios.get("/api/v1/surat-tugas");
+
+      return data;
+    },
+    {
+      enabled: true,
+    }
+  );
+
   const initialValues = {
     nomorSurat: "",
     tujuanDinas: "",
@@ -45,17 +57,7 @@ const SuratTugas: NextPage = () => {
     },
   });
 
-  const { data } = useQuery(
-    "fetchSuratTugas",
-    async () => {
-      const { data } = await axios.get("/api/v1/surat-tugas");
-
-      return data;
-    },
-    {
-      enabled: true,
-    }
-  );
+  if (isLoading) return <h4>Loading...</h4>;
 
   const onCounterId = async (): Promise<void> => {
     const incrementCount = data.total + 1;
