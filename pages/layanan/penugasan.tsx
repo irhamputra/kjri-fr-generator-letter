@@ -3,11 +3,16 @@ import { NextPage } from "next";
 import DashboardLayout from "../../components/layout/Dashboard";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
-import { InputComponent, SelectComponent } from "../../components/CustomField";
+import {
+  InputComponent,
+  SelectComponent,
+  SelectStaff,
+} from "../../components/CustomField";
 import useQueryJalDir from "../../hooks/useQueryJalDir";
 import useQuerySuratTugas from "../../hooks/useQuerySuratTugas";
 import { object, string } from "yup";
 import { toast } from "react-hot-toast";
+import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 
 const Penugasan: NextPage = () => {
   const { data: listSuratTugas } = useQuerySuratTugas();
@@ -55,30 +60,35 @@ const Penugasan: NextPage = () => {
         >
           {({ values }) => (
             <Form>
-              <label className="form-label">Nomor Surat</label>
-
-              <Field
-                className="form-control"
-                name="nomorSurat"
-                component={SelectComponent}
-                options={optionsSuratTugas}
-                placeholder="Pilih Surat"
-              />
+              <div
+                style={{ padding: 16, background: "#f8f8f8", borderRadius: 4 }}
+              >
+                <label className="form-label">Nomor Surat</label>
+                <Field
+                  className="form-control"
+                  name="nomorSurat"
+                  component={SelectComponent}
+                  options={optionsSuratTugas}
+                  placeholder="Pilih Surat"
+                />
+              </div>
 
               <FieldArray
                 name="namaPegawai"
                 render={(arrayHelpers) => (
                   <div className="mt-3">
-                    {values.namaPegawai && values.namaPegawai.length > 0 ? (
-                      values.namaPegawai.map((_, index) => (
-                        <div key={index} className="mt-3 row">
-                          <div className="col">
+                    {values.namaPegawai.map((_, index) => (
+                      <div key={index} className="mt-3 container-fluid p-0">
+                        <div className="row">
+                          <div className="col-11">
                             <div className="row">
                               <div className="col">
                                 <label className="form-label">Nama Staff</label>
                                 <Field
                                   className="form-control"
                                   name={`namaPegawai.${index}.nama`}
+                                  value={_.nama}
+                                  component={SelectStaff}
                                   placeholder="Input nama pegawai"
                                 />
                               </div>
@@ -91,6 +101,13 @@ const Penugasan: NextPage = () => {
                                   className="form-control"
                                   name={`namaPegawai.${index}.jaldir`}
                                   component={SelectComponent}
+                                  styles={{
+                                    control: (provided) => ({
+                                      ...provided,
+                                      height: 66,
+                                    }),
+                                  }}
+                                  value={_.jaldir}
                                   options={optionsGolongan}
                                   placeholder="Pilih Golongan Jalan Dinas"
                                 />
@@ -104,6 +121,10 @@ const Penugasan: NextPage = () => {
                                   className="form-control"
                                   name={`namaPegawai.${index}.durasi`}
                                   as={InputComponent}
+                                  value={_.durasi}
+                                  style={{
+                                    height: 66,
+                                  }}
                                   placeholder="(e.g 1 hari atau 2,5 hari)"
                                 />
                               </div>
@@ -114,49 +135,36 @@ const Penugasan: NextPage = () => {
                             <button
                               className="btn btn-outline-danger w-100"
                               type="button"
+                              style={{ height: 66 }}
                               onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
                             >
-                              Hapus
-                            </button>
-                          </div>
-
-                          <div className="col-1 d-flex align-items-end">
-                            <button
-                              className="btn btn-primary text-white w-100"
-                              type="button"
-                              onClick={() =>
-                                arrayHelpers.insert(index, {
-                                  nama: "",
-                                  golongan: "",
-                                  jabatan: "",
-                                  durasi: "",
-                                })
-                              }
-                            >
-                              Tambah
+                              <TrashIcon height={20} width={20} />
                             </button>
                           </div>
                         </div>
-                      ))
-                    ) : (
-                      <button
-                        className="btn btn-dark"
-                        type="button"
-                        onClick={() =>
-                          arrayHelpers.push({
-                            nama: "",
-                            golongan: "",
-                            jabatan: "",
-                            durasi: "",
-                          })
-                        }
-                      >
-                        Tambahkan Pegawai
-                      </button>
-                    )}
+                      </div>
+                    ))}
+                    <button
+                      className="btn btn-primary text-white w-100 mt-3"
+                      type="button"
+                      onClick={() =>
+                        arrayHelpers.push({
+                          nama: "",
+                          golongan: "",
+                          jabatan: "",
+                          durasi: "",
+                        })
+                      }
+                    >
+                      <PlusIcon />
+                      Tambah Pegawai
+                    </button>
 
                     <div className="mt-3">
-                      <button className="btn btn-dark" type="submit">
+                      <button
+                        className="btn btn-dark w-100 btn-lg"
+                        type="submit"
+                      >
                         Submit
                       </button>
                     </div>
