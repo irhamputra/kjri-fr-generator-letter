@@ -1,28 +1,20 @@
 import * as React from "react";
-import {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from "next";
+import { GetServerSideProps, NextPage } from "next";
 import DashboardLayout from "../../components/layout/Dashboard";
 import parseCookies from "../../utils/parseCookies";
-import Link from "next/link";
+import Card from "../../components/Card";
 
-const Dashboard: NextPage = (
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
+const Dashboard: NextPage = () => {
   return (
     <DashboardLayout>
       <div className="row mt-3">
         <h3 className="mb-3">Layanan Sistem Aplikasi Surat</h3>
-        <ul>
-          <li>
-            <Link href="/layanan/surat-tugas">Surat Tugas (SPPD)</Link>
-          </li>
-          <li>
-            <Link href="/layanan/penugasan">Surat Penugasan (SPD)</Link>
-          </li>
-        </ul>
+        <div className="col-2">
+          <Card title="Surat Tugas (SPPD)" link="surat-tugas" />
+        </div>
+        <div className="col-2">
+          <Card title="Surat Penugasan(SPD)" link="penugasan" />
+        </div>
       </div>
     </DashboardLayout>
   );

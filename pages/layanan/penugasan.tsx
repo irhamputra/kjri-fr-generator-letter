@@ -4,6 +4,7 @@ import DashboardLayout from "../../components/layout/Dashboard";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios from "axios";
 import { useQuery } from "react-query";
+import CustomField from "../../components/CustomField";
 
 const Penugasan: NextPage = () => {
   const { data } = useQuery("fetchSuratTugas", async () => {
@@ -17,8 +18,17 @@ const Penugasan: NextPage = () => {
       <h1 className="mt-3">Surat Penugasan Perjalanan Dinas (SPD)</h1>
       <div>
         <Formik
-          initialValues={{ namaPegawai: [{}], nomorSurat: "" }}
-          onSubmit={(values) => console.log(values)}
+          initialValues={{
+            namaPegawai: [{ nama: "", golongan: "", jabatan: "", durasi: "" }],
+            nomorSurat: "",
+          }}
+          onSubmit={async (values, { setSubmitting }) => {
+            setSubmitting(true);
+
+            await axios.put("/api/v1/penugasan", values);
+
+            setSubmitting(false);
+          }}
         >
           {({ values }) => (
             <Form>
@@ -46,7 +56,7 @@ const Penugasan: NextPage = () => {
                           <div className="col">
                             <div className="row">
                               <div className="col">
-                                <label className="form-label">Nama / NIP</label>
+                                <label className="form-label">Nama Staff</label>
                                 <Field
                                   className="form-control"
                                   name={`namaPegawai.${index}.nama`}
@@ -73,11 +83,13 @@ const Penugasan: NextPage = () => {
 
                               <div className="col">
                                 <label className="form-label">
-                                  Tanggal Tugas
+                                  Lama Perjalanan
                                 </label>
                                 <Field
                                   className="form-control"
-                                  name={`namaPegawai.${index}.tanggalTugas`}
+                                  name={`namaPegawai.${index}.durasi`}
+                                  as={CustomField}
+                                  placeholder="(e.g 1 hari atau 2,5 hari)"
                                 />
                               </div>
                             </div>
@@ -97,7 +109,14 @@ const Penugasan: NextPage = () => {
                             <button
                               className="btn btn-info text-white w-100"
                               type="button"
-                              onClick={() => arrayHelpers.insert(index, {})}
+                              onClick={() =>
+                                arrayHelpers.insert(index, {
+                                  nama: "",
+                                  golongan: "",
+                                  jabatan: "",
+                                  durasi: "",
+                                })
+                              }
                             >
                               Tambah
                             </button>
@@ -108,7 +127,14 @@ const Penugasan: NextPage = () => {
                       <button
                         className="btn btn-dark"
                         type="button"
-                        onClick={() => arrayHelpers.push({})}
+                        onClick={() =>
+                          arrayHelpers.push({
+                            nama: "",
+                            golongan: "",
+                            jabatan: "",
+                            durasi: "",
+                          })
+                        }
                       >
                         Tambahkan Pegawai
                       </button>

@@ -19,4 +19,50 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.end();
     }
   }
+
+  if (req.method === "PUT") {
+    const { nomorSurat, namaPegawai } = req.body;
+
+    const listPegawai = namaPegawai.map((v) => {
+      const durasiWaktu = v.durasi.split(",");
+      let halfDay = 0;
+
+      const { format } = new Intl.NumberFormat("de-DE", {
+        style: "currency",
+        currency: "EUR",
+      });
+
+      const fullDay = parseFloat(durasiWaktu[0]) * 0.84 * 415;
+
+      if (durasiWaktu.length > 1) {
+        halfDay = 0.4 * 415;
+      }
+
+      const total = fullDay + halfDay;
+
+      return {
+        ...v,
+        uangHarian: format(total),
+      };
+    });
+
+    let id = "";
+
+    const snapshot = await db
+      .collection("SuratTugas")
+      .where("nomorSurat", "==", nomorSurat)
+      .limit(1)
+      .get();
+
+    snapshot.forEach((doc) => {
+      id = doc.id;
+    });
+
+    await db.collection("SuratTugas").doc(id).update({
+      listPegawai,
+    });
+
+    res.status(200).json({ message: "Update Surat Tugas" });
+    res.end();
+  }
 };

@@ -11,7 +11,7 @@ const Sidebar: React.FC = () => {
     <div className="col-2 mt-3">
       <ul className="list-group list-group-flush">
         <li className="list-group-item">
-          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/dashboard">🏠 &nbsp; Dashboard</Link>
         </li>
 
         <li
@@ -21,7 +21,7 @@ const Sidebar: React.FC = () => {
               : "list-group-item mt-5"
           }`}
         >
-          <Link href="/pengaturan">Pengaturan</Link>
+          <Link href="/pengaturan">⚙️ &nbsp; Pengaturan</Link>
         </li>
       </ul>
     </div>

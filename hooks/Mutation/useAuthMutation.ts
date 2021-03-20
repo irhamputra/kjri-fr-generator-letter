@@ -29,7 +29,9 @@ const useAuthMutation = (type: "login" | "register") => {
     },
     {
       onSuccess: async ({ idToken, refreshToken }) => {
-        cookie.set("KJRIFR-U", JSON.stringify({ idToken, refreshToken }));
+        cookie.set("KJRIFR-U", JSON.stringify({ idToken, refreshToken }), {
+          expires: (1 / 48) * 2,
+        });
       },
     }
   );

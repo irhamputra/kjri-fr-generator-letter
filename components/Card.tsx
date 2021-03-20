@@ -3,21 +3,18 @@ import Link from "next/link";
 
 interface CardProps {
   title: string;
-  subtitle: string;
-  content: string;
   link: string;
 }
 
-const Card: React.FC<CardProps> = ({ title, content, link, subtitle }) => {
+const Card: React.FC<CardProps> = ({ title, link }) => {
   return (
-    <div className="card">
-      <div className="card-body">
-        <h5 className="card-title">{title}</h5>
-        <h6 className="card-subtitle mb-2 text-muted">{subtitle}</h6>
-        <p className="card-text">{content}</p>
-        <Link href={`/create/${link}`}>{link}</Link>
+    <Link href={`/layanan/${link}`}>
+      <div className="card" style={{ cursor: "pointer" }}>
+        <div className="card-body">
+          <p className="card-title text-center fw-bold">{title}</p>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

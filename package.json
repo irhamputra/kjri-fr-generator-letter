@@ -18,8 +18,10 @@
     "next": "10.0.8",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-dropzone": "^11.3.1",
     "react-hot-toast": "^1.0.2",
     "react-query": "^3.12.0",
+    "react-select": "^4.3.0",
     "react-switch": "^6.0.0",
     "uuid": "^8.3.2",
     "yup": "^0.32.9"
@@ -32,6 +34,7 @@
     "@types/prettier": "^2.2.2",
     "@types/react": "^17.0.2",
     "@types/react-dom": "17.0.1",
+    "@types/react-select": "^4.0.13",
     "@types/uuid": "^8.3.0",
     "@types/yup": "^0.29.11",
     "prettier": "^2.2.1",
