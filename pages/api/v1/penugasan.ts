@@ -21,48 +21,53 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const { nomorSurat, namaPegawai } = req.body;
+    try {
+      const { nomorSurat, namaPegawai } = req.body;
 
-    const listPegawai = namaPegawai.map((v) => {
-      const durasiWaktu = v.durasi.split(",");
-      let halfDay = 0;
+      const listPegawai = namaPegawai.map((v) => {
+        const [durasi] = v.durasi.split(",");
+        let halfDay = 0;
 
-      const { format } = new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency: "EUR",
+        const { format } = new Intl.NumberFormat("de-DE", {
+          style: "currency",
+          currency: "EUR",
+        });
+
+        const fullDay = parseFloat(durasi) * 0.84 * 415;
+
+        if (v.durasi.length > 1) {
+          halfDay = 0.4 * 415;
+        }
+
+        const total = fullDay + halfDay;
+
+        return {
+          ...v,
+          uangHarian: format(total),
+        };
       });
 
-      const fullDay = parseFloat(durasiWaktu[0]) * 0.84 * 415;
+      let id = "";
 
-      if (durasiWaktu.length > 1) {
-        halfDay = 0.4 * 415;
-      }
+      const snapshot = await db
+        .collection("SuratTugas")
+        .where("nomorSurat", "==", nomorSurat)
+        .limit(1)
+        .get();
 
-      const total = fullDay + halfDay;
+      snapshot.forEach((doc) => {
+        id = doc.id;
+      });
 
-      return {
-        ...v,
-        uangHarian: format(total),
-      };
-    });
+      await db.collection("SuratTugas").doc(id).update({
+        listPegawai,
+      });
 
-    let id = "";
-
-    const snapshot = await db
-      .collection("SuratTugas")
-      .where("nomorSurat", "==", nomorSurat)
-      .limit(1)
-      .get();
-
-    snapshot.forEach((doc) => {
-      id = doc.id;
-    });
-
-    await db.collection("SuratTugas").doc(id).update({
-      listPegawai,
-    });
-
-    res.status(200).json({ message: "Update Surat Tugas" });
-    res.end();
+      res.status(200).json({ message: "Update Surat Tugas" });
+      res.end();
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+      res.end();
+    }
   }
 };
