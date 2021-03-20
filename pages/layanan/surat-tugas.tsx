@@ -8,32 +8,22 @@ import dayjs from "dayjs";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useQuery } from "react-query";
-import Link from "next/link";
 
 const SuratTugas: NextPage = () => {
   const initialValues = {
     nomorSurat: "",
     tujuanDinas: "",
-    arsipId: "",
   };
 
   const { replace } = useRouter();
-
-  const { data } = useQuery("fetchArsip", async () => {
-    const { data } = await axios.get("/api/v1/arsip");
-    return data;
-  });
 
   const {
     handleChange,
     handleSubmit,
     values,
     setFieldValue,
-    setFieldError,
     errors,
     touched,
-    setFieldTouched,
   } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
@@ -54,21 +44,15 @@ const SuratTugas: NextPage = () => {
   });
 
   const onCounterId = async (): Promise<void> => {
-    if (!values.arsipId) {
-      await setFieldTouched("arsipId", true);
-      return setFieldError("arsipId", "Pilih arsip terlebih dahulu!");
-    }
-
     const { data } = await axios.get("/api/v1/surat-tugas");
-    const { total } = data;
 
-    const incrementCount = total + 1;
+    const incrementCount = data.total + 1;
     const thisMonth = dayjs().month() + 1;
     const thisYear = dayjs().year();
 
     await setFieldValue(
       "nomorSurat",
-      `${incrementCount}/SPPD/${values.arsipId}/${thisMonth}/${thisYear}/FRA`
+      `${incrementCount}/SPPD/${thisMonth}/${thisYear}/FRA`
     );
   };
 
@@ -78,35 +62,7 @@ const SuratTugas: NextPage = () => {
       <form onSubmit={handleSubmit}>
         <div className="row">
           <label className="form-label">Nomor Surat Arsip</label>
-
-          <div className="col">
-            <select
-              onChange={handleChange}
-              name="arsipId"
-              className="form-select"
-              id="records"
-              value={values.arsipId}
-            >
-              <option value="" label="Pilih Jenis Arsip" />
-              {data
-                ?.sort((a, b) => a.kelasArsip - b.kelasArsip)
-                .map((v) => (
-                  <option key={v.acronym} value={v.acronym} label={v.acronym} />
-                ))}
-            </select>
-            {errors.arsipId && touched.arsipId && (
-              <small className="text-danger">{errors.arsipId}</small>
-            )}
-
-            <Link href="/pengaturan/manage-arsip">
-              <div>
-                <small className="text-primary" style={{ cursor: "pointer" }}>
-                  Manage Arsip
-                </small>
-              </div>
-            </Link>
-          </div>
-          <div className="col">
+          <div className="col-3">
             <input
               className="form-control"
               name="nomorSurat"
@@ -118,7 +74,7 @@ const SuratTugas: NextPage = () => {
               <small className="text-danger">{errors.nomorSurat}</small>
             )}
           </div>
-          <div className="col">
+          <div className="col-3">
             <button
               type="button"
               onClick={onCounterId}

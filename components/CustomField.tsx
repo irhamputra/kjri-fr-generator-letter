@@ -1,4 +1,5 @@
 import * as React from "react";
+import Select from "react-select";
 
 const InputComponent: React.FC = (props) => {
   return (
@@ -11,4 +12,36 @@ const InputComponent: React.FC = (props) => {
   );
 };
 
-export default InputComponent;
+const SelectComponent = ({
+  placeholder,
+  field,
+  form: { setFieldValue, setFieldTouched, ...restForm },
+  options,
+}) => {
+  const handleOnChange = (option, { action }) => {
+    if (action === "select-option") {
+      setFieldValue(field.name, option?.value);
+    }
+  };
+
+  const handleOnFocus = () => {
+    setFieldTouched(field.name, true);
+    console.log(restForm);
+  };
+
+  return (
+    <div>
+      <Select
+        id={field.name}
+        instanceId={field.name}
+        isClearable
+        placeholder={placeholder}
+        onChange={handleOnChange}
+        options={options}
+        onFocus={handleOnFocus}
+      />
+    </div>
+  );
+};
+
+export { InputComponent, SelectComponent };

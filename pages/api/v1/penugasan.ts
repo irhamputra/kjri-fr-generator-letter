@@ -6,7 +6,10 @@ import createSchema from "../../../utils/validation/schema";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
-      const snapshot = await db.collection("SuratTugas").get();
+      const snapshot = await db
+        .collection("SuratTugas")
+        .orderBy("nomorSurat", "asc")
+        .get();
 
       let result = [];
 
@@ -23,13 +26,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    if (!req.body) {
-      res.status(404).json({ error: "Tidak ada value" });
-      res.end();
-    }
-
     try {
       const { nomorSurat, namaPegawai } = req.body;
+
+      if (namaPegawai.length <= 0) {
+        res.status(404).json({ error: "Tidak ada data yang tersimpan" });
+      }
 
       const schema = array().of(object().shape(createSchema(namaPegawai[0])));
 

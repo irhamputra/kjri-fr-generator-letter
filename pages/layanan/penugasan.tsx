@@ -2,21 +2,35 @@ import * as React from "react";
 import { NextPage } from "next";
 import DashboardLayout from "../../components/layout/Dashboard";
 import { Form, FieldArray, Field, Formik } from "formik";
-import axios from "axios";
-import { useQuery } from "react-query";
-import CustomField from "../../components/CustomField";
+import axios, { AxiosResponse } from "axios";
+import { InputComponent, SelectComponent } from "../../components/CustomField";
+import useQueryJalDir from "../../hooks/useQueryJalDir";
+import useQuerySuratTugas from "../../hooks/useQuerySuratTugas";
+import { object, string } from "yup";
+import { toast } from "react-hot-toast";
 
 const Penugasan: NextPage = () => {
-  const { data } = useQuery("fetchSuratTugas", async () => {
-    const { data } = await axios.get("/api/v1/penugasan");
-
-    return data;
-  });
+  const { data: listSuratTugas } = useQuerySuratTugas();
+  const { data: listJalDir } = useQueryJalDir();
 
   const initialValues = {
-    namaPegawai: [{ nama: "", golongan: "", jabatan: "", durasi: "" }],
+    namaPegawai: [],
     nomorSurat: "",
   };
+
+  const optionsGolongan = listJalDir?.map((v) => ({
+    label: v.golongan,
+    value: v.golongan,
+  }));
+
+  const optionsSuratTugas = listSuratTugas?.map((v) => ({
+    label: `${v.nomorSurat} - ${v.tujuanDinas}`,
+    value: v.nomorSurat,
+  }));
+
+  const validationSchema = object().shape({
+    nomorSurat: string().trim().required("Nomor Surat Wajib diisi!"),
+  });
 
   return (
     <DashboardLayout>
@@ -24,29 +38,32 @@ const Penugasan: NextPage = () => {
       <div>
         <Formik
           initialValues={initialValues}
+          validationSchema={validationSchema}
           onSubmit={async (values, { setSubmitting }) => {
             setSubmitting(true);
-
-            await axios.put("/api/v1/penugasan", values);
+            let response: AxiosResponse;
+            try {
+              response = await axios.put("/api/v1/penugasan", values);
+              toast.success("SPD berhasil disimpan");
+            } catch (e) {
+              console.log(response);
+              toast.error(e.message);
+            }
 
             setSubmitting(false);
           }}
         >
-          {({ values, errors }) => (
+          {({ values }) => (
             <Form>
               <label className="form-label">Nomor Surat</label>
 
-              <Field as="select" className="form-select" name="nomorSurat">
-                <option value="" label="Pilih Nomor Surat" />
-                {data &&
-                  data.map(({ nomorSurat, tujuanDinas }) => (
-                    <option
-                      key={nomorSurat}
-                      value={nomorSurat}
-                      label={`${nomorSurat} - ${tujuanDinas}`}
-                    />
-                  ))}
-              </Field>
+              <Field
+                className="form-control"
+                name="nomorSurat"
+                component={SelectComponent}
+                options={optionsSuratTugas}
+                placeholder="Pilih Surat"
+              />
 
               <FieldArray
                 name="namaPegawai"
@@ -62,24 +79,20 @@ const Penugasan: NextPage = () => {
                                 <Field
                                   className="form-control"
                                   name={`namaPegawai.${index}.nama`}
+                                  placeholder="Input nama pegawai"
                                 />
                               </div>
 
                               <div className="col">
                                 <label className="form-label">
-                                  Pangkat/Golongan
+                                  Golongan Jalan Dinas
                                 </label>
                                 <Field
                                   className="form-control"
-                                  name={`namaPegawai.${index}.golongan`}
-                                />
-                              </div>
-
-                              <div className="col">
-                                <label className="form-label">Jabatan</label>
-                                <Field
-                                  className="form-control"
-                                  name={`namaPegawai.${index}.jabatan`}
+                                  name={`namaPegawai.${index}.jaldir`}
+                                  component={SelectComponent}
+                                  options={optionsGolongan}
+                                  placeholder="Pilih Golongan Jalan Dinas"
                                 />
                               </div>
 
@@ -90,7 +103,7 @@ const Penugasan: NextPage = () => {
                                 <Field
                                   className="form-control"
                                   name={`namaPegawai.${index}.durasi`}
-                                  as={CustomField}
+                                  as={InputComponent}
                                   placeholder="(e.g 1 hari atau 2,5 hari)"
                                 />
                               </div>
@@ -109,7 +122,7 @@ const Penugasan: NextPage = () => {
 
                           <div className="col-1 d-flex align-items-end">
                             <button
-                              className="btn btn-info text-white w-100"
+                              className="btn btn-primary text-white w-100"
                               type="button"
                               onClick={() =>
                                 arrayHelpers.insert(index, {
