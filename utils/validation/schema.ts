@@ -26,7 +26,21 @@ const schema = (type: string) => {
     case "tujuanDinas":
       return string().trim().required("Nama Dinas / Tujuan Dinas Wajib diisi");
 
-    // TODO: tambah lagi validation untuk di form surat
+    case "kelasArsip":
+      return string().trim().required("Jenis arsip wajib diisi!");
+
+    case "acronym":
+      return string().trim().required("Akronim Wajib diisi!");
+
+    // Server
+    case "nama":
+    case "golongan":
+    case "jabatan":
+      return string().trim().required("Value tidak valid");
+
+    case "durasi":
+      return string().matches(/^[0-9]?,[5]$/, "Value bukan angka dan koma");
+
     default:
       return undefined;
   }

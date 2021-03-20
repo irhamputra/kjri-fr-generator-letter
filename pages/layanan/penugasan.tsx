@@ -13,15 +13,17 @@ const Penugasan: NextPage = () => {
     return data;
   });
 
+  const initialValues = {
+    namaPegawai: [{ nama: "", golongan: "", jabatan: "", durasi: "" }],
+    nomorSurat: "",
+  };
+
   return (
     <DashboardLayout>
-      <h1 className="mt-3">Surat Penugasan Perjalanan Dinas (SPD)</h1>
+      <h3 className="mt-3">Surat Penugasan Perjalanan Dinas (SPD)</h3>
       <div>
         <Formik
-          initialValues={{
-            namaPegawai: [{ nama: "", golongan: "", jabatan: "", durasi: "" }],
-            nomorSurat: "",
-          }}
+          initialValues={initialValues}
           onSubmit={async (values, { setSubmitting }) => {
             setSubmitting(true);
 
@@ -30,7 +32,7 @@ const Penugasan: NextPage = () => {
             setSubmitting(false);
           }}
         >
-          {({ values }) => (
+          {({ values, errors }) => (
             <Form>
               <label className="form-label">Nomor Surat</label>
 
@@ -51,7 +53,7 @@ const Penugasan: NextPage = () => {
                 render={(arrayHelpers) => (
                   <div className="mt-3">
                     {values.namaPegawai && values.namaPegawai.length > 0 ? (
-                      values.namaPegawai.map((friend, index) => (
+                      values.namaPegawai.map((_, index) => (
                         <div key={index} className="mt-3 row">
                           <div className="col">
                             <div className="row">

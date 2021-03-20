@@ -8,45 +8,8 @@ import dayjs from "dayjs";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-
-const generateArchive = () => {
-  function convertToRoman(num) {
-    const roman = {
-      M: 1000,
-      CM: 900,
-      D: 500,
-      CD: 400,
-      C: 100,
-      XC: 90,
-      L: 50,
-      XL: 40,
-      X: 10,
-      IX: 9,
-      V: 5,
-      IV: 4,
-      I: 1,
-    };
-    let str = "";
-
-    for (let i of Object.keys(roman)) {
-      const q = Math.floor(num / roman[i]);
-      num -= q * roman[i];
-      str += i.repeat(q);
-    }
-
-    return str;
-  }
-
-  return Array.from({ length: 10 }).map((_, i) => {
-    return (
-      <option
-        key={i + 1}
-        value={convertToRoman(i + 1)}
-        label={convertToRoman(i + 1)}
-      />
-    );
-  });
-};
+import { useQuery } from "react-query";
+import Link from "next/link";
 
 const SuratTugas: NextPage = () => {
   const initialValues = {
@@ -56,6 +19,11 @@ const SuratTugas: NextPage = () => {
   };
 
   const { replace } = useRouter();
+
+  const { data } = useQuery("fetchArsip", async () => {
+    const { data } = await axios.get("/api/v1/arsip");
+    return data;
+  });
 
   const {
     handleChange,
@@ -100,13 +68,13 @@ const SuratTugas: NextPage = () => {
 
     await setFieldValue(
       "nomorSurat",
-      `${incrementCount}/ST/${values.arsipId}/${thisMonth}/${thisYear}/FRA`
+      `${incrementCount}/SPPD/${values.arsipId}/${thisMonth}/${thisYear}/FRA`
     );
   };
 
   return (
     <DashboardLayout>
-      <h1>Surat Tugas (SPPD)</h1>
+      <h3 className="mt-3">Surat Tugas (SPPD)</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <label className="form-label">Nomor Surat Arsip</label>
@@ -120,11 +88,23 @@ const SuratTugas: NextPage = () => {
               value={values.arsipId}
             >
               <option value="" label="Pilih Jenis Arsip" />
-              {generateArchive()}
+              {data
+                ?.sort((a, b) => a.kelasArsip - b.kelasArsip)
+                .map((v) => (
+                  <option key={v.acronym} value={v.acronym} label={v.acronym} />
+                ))}
             </select>
             {errors.arsipId && touched.arsipId && (
               <small className="text-danger">{errors.arsipId}</small>
             )}
+
+            <Link href="/pengaturan/manage-arsip">
+              <div>
+                <small className="text-primary" style={{ cursor: "pointer" }}>
+                  Manage Arsip
+                </small>
+              </div>
+            </Link>
           </div>
           <div className="col">
             <input

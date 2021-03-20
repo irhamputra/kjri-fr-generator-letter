@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../utils/firebase";
+import { object, array } from "yup";
+import createSchema from "../../../utils/validation/schema";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
@@ -21,8 +23,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
+    if (!req.body) {
+      res.status(404).json({ error: "Tidak ada value" });
+      res.end();
+    }
+
     try {
       const { nomorSurat, namaPegawai } = req.body;
+
+      const schema = array().of(object().shape(createSchema(namaPegawai[0])));
+
+      try {
+        await schema.validate(namaPegawai);
+      } catch (e) {
+        res.status(504).json({ error: "Data tidak valid" });
+        res.end();
+      }
 
       const listPegawai = namaPegawai.map((v) => {
         const [durasi] = v.durasi.split(",");
