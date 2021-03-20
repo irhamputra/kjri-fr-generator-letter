@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import DashboardLayout from "../../components/layout/Dashboard";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
@@ -15,25 +15,30 @@ import { toast } from "react-hot-toast";
 import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 
 const Penugasan: NextPage = () => {
-  const { data: listSuratTugas, isLoading } = useQuerySuratTugas();
-  const { data: listJalDir } = useQueryJalDir();
+  const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
+  const {
+    data: listSuratTugas,
+    isLoading: suratTugasLoading,
+  } = useQuerySuratTugas();
 
   const initialValues = {
     namaPegawai: [],
     nomorSurat: "",
   };
 
-  if (isLoading) return <h4>Loading...</h4>;
+  if (suratTugasLoading && jalDirLoading) return <h4>Loading...</h4>;
 
   const optionsGolongan = listJalDir?.map((v) => ({
     label: v.golongan,
     value: v.golongan,
   }));
 
-  const optionsSuratTugas = listSuratTugas?.map((v) => ({
-    label: `${v.nomorSurat} - ${v.tujuanDinas}`,
-    value: v.nomorSurat,
-  }));
+  const optionsSuratTugas =
+    listSuratTugas &&
+    listSuratTugas?.map?.((v) => ({
+      label: `${v.nomorSurat} - ${v.tujuanDinas}`,
+      value: v.nomorSurat,
+    }));
 
   const validationSchema = object().shape({
     nomorSurat: string().trim().required("Nomor Surat Wajib diisi!"),
@@ -179,6 +184,12 @@ const Penugasan: NextPage = () => {
       </div>
     </DashboardLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
 };
 
 export default Penugasan;
