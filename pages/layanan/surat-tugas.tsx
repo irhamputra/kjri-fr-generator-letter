@@ -8,8 +8,21 @@ import dayjs from "dayjs";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
+import { useQuery } from "react-query";
 
 const SuratTugas: NextPage = () => {
+  const { data, isLoading } = useQuery(
+    "fetchSuratTugas",
+    async () => {
+      const { data } = await axios.get("/api/v1/surat-tugas");
+
+      return data;
+    },
+    {
+      enabled: true,
+    }
+  );
+
   const initialValues = {
     nomorSurat: "",
     tujuanDinas: "",
@@ -24,6 +37,7 @@ const SuratTugas: NextPage = () => {
     setFieldValue,
     errors,
     touched,
+    resetForm,
   } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
@@ -43,9 +57,9 @@ const SuratTugas: NextPage = () => {
     },
   });
 
-  const onCounterId = async (): Promise<void> => {
-    const { data } = await axios.get("/api/v1/surat-tugas");
+  if (isLoading) return <h4>Loading...</h4>;
 
+  const onCounterId = async (): Promise<void> => {
     const incrementCount = data.total + 1;
     const thisMonth = dayjs().month() + 1;
     const thisYear = dayjs().year();
@@ -74,15 +88,18 @@ const SuratTugas: NextPage = () => {
               <small className="text-danger">{errors.nomorSurat}</small>
             )}
           </div>
-          <div className="col-3">
-            <button
-              type="button"
-              onClick={onCounterId}
-              className="btn btn-dark"
-            >
-              Generate Nomor Surat
-            </button>
-          </div>
+
+          {values.nomorSurat ? null : (
+            <div className="col-3">
+              <button
+                type="button"
+                onClick={onCounterId}
+                className="btn btn-dark"
+              >
+                Generate Nomor Surat
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="mt-3">
@@ -98,9 +115,19 @@ const SuratTugas: NextPage = () => {
           )}
         </div>
 
-        <button className="btn btn-dark mt-3" type="submit">
-          Submit
-        </button>
+        <div className="mt-3">
+          <button className="btn btn-dark " type="submit">
+            Simpan Surat
+          </button>
+
+          <button
+            className="btn btn-outline-danger mx-3"
+            onClick={() => resetForm()}
+            type="reset"
+          >
+            Ulangi
+          </button>
+        </div>
       </form>
     </DashboardLayout>
   );
