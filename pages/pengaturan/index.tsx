@@ -9,6 +9,9 @@ const Index: NextPage = () => {
       <h4>Pengaturan</h4>
       <ul>
         <li>
+          <Link href="/pengaturan/manage-arsip">Manage Arsip</Link>
+        </li>
+        <li>
           <Link href="/pengaturan/manage-departemen">Manage Departemen</Link>
         </li>
         <li>

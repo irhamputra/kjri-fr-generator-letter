@@ -18,6 +18,7 @@ const schema = (type: string) => {
         .required("Password wajib diisi");
 
     case "arsipId":
+    case "jenisSurat":
       return string().trim().required("Arsip wajib diisi!");
 
     case "nomorSurat":
@@ -31,6 +32,11 @@ const schema = (type: string) => {
 
     case "acronym":
       return string().trim().required("Akronim Wajib diisi!");
+
+    case "recipient":
+    case "content":
+    case "jenisArsip":
+      return string().trim().required("Input wajib diisi!");
 
     // Server
     case "nama":
