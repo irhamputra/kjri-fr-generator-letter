@@ -2,8 +2,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../utils/firebase";
 import { object, array } from "yup";
 import createSchema from "../../../utils/validation/schema";
+import { cors } from "../../../utils/middlewares";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await cors(req, res);
+
   if (req.method === "GET") {
     try {
       const snapshot = await db

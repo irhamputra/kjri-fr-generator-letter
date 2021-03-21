@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import authInstance from "../../../utils/firebase/authInstance";
+import { cors } from "../../../utils/middlewares";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   /**
@@ -7,6 +8,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
    * @method POST
    * @body idToken
    */
+  await cors(req, res);
+
   if (req.method === "POST") {
     try {
       const { email } = req.body;

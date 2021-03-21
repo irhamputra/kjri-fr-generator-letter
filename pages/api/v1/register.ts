@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../utils/firebase";
 import authInstance from "../../../utils/firebase/authInstance";
 import type { AuthResponse } from "../../../typings/AuthResponse";
+import { cors } from "../../../utils/middlewares";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   /**
@@ -11,6 +12,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
    * @interface AuthResponse
    * @return AuthResponse
    */
+  await cors(req, res);
+
   if (req.method === "POST") {
     const { email, password, displayName, nip } = req.body;
 
