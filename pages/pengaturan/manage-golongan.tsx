@@ -13,7 +13,14 @@ const ManageGolongan: NextPage = () => {
     hargaGolongan: "",
   };
 
-  const { handleChange, handleSubmit, values, isSubmitting } = useFormik({
+  const {
+    handleChange,
+    handleSubmit,
+    values,
+    isSubmitting,
+    errors,
+    touched,
+  } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting }) => {
@@ -50,6 +57,9 @@ const ManageGolongan: NextPage = () => {
               onChange={handleChange}
               className="form-control"
             />
+            {errors.jenisGolongan && touched.jenisGolongan && (
+              <small className="text-danger">{errors.jenisGolongan}</small>
+            )}
           </div>
 
           <div className="col">
@@ -60,6 +70,9 @@ const ManageGolongan: NextPage = () => {
               onChange={handleChange}
               className="form-control"
             />
+            {errors.hargaGolongan && touched.hargaGolongan && (
+              <small className="text-danger">{errors.hargaGolongan}</small>
+            )}
           </div>
         </div>
 
