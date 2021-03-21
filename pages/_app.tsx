@@ -45,23 +45,25 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
   if (!cookie["KJRIFR-U"]) return {};
 
+  const BASE_URL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://sistem-nomor-surat-kjri-frankfurt.vercel.app";
+
   try {
     const json = JSON.parse(cookie["KJRIFR-U"]);
     const {
       data: { email },
-    } = await axios.get(
-      "https://sistem-nomor-surat-kjri-frankfurt.vercel.app/api/v1/user",
-      {
-        headers: {
-          authorization: `Bearer ${json.idToken}`,
-        },
-      }
-    );
+    } = await axios.get(`${BASE_URL}/api/v1/user`, {
+      headers: {
+        authorization: `Bearer ${json.idToken}`,
+      },
+    });
 
     return { email, isAdmin: email.includes("admin") };
   } catch (e) {
     console.error(e);
-    return {};
+    throw new Error(e.message);
   }
 };
 
