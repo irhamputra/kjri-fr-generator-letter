@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import styles from "./Card.module.css";
 interface CardProps {
   title: string;
   link: string;
@@ -8,10 +9,10 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ title, link, icon }) => {
   return (
-    <Link href={`/layanan/${link}`}>
+    <Link href={link}>
       <div className="card-body">
         <div
-          className="card"
+          className={"card " + styles.customCard}
           style={{
             cursor: "pointer",
             minHeight: 240,
@@ -19,6 +20,7 @@ const Card: React.FC<CardProps> = ({ title, link, icon }) => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
+            padding: 8,
           }}
         >
           <div
