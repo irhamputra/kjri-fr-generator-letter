@@ -9,6 +9,7 @@ import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
+import { NextSeo } from "next-seo";
 
 const SuratTugas: NextPage = () => {
   const { data, isLoading } = useQuery(
@@ -72,6 +73,10 @@ const SuratTugas: NextPage = () => {
 
   return (
     <>
+      <NextSeo
+        title="Surat Tugas | Sistem Aplikasi KJRI Frankfurt"
+        description="Surat Tugas Sistem Aplikasi KJRI Frankfurt"
+      />
       <h3 className="mt-3">Surat Tugas (SPPD)</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">

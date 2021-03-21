@@ -6,6 +6,7 @@ import createSchema from "../../utils/validation/schema";
 import useQueryJalDir from "../../hooks/useQueryJalDir";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { NextSeo } from "next-seo";
 
 const ManageGolongan: NextPage = () => {
   const initialValues = {
@@ -46,6 +47,10 @@ const ManageGolongan: NextPage = () => {
 
   return (
     <>
+      <NextSeo
+        title="Manage Golongan | Sistem Aplikasi KJRI Frankfurt"
+        description="Manage Golongan Sistem Aplikasi KJRI Frankfurt"
+      />
       <h4>Manage Golongan</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">

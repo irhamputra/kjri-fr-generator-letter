@@ -7,11 +7,16 @@ import {
   FileEarmarkRichtext as SuratPenugasanIcon,
   FileEarmarkText as SuratTugasIcon,
 } from "react-bootstrap-icons";
+import { NextSeo } from "next-seo";
 
 const Dashboard: NextPage = () => {
   const iconProps = { height: 32, width: 32 };
   return (
     <>
+      <NextSeo
+        title="Dashboard | Sistem Aplikasi KJRI Frankfurt"
+        description="Dashboard Arsip Sistem Aplikasi KJRI Frankfurt"
+      />
       <section className="container-fluid">
         <h3 className="mt-3 mx-3">Layanan Sistem Aplikasi Surat</h3>
         <div className="row mt-3">

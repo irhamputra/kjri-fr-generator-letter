@@ -7,12 +7,17 @@ import {
   Tag as GolonganIcon,
 } from "react-bootstrap-icons";
 import Card from "../../components/Card";
+import { NextSeo } from "next-seo";
 
 const Index: NextPage = () => {
   const iconProps = { height: 32, width: 32 };
 
   return (
     <>
+      <NextSeo
+        title="Pengaturan | Sistem Aplikasi KJRI Frankfurt"
+        description="Pengaturan Sistem Aplikasi KJRI Frankfurt"
+      />
       <section className="container-fluid">
         <h3 className="mt-3 mx-3">Pengaturan</h3>
 
