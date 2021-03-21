@@ -45,7 +45,7 @@ const Penugasan: NextPage = () => {
   });
 
   return (
-    <DashboardLayout>
+    <>
       <h3 className="mt-3">Surat Penugasan Perjalanan Dinas (SPD)</h3>
       <div>
         <Formik
@@ -182,7 +182,7 @@ const Penugasan: NextPage = () => {
           )}
         </Formik>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

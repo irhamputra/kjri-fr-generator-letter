@@ -3,7 +3,6 @@ import { NextPage } from "next";
 import { useFormik } from "formik";
 import { object } from "yup";
 import createSchema from "../../utils/validation/schema";
-import DashboardLayout from "../../components/layout/Dashboard";
 import useQueryJalDir from "../../hooks/useQueryJalDir";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -39,7 +38,7 @@ const ManageGolongan: NextPage = () => {
   if (isLoading) return <h4>Loading...</h4>;
 
   return (
-    <DashboardLayout>
+    <>
       <h4>Manage Golongan</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -85,7 +84,7 @@ const ManageGolongan: NextPage = () => {
           ))}
         </tbody>
       </table>
-    </DashboardLayout>
+    </>
   );
 };
 

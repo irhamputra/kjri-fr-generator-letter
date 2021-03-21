@@ -2,7 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const { pathname } = useRouter();
 
   const isActive = pathname === "/pengaturan";
@@ -14,15 +14,17 @@ const Sidebar: React.FC = () => {
           <Link href="/dashboard">🏠 &nbsp; Dashboard</Link>
         </li>
 
-        <li
-          className={`${
-            isActive
-              ? "text-primary list-group-item mt-5"
-              : "list-group-item mt-5"
-          }`}
-        >
-          <Link href="/pengaturan">⚙️ &nbsp; Pengaturan</Link>
-        </li>
+        {isAdmin && (
+          <li
+            className={`${
+              isActive
+                ? "text-primary list-group-item mt-5"
+                : "list-group-item mt-5"
+            }`}
+          >
+            <Link href="/pengaturan">⚙️ &nbsp; Pengaturan</Link>
+          </li>
+        )}
       </ul>
     </div>
   );
