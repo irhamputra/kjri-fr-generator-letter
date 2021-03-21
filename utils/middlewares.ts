@@ -26,5 +26,6 @@ export const cors = middlewares(
         callback(new Error("Not allowed by CORS"));
       }
     },
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );

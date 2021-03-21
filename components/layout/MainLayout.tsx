@@ -2,7 +2,11 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import DashboardLayout from "./Dashboard";
 
-const MainLayout: React.FC = ({ children }) => {
+const MainLayout: React.FC<{ email: string; isAdmin: boolean }> = ({
+  children,
+  isAdmin,
+  email,
+}) => {
   const { pathname } = useRouter();
 
   const isLoginPage = pathname === "/";
@@ -10,7 +14,13 @@ const MainLayout: React.FC = ({ children }) => {
   return (
     <div className="container-fluid h-100">
       <div className="row h-100">
-        {isLoginPage ? children : <DashboardLayout>{children}</DashboardLayout>}
+        {isLoginPage ? (
+          children
+        ) : (
+          <DashboardLayout email={email} isAdmin={isAdmin}>
+            {children}
+          </DashboardLayout>
+        )}
       </div>
     </div>
   );

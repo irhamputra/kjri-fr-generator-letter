@@ -71,19 +71,8 @@ const Home: NextPage = () => {
           disabled={isSubmitting}
           type="submit"
         >
-          Login
+          {isSubmitting ? "Mohon tunggu..." : "Login"}
         </button>
-
-        <hr />
-
-        <div className="text-center">
-          <p>
-            Belum terdaftar? Silahkan{" "}
-            <Link href="/register">
-              <a>Register disini</a>
-            </Link>
-          </p>
-        </div>
       </form>
     </div>
   );

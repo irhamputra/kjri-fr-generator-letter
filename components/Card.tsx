@@ -1,6 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
-import styles from "./Card.module.css";
+import styles from "../styles/Card.module.css";
 interface CardProps {
   title: string;
   link: string;

@@ -10,14 +10,14 @@ import { DefaultSeo } from "next-seo";
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, email, isAdmin }) {
   return (
     <QueryClientProvider client={queryClient}>
       <DefaultSeo
         title="Sistem Aplikasi KJRI Frankfurt"
         description="Sistem Aplikasi KJRI Frankfurt"
       />
-      <MainLayout>
+      <MainLayout email={email} isAdmin={isAdmin}>
         <Component {...pageProps} />
         <Toaster
           position="bottom-right"
@@ -31,8 +31,7 @@ function MyApp({ Component, pageProps }) {
 MyApp.getInitialProps = async ({ ctx }) => {
   const cookie = parseCookies(ctx.req);
 
-  // Allow this pages to be accessed without user cookie
-  const whitelistedPage = ["/", "/register", "/_error"];
+  const whitelistedPage = ["/", "/_error"];
 
   if (!cookie["KJRIFR-U"] && !whitelistedPage.includes(ctx.pathname)) {
     ctx.res.writeHead(302, { Location: "/" });

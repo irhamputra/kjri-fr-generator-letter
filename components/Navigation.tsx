@@ -5,8 +5,8 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 
-const Navigation: React.FC = () => {
-  const { replace } = useRouter();
+const Navigation: React.FC<{ email: string }> = ({ email }) => {
+  const { replace, reload } = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -23,6 +23,7 @@ const Navigation: React.FC = () => {
     }
 
     cookie.remove("KJRIFR-U");
+    reload();
     await replace("/");
   };
 
@@ -34,7 +35,7 @@ const Navigation: React.FC = () => {
         </a>
       </Link>
       <div className="d-flex align-items-center">
-        <p className="ms-auto my-0 text-white">Hello,</p>
+        <p className="ms-auto my-0 text-white">Hello, {email}</p>
         <button className="btn btn-link text-white" onClick={handleLogout}>
           Sign Out
         </button>
