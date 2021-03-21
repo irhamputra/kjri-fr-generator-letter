@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import { toast } from "react-hot-toast";
 import useValidation from "./useValidation";
-import useAuthMutation from "./Mutation/useAuthMutation";
+import useAuthMutation from "./mutation/useAuthMutation";
 
 const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
   const { replace } = useRouter();

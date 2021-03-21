@@ -5,7 +5,7 @@ import { object } from "yup";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import useQueryArsip from "../../hooks/useQueryArsip";
+import useQueryArsip from "../../hooks/Query/useQueryArsip";
 
 const ManageArsip: NextPage = () => {
   const initialValues = {

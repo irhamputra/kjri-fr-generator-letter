@@ -1,6 +1,5 @@
 import * as React from "react";
 import { GetServerSideProps, NextPage } from "next";
-import DashboardLayout from "../../components/layout/Dashboard";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
 import {
@@ -8,8 +7,8 @@ import {
   SelectComponent,
   SelectStaff,
 } from "../../components/CustomField";
-import useQueryJalDir from "../../hooks/useQueryJalDir";
-import useQuerySuratTugas from "../../hooks/useQuerySuratTugas";
+import useQueryJalDir from "../../hooks/query/useQueryJalDir";
+import useQuerySuratTugas from "../../hooks/query/useQuerySuratTugas";
 import { object, string } from "yup";
 import { toast } from "react-hot-toast";
 import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
