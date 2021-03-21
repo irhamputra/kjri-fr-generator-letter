@@ -2,26 +2,14 @@ import { useMutation } from "react-query";
 import axios from "axios";
 import cookie from "js-cookie";
 
-import type { AuthResponse } from "../../typings/AuthResponse";
-import type { InitialValues } from "../../typings/InitialValues";
-
-const useAuthMutation = (type: "login" | "register") => {
+const useAuthMutation = <T>(type: "login" | "register") => {
   const mutationKey = type === "login" ? "loginUser" : "registerUser";
 
   return useMutation(
     [mutationKey],
-    async (formik: InitialValues): Promise<AuthResponse> => {
+    async (formik: T) => {
       try {
-        const { data } = await axios.post(`/api/v1/${type}`, {
-          email: formik.email,
-          password: formik.password,
-          ...(type === "register"
-            ? {
-                displayName: formik.displayName,
-                nip: formik.nip,
-              }
-            : {}),
-        });
+        const { data } = await axios.post(`/api/v1/${type}`, formik);
         return data;
       } catch (e) {
         throw new Error(e.response.data.message);
@@ -29,9 +17,11 @@ const useAuthMutation = (type: "login" | "register") => {
     },
     {
       onSuccess: async ({ idToken, refreshToken }) => {
-        cookie.set("KJRIFR-U", JSON.stringify({ idToken, refreshToken }), {
-          expires: (1 / 48) * 2,
-        });
+        if (type === "login") {
+          cookie.set("KJRIFR-U", JSON.stringify({ idToken, refreshToken }), {
+            expires: (1 / 48) * 2,
+          });
+        }
       },
     }
   );
