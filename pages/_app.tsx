@@ -38,19 +38,37 @@ function MyApp({ Component, pageProps, router, email, isAdmin }) {
 
 MyApp.getInitialProps = async ({ ctx }) => {
   const cookie = parseCookies(ctx.req);
+
+  // Allow this pages to be accessed without user cookie
+  const whitelistedPage = ["/", "/register", "/_error"];
+
+  if (!cookie["KJRIFR-U"] && !whitelistedPage.includes(ctx.pathname)) {
+    ctx.res.writeHead(302, { Location: "/" });
+    ctx.res.end();
+    return {};
+  } else if (cookie["KJRIFR-U"] && ctx.pathname === "/") {
+    ctx.res.writeHead(302, { Location: "/dashboard" });
+    ctx.res.end();
+    return {};
+  }
+
   if (!cookie["KJRIFR-U"]) return {};
 
-  const json = JSON.parse(cookie["KJRIFR-U"]);
+  try {
+    const json = JSON.parse(cookie["KJRIFR-U"]);
+    const {
+      data: { email },
+    } = await axios.get("http://localhost:3000/api/v1/user", {
+      headers: {
+        authorization: `Bearer ${json.idToken}`,
+      },
+    });
 
-  const {
-    data: { email },
-  } = await axios.get("http://localhost:3000/api/v1/user", {
-    headers: {
-      authorization: `Bearer ${json.idToken}`,
-    },
-  });
-
-  return { email, isAdmin: email.includes("admin") };
+    return { email, isAdmin: email.includes("admin") };
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
 };
 
 export default MyApp;
