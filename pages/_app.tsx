@@ -13,8 +13,6 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps, router, email, isAdmin }) {
   const isLoginPage = router.pathname === "/";
 
-  console.log(isAdmin);
-
   return (
     <QueryClientProvider client={queryClient}>
       {isLoginPage ? (
