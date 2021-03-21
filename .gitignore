@@ -32,3 +32,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+/.env
+/.idea/.gitignore
+/.idea/kjri.iml
+/.idea/modules.xml
+/.idea/prettier.xml
+/utils/firebase/serviceAccount.ts
+/.idea/vcs.xml

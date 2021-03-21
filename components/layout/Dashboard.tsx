@@ -2,16 +2,12 @@ import * as React from "react";
 import Navigation from "../Navigation";
 import Sidebar from "../Sidebar";
 
-const DashboardLayout: React.FC<{ email?: string; isAdmin: boolean }> = ({
-  children,
-  email,
-  isAdmin,
-}) => {
+const DashboardLayout: React.FC = ({ children }) => {
   return (
     <>
-      <Navigation email={email} />
+      <Navigation />
       <div className="row">
-        <Sidebar isAdmin={isAdmin} />
+        <Sidebar />
         <div className="col-9">{children}</div>
       </div>
     </>

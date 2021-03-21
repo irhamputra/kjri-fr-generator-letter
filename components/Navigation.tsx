@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 
-const Navigation: React.FC<{ email: string }> = ({ email }) => {
+const Navigation: React.FC = () => {
   const { replace } = useRouter();
 
   const handleLogout = async () => {
@@ -34,7 +34,7 @@ const Navigation: React.FC<{ email: string }> = ({ email }) => {
         </a>
       </Link>
       <div className="d-flex align-items-center">
-        <p className="ms-auto my-0 text-white">Hello, {email}</p>
+        <p className="ms-auto my-0 text-white">Hello,</p>
         <button className="btn btn-link text-white" onClick={handleLogout}>
           Sign Out
         </button>

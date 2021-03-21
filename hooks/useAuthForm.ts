@@ -2,34 +2,33 @@ import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import { toast } from "react-hot-toast";
 import useValidation from "./useValidation";
-import useAuthMutation from "./Mutation/useAuthMutation";
+import useAuthMutation from "./mutation/useAuthMutation";
 
-import type { InitialValues } from "../typings/InitialValues";
-
-const useAuthForm = (
-  initialValues: InitialValues,
-  type: "login" | "register"
-) => {
+const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
   const { replace } = useRouter();
-  const validationSchema = useValidation(initialValues);
-  const { mutateAsync } = useAuthMutation(type);
+  const validationSchema = useValidation<T>(initialValues);
+  const { mutateAsync } = useAuthMutation<T>(type);
 
-  return useFormik<InitialValues>({
+  return useFormik<T>({
     initialValues,
     validationSchema,
-    onSubmit: async (v, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
 
       try {
-        await mutateAsync(v);
+        await mutateAsync(values);
       } catch (e) {
         return toast.error(e.message);
       }
 
-      await replace("/dashboard");
-
-      toast.success("Login berhasil");
       setSubmitting(false);
+
+      if (type === "login") {
+        await replace("/dashboard");
+        toast.success("Login berhasil");
+      } else {
+        toast.success("Register User berhasil");
+      }
     },
   });
 };
