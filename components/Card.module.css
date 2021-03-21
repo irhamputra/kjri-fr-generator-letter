@@ -1,0 +1,14 @@
+.customCard:hover {
+  border: 1px solid #0a58ca;
+}
+
+.customCard {
+  cursor: pointer;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  transition: 0.3s border ease-out;
+}

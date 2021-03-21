@@ -12,6 +12,7 @@ import useQuerySuratTugas from "../../hooks/query/useQuerySuratTugas";
 import { object, string } from "yup";
 import { toast } from "react-hot-toast";
 import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
+import { NextSeo } from "next-seo";
 
 const Penugasan: NextPage = () => {
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
@@ -45,6 +46,10 @@ const Penugasan: NextPage = () => {
 
   return (
     <>
+      <NextSeo
+        title="Penugasan | Sistem Aplikasi KJRI Frankfurt"
+        description="Penugasan Sistem Aplikasi KJRI Frankfurt"
+      />
       <h3 className="mt-3">Surat Penugasan Perjalanan Dinas (SPD)</h3>
       <div>
         <Formik

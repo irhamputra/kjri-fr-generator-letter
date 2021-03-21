@@ -21,14 +21,9 @@ const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
         return toast.error(e.message);
       }
 
+      await replace("/dashboard");
       setSubmitting(false);
-
-      if (type === "login") {
-        await replace("/dashboard");
-        toast.success("Login berhasil");
-      } else {
-        toast.success("Register User berhasil");
-      }
+      toast.success("Login berhasil");
     },
   });
 };

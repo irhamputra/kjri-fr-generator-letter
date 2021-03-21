@@ -23,7 +23,7 @@ const Navigation: React.FC = () => {
     }
 
     cookie.remove("KJRIFR-U");
-    replace("/");
+    await replace("/");
   };
 
   return (

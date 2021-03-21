@@ -7,6 +7,7 @@ import useQueryArsip from "../../../hooks/query/useQueryArsip";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useQuery } from "react-query";
+import { NextSeo } from "next-seo";
 
 const listJenisSurat = [
   {
@@ -97,6 +98,10 @@ const Index: NextPage = () => {
 
   return (
     <>
+      <NextSeo
+        title="Surat Keluar | Sistem Aplikasi KJRI Frankfurt"
+        description="Surat Keluar Sistem Aplikasi KJRI Frankfurt"
+      />
       <h3 className="mt-3">Surat Keluar</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">

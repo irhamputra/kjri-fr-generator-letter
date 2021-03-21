@@ -5,6 +5,7 @@ import { object } from "yup";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { NextSeo } from "next-seo";
 import useQueryArsip from "../../hooks/query/useQueryArsip";
 
 const ManageArsip: NextPage = () => {
@@ -45,6 +46,10 @@ const ManageArsip: NextPage = () => {
 
   return (
     <>
+      <NextSeo
+        title="Manage Arsip | Sistem Aplikasi KJRI Frankfurt"
+        description="Manage Arsip Sistem Aplikasi KJRI Frankfurt"
+      />
       <h3 className="mt-3">Manage Arsip</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -80,7 +85,6 @@ const ManageArsip: NextPage = () => {
           Simpan Arsip
         </button>
       </form>
-
       <table className="table caption-top mt-3">
         <caption>Table Jenis Arsip</caption>
         <thead>

@@ -6,11 +6,17 @@ import MainLayout from "../components/layout/MainLayout";
 import parseCookies from "../utils/parseCookies";
 import axios from "axios";
 
+import { DefaultSeo } from "next-seo";
+
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
+      <DefaultSeo
+        title="Sistem Aplikasi KJRI Frankfurt"
+        description="Sistem Aplikasi KJRI Frankfurt"
+      />
       <MainLayout>
         <Component {...pageProps} />
         <Toaster
