@@ -33,6 +33,8 @@ const listJenisSurat = [
 ];
 
 const Index: NextPage = () => {
+  const [disabled, setDisabled] = React.useState(false);
+
   const initialValues = {
     recipient: "",
     content: "",
@@ -91,6 +93,7 @@ const Index: NextPage = () => {
           values.arsipId
         }/${thisMonth}/${thisYear}`
       );
+      setDisabled(true);
     } catch (e) {
       throw new Error(e.message);
     }
@@ -107,6 +110,7 @@ const Index: NextPage = () => {
         <div className="row">
           <div className="col-3">
             <select
+              disabled={disabled}
               className="form-select"
               aria-label="Jenis Surat"
               name="jenisSurat"
@@ -132,6 +136,7 @@ const Index: NextPage = () => {
           <label className="form-label">Nomor Surat</label>
           <div className="col-3">
             <select
+              disabled={disabled}
               className="form-select"
               aria-label="Default select example"
               name="arsipId"
@@ -209,7 +214,10 @@ const Index: NextPage = () => {
 
           <button
             type="reset"
-            onClick={() => resetForm()}
+            onClick={() => {
+              setDisabled(false);
+              resetForm();
+            }}
             className="btn btn-outline-danger mx-3"
           >
             Ulangi
