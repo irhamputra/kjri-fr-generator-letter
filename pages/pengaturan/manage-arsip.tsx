@@ -1,7 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
 import { useFormik } from "formik";
-import DashboardLayout from "../../components/layout/Dashboard";
 import { object } from "yup";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
@@ -45,7 +44,7 @@ const ManageArsip: NextPage = () => {
   if (isLoading) return <h4>Loading...</h4>;
 
   return (
-    <DashboardLayout>
+    <>
       <h3 className="mt-3">Manage Arsip</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -101,7 +100,7 @@ const ManageArsip: NextPage = () => {
           })}
         </tbody>
       </table>
-    </DashboardLayout>
+    </>
   );
 };
 

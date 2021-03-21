@@ -71,7 +71,7 @@ const SuratTugas: NextPage = () => {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <h3 className="mt-3">Surat Tugas (SPPD)</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -129,7 +129,7 @@ const SuratTugas: NextPage = () => {
           </button>
         </div>
       </form>
-    </DashboardLayout>
+    </>
   );
 };
 

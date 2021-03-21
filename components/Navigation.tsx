@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
-const Navigation: React.FC = () => {
+const Navigation: React.FC<{ email: string }> = ({ email }) => {
   const { replace } = useRouter();
 
   const handleLogout = async () => {
@@ -22,14 +23,18 @@ const Navigation: React.FC = () => {
     }
 
     cookie.remove("KJRIFR-U");
-    await replace("/");
+    replace("/");
   };
 
   return (
     <nav className="bg-dark d-flex justify-content-between p-3 align-items-center">
-      <h4 className="text-white my-0">Sistem Aplikasi KJRI Frankfurt</h4>
+      <Link href="/dashboard">
+        <a>
+          <h4 className="text-white my-0">Sistem Aplikasi KJRI Frankfurt</h4>
+        </a>
+      </Link>
       <div className="d-flex align-items-center">
-        <p className="ms-auto my-0 text-white">Hello, Admin</p>
+        <p className="ms-auto my-0 text-white">Hello, {email}</p>
         <button className="btn btn-link text-white" onClick={handleLogout}>
           Sign Out
         </button>

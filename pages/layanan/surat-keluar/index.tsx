@@ -97,7 +97,7 @@ const Index: NextPage = () => {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <h3 className="mt-3">Surat Keluar</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -212,7 +212,7 @@ const Index: NextPage = () => {
           </button>
         </div>
       </form>
-    </DashboardLayout>
+    </>
   );
 };
 
