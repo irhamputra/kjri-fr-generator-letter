@@ -4,11 +4,6 @@ import Link from "next/link";
 import useAuthForm from "../hooks/useAuthForm";
 
 const Home: NextPage = () => {
-  const initialValues = {
-    email: "",
-    password: "",
-  };
-
   const {
     handleSubmit,
     values,
@@ -16,7 +11,7 @@ const Home: NextPage = () => {
     errors,
     touched,
     isSubmitting,
-  } = useAuthForm(initialValues, "login");
+  } = useAuthForm({ email: "", password: "" }, "login");
 
   return (
     <div className="d-flex mt-5 justify-content-center align-items-center">

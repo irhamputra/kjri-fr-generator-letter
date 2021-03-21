@@ -2,6 +2,19 @@ import { string } from "yup";
 
 const schema = (type: string) => {
   switch (type) {
+    // common schema
+    case "displayName":
+    case "nip":
+    case "arsipId":
+    case "jenisSurat":
+    case "recipient":
+    case "content":
+    case "jenisArsip":
+    case "acronym":
+    case "tujuanDinas":
+      return string().trim().min(3).required("Wajib diisi!");
+
+    // Login & Register schema
     case "email":
       return string()
         .email("Email tidak sesuai format, mohon cek kembali")
@@ -17,26 +30,8 @@ const schema = (type: string) => {
         )
         .required("Password wajib diisi");
 
-    case "arsipId":
-    case "jenisSurat":
-      return string().trim().required("Arsip wajib diisi!");
-
     case "nomorSurat":
-      return string().trim().required("Mohon reservasi nomor surat");
-
-    case "tujuanDinas":
-      return string().trim().required("Nama Dinas / Tujuan Dinas Wajib diisi");
-
-    case "kelasArsip":
-      return string().trim().required("Jenis arsip wajib diisi!");
-
-    case "acronym":
-      return string().trim().required("Akronim Wajib diisi!");
-
-    case "recipient":
-    case "content":
-    case "jenisArsip":
-      return string().trim().required("Input wajib diisi!");
+      return string().trim().required("Wajib reservasi nomor surat");
 
     // Server
     case "nama":
@@ -55,7 +50,7 @@ const schema = (type: string) => {
   }
 };
 
-const createSchema = (initialValues: Record<string, string>) => {
+const createSchema = <T>(initialValues: T) => {
   const fieldNames = Object.keys(initialValues);
   return !Array.isArray(fieldNames) || fieldNames.length === 0
     ? undefined

@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import { useFormik } from "formik";
 import { object } from "yup";
 import createSchema from "../../utils/validation/schema";
-import useQueryJalDir from "../../hooks/useQueryJalDir";
+import useQueryJalDir from "../../hooks/query/useQueryJalDir";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { NextSeo } from "next-seo";
@@ -31,13 +31,14 @@ const ManageGolongan: NextPage = () => {
           golongan: values.jenisGolongan,
           harga: values.hargaGolongan,
         });
+
         toast.success("Data berhasil disimpan");
+
+        setSubmitting(false);
       } catch (e) {
         toast.error("Terjadi kesalahan teknis! Mohon ulangi kembali");
         throw new Error(e.message);
       }
-
-      setSubmitting(false);
     },
   });
 
