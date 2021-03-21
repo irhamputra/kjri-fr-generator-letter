@@ -6,24 +6,22 @@ import { toast } from "react-hot-toast";
 import Link from "next/link";
 
 const Navigation: React.FC<{ email: string }> = ({ email }) => {
-  const { replace, reload } = useRouter();
+  const { replace } = useRouter();
 
   const handleLogout = async () => {
     try {
-      const cookies = cookie.get("KJRIFR-U");
-      const value = JSON.parse(cookies ?? "");
+      const idToken = cookie.get("KJRIFR-U");
 
-      const { data } = await axios.post("/api/v1/logout", {
-        idToken: value?.idToken,
-      });
+      const { data } = await axios.post("/api/v1/logout", { idToken });
 
       toast.success(data.message);
     } catch (e) {
-      console.log({ e });
+      toast.error("Terjadi kesalahan teknis!");
+      throw new Error(e.message);
     }
 
     cookie.remove("KJRIFR-U");
-    reload();
+    cookie.remove("rtfa");
     await replace("/");
   };
 

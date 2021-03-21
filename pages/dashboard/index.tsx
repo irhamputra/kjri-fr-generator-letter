@@ -8,9 +8,13 @@ import {
   FileEarmarkText as SuratTugasIcon,
 } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
+import useRefetchToken from "../../hooks/useRefetchToken";
+
+const iconProps = { height: 32, width: 32 };
 
 const Dashboard: NextPage = () => {
-  const iconProps = { height: 32, width: 32 };
+  useRefetchToken();
+
   return (
     <>
       <NextSeo

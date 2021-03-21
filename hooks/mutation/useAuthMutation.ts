@@ -18,9 +18,10 @@ const useAuthMutation = <T>(type: "login" | "register") => {
     {
       onSuccess: async ({ idToken, refreshToken }) => {
         if (type === "login") {
-          cookie.set("KJRIFR-U", JSON.stringify({ idToken, refreshToken }), {
-            expires: (1 / 48) * 2,
+          cookie.set("KJRIFR-U", idToken, {
+            expires: 2 / 48,
           });
+          cookie.set("rtfa", refreshToken);
         }
       },
     }
