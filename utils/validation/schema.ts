@@ -12,7 +12,14 @@ const schema = (type: string) => {
     case "jenisArsip":
     case "acronym":
     case "tujuanDinas":
-      return string().trim().min(3).required("Wajib diisi!");
+    case "nomorSurat":
+    case "jenisGolongan":
+    case "hargaGolongan":
+      return string()
+        .trim()
+        .required(
+          `${type === "displayName" ? "Nama Pegawai" : type} wajib diisi!`
+        );
 
     // Login & Register schema
     case "email":
@@ -30,9 +37,6 @@ const schema = (type: string) => {
         )
         .required("Password wajib diisi");
 
-    case "nomorSurat":
-      return string().trim().required("Wajib reservasi nomor surat");
-
     // Server
     case "nama":
     case "golongan":
@@ -41,10 +45,7 @@ const schema = (type: string) => {
 
     case "durasi":
       return string().matches(/^[0-9]?,[5]$/, "Value bukan angka dan koma");
-    case "jenisGolongan":
-      return string().trim().required("Jenis golongan wajib diisi!");
-    case "hargaGolongan":
-      return string().trim().required("Harga golongan wajib diisi!");
+
     default:
       return undefined;
   }

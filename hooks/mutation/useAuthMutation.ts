@@ -1,8 +1,9 @@
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import cookie from "js-cookie";
 
 const useAuthMutation = <T>(type: "login" | "register") => {
+  const queryClient = useQueryClient();
   const mutationKey = type === "login" ? "loginUser" : "registerUser";
 
   return useMutation(
@@ -23,6 +24,8 @@ const useAuthMutation = <T>(type: "login" | "register") => {
           });
           cookie.set("rtfa", refreshToken);
         }
+
+        await queryClient.invalidateQueries("fetchUser");
       },
     }
   );

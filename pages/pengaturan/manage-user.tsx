@@ -1,12 +1,46 @@
 import * as React from "react";
 import { NextPage } from "next";
 import useAuthForm from "../../hooks/useAuthForm";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const ManageUser: NextPage = () => {
+  const queryClient = useQueryClient();
+
   const { values, handleChange, handleSubmit, errors, touched } = useAuthForm(
     { displayName: "", email: "", password: "", nip: "" },
     "register"
   );
+
+  const { data, isLoading } = useQuery("fetchUser", async () => {
+    const { data } = await axios.get("/api/v1/users");
+
+    return data;
+  });
+
+  const { mutateAsync } = useMutation(
+    "deleteUser",
+    async (nip: string) => {
+      try {
+        const { data } = await axios.delete(`/api/v1/user/${nip}`);
+
+        return data;
+      } catch (e) {
+        toast.error("Gagal menghapus user!");
+        throw new Error(e.message);
+      }
+    },
+    {
+      onSuccess: async (data) => {
+        await queryClient.invalidateQueries("fetchUser");
+
+        toast.success(data.message);
+      },
+    }
+  );
+
+  if (isLoading) return <h4>Loading...</h4>;
 
   return (
     <>
@@ -17,10 +51,14 @@ const ManageUser: NextPage = () => {
             <label className="form-label">Nama Pegawai</label>
             <input
               className="form-control"
+              type="text"
               name="displayName"
               value={values.displayName}
               onChange={handleChange}
             />
+            {errors.displayName && touched.displayName && (
+              <small className="text-danger">{errors.displayName}</small>
+            )}
           </div>
 
           <div className="col-6 mt-3">
@@ -28,19 +66,27 @@ const ManageUser: NextPage = () => {
             <input
               className="form-control"
               name="email"
+              type="email"
               value={values.email}
               onChange={handleChange}
             />
+            {errors.email && touched.email && (
+              <small className="text-danger">{errors.email}</small>
+            )}
           </div>
 
           <div className="col-6 mt-3">
             <label className="form-label">Password</label>
             <input
+              type="password"
               className="form-control"
               name="password"
               value={values.password}
               onChange={handleChange}
             />
+            {errors.password && touched.password && (
+              <small className="text-danger">{errors.password}</small>
+            )}
           </div>
 
           <div className="col-6 mt-3">
@@ -48,9 +94,13 @@ const ManageUser: NextPage = () => {
             <input
               className="form-control"
               name="nip"
+              type="text"
               value={values.nip}
               onChange={handleChange}
             />
+            {errors.nip && touched.nip && (
+              <small className="text-danger">{errors.nip}</small>
+            )}
           </div>
 
           <div className="mt-3">
@@ -60,6 +110,37 @@ const ManageUser: NextPage = () => {
           </div>
         </div>
       </form>
+
+      <table className="table caption-top mt-3">
+        <caption>List Staff</caption>
+        <thead>
+          <tr>
+            <th scope="col">NIP</th>
+            <th scope="col">Nama Staff</th>
+            <th scope="col">Email</th>
+            <th scope="col"> </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data?.map?.((v) => (
+            <tr key={v.nip}>
+              <td scope="row">{v.nip}</td>
+              <td>{v.displayName}</td>
+              <td>{v.email}</td>
+              <td>
+                <button
+                  onClick={async () => {
+                    await mutateAsync(v.nip);
+                  }}
+                  className="btn-danger btn"
+                >
+                  Hapus
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 };
