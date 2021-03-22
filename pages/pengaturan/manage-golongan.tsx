@@ -95,7 +95,7 @@ const ManageGolongan: NextPage = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((v) => (
+          {data?.map?.((v) => (
             <tr key={v.golId}>
               <td scope="row">{v.golongan}</td>
               <td>$ {v.harga}</td>

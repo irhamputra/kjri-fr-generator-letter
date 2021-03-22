@@ -9,12 +9,12 @@ const MainLayout: React.FC<{ email: string; isAdmin: boolean }> = ({
 }) => {
   const { pathname } = useRouter();
 
-  const isLoginPage = pathname === "/";
+  const isAuthPage = ["/", "/forget-password", "/_error"].includes(pathname);
 
   return (
     <div className="container-fluid h-100">
       <div className="row h-100">
-        {isLoginPage ? (
+        {isAuthPage ? (
           children
         ) : (
           <DashboardLayout email={email} isAdmin={isAdmin}>

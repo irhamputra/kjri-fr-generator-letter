@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps, email, isAdmin }) {
 MyApp.getInitialProps = async ({ ctx }) => {
   const cookie = parseCookies(ctx.req);
 
-  const whitelistedPage = ["/", "/_error"];
+  const whitelistedPage = ["/", "/forget-password", "/_error"];
 
   if (!cookie["KJRIFR-U"] && !whitelistedPage.includes(ctx.pathname)) {
     ctx.res.writeHead(302, { Location: "/" });
