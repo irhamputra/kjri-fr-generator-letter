@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import { NextSeo } from "next-seo";
+import { v4 } from "uuid";
 
 const SuratTugas: NextPage = () => {
   const { data, isLoading } = useQuery(
@@ -44,7 +45,10 @@ const SuratTugas: NextPage = () => {
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        await axios.post("/api/v1/surat-tugas", values);
+        await axios.post("/api/v1/surat-tugas", {
+          suratTugasId: v4(),
+          ...values,
+        });
         toast.success("Surat Tugas berhasil dibuat");
       } catch (e) {
         toast.error("Terjadi masalah teknis");

@@ -1,18 +1,19 @@
 import * as React from "react";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
 import {
   InputComponent,
   SelectComponent,
   SelectStaff,
-} from "../../components/CustomField";
-import useQueryJalDir from "../../hooks/query/useQueryJalDir";
-import useQuerySuratTugas from "../../hooks/query/useQuerySuratTugas";
+} from "../../../components/CustomField";
+import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
+import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { object, string } from "yup";
 import { toast } from "react-hot-toast";
 import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
+import Link from "next/link";
 
 const Penugasan: NextPage = () => {
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
@@ -30,7 +31,7 @@ const Penugasan: NextPage = () => {
 
   const optionsGolongan = listJalDir?.map((v) => ({
     label: v.golongan,
-    value: v.golongan,
+    value: v.harga,
   }));
 
   const optionsSuratTugas =
@@ -55,7 +56,7 @@ const Penugasan: NextPage = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={async (values, { setSubmitting }) => {
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
             let response: AxiosResponse;
             try {
@@ -66,6 +67,7 @@ const Penugasan: NextPage = () => {
               toast.error(e.message);
             }
 
+            resetForm();
             setSubmitting(false);
           }}
         >
@@ -97,8 +99,8 @@ const Penugasan: NextPage = () => {
                                 <label className="form-label">Nama Staff</label>
                                 <Field
                                   className="form-control"
-                                  name={`namaPegawai.${index}.nama`}
-                                  value={_.nama}
+                                  name={`namaPegawai.${index}.pegawai`}
+                                  value={_.pegawai}
                                   component={SelectStaff}
                                   placeholder="Input nama pegawai"
                                 />
@@ -110,7 +112,7 @@ const Penugasan: NextPage = () => {
                                 </label>
                                 <Field
                                   className="form-control"
-                                  name={`namaPegawai.${index}.jaldir`}
+                                  name={`namaPegawai.${index}.jaldis`}
                                   component={SelectComponent}
                                   styles={{
                                     control: (provided) => ({
@@ -118,7 +120,7 @@ const Penugasan: NextPage = () => {
                                       height: 66,
                                     }),
                                   }}
-                                  value={_.jaldir}
+                                  value={_.jaldis}
                                   options={optionsGolongan}
                                   placeholder="Pilih Golongan Jalan Dinas"
                                 />
@@ -160,9 +162,8 @@ const Penugasan: NextPage = () => {
                       type="button"
                       onClick={() =>
                         arrayHelpers.push({
-                          nama: "",
-                          golongan: "",
-                          jabatan: "",
+                          pegawai: {},
+                          jaldis: "",
                           durasi: "",
                         })
                       }
@@ -185,15 +186,30 @@ const Penugasan: NextPage = () => {
             </Form>
           )}
         </Formik>
+
+        <ul className="mt-3">
+          {suratTugasLoading ? (
+            <p>Loading...</p>
+          ) : (
+            listSuratTugas?.map?.((v) => {
+              return (
+                <li key={v.nomorSurat}>
+                  <Link
+                    href="/layanan/penugasan/[id]"
+                    as={`/layanan/penugasan/${v.suratTugasId}`}
+                  >
+                    <a>
+                      {v.nomorSurat} - {v.tujuanDinas}
+                    </a>
+                  </Link>
+                </li>
+              );
+            })
+          )}
+        </ul>
       </div>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: {},
-  };
 };
 
 export default Penugasan;

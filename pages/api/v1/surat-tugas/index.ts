@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../utils/firebase";
-import { cors } from "../../../utils/middlewares";
+import { db } from "../../../../utils/firebase";
+import { cors } from "../../../../utils/middlewares";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
@@ -18,8 +18,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "POST") {
+    const { suratTugasId } = req.body;
+
     try {
-      await db.collection("SuratTugas").add(req.body);
+      await db.collection("SuratTugas").doc(suratTugasId).set(req.body);
       res.status(200);
       res.end();
     } catch (e) {

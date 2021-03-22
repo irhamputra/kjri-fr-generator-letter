@@ -8,7 +8,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
       let result = [];
-      const snapshot = await db.collection("JalDir").get();
+      const snapshot = await db
+        .collection("JalDis")
+        .orderBy("golongan", "asc")
+        .get();
 
       snapshot.forEach((doc) => {
         result.push(doc.data());
@@ -23,7 +26,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     try {
-      await db.collection("JalDir").add(req.body);
+      const { golId } = req.body;
+
+      await db.collection("JalDis").doc(golId).set(req.body);
       res.status(200).json({ message: "Data berhasil disimpan" });
       res.end();
     } catch (e) {

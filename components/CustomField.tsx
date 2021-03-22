@@ -17,7 +17,7 @@ const InputComponent: React.FC = (props) => {
 const SelectComponent: React.FC<Props> = ({
   placeholder,
   field,
-  form: { setFieldValue, setFieldTouched, ...restForm },
+  form: { setFieldValue, setFieldTouched },
   options,
   components,
   value,
@@ -61,7 +61,7 @@ const SelectComponent: React.FC<Props> = ({
 
 const mockStaff = [
   {
-    name: "Acep Somantri",
+    nama: "Acep Somantri",
     nip: 1908283909123819,
     golongan: "IV/c",
     jabatan: "Kepala Perwakilan",
@@ -69,9 +69,9 @@ const mockStaff = [
   },
 ];
 
-const mockOptions = mockStaff.map(({ name, ...rest }) => ({
-  label: name,
-  value: ({ name, ...rest } as unknown) as string,
+const mockOptions = mockStaff.map(({ nama, ...rest }) => ({
+  label: nama,
+  value: ({ nama, ...rest } as unknown) as string,
 }));
 
 const SelectStaff = ({ placeholder, form, field, value }) => {

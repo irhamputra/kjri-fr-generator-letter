@@ -1,8 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../utils/firebase";
-import { object, array } from "yup";
-import createSchema from "../../../utils/validation/schema";
 import { cors } from "../../../utils/middlewares";
+
+const { format } = new Intl.NumberFormat("de-DE", {
+  style: "currency",
+  currency: "EUR",
+});
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
@@ -29,35 +32,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
+    const { nomorSurat, namaPegawai } = req.body;
+
+    if (namaPegawai.length <= 0) {
+      res.status(404).json({ error: "Tidak ada data yang tersimpan" });
+      res.end();
+    }
+
     try {
-      const { nomorSurat, namaPegawai } = req.body;
-
-      if (namaPegawai.length <= 0) {
-        res.status(404).json({ error: "Tidak ada data yang tersimpan" });
-      }
-
-      const schema = array().of(object().shape(createSchema(namaPegawai[0])));
-
-      try {
-        await schema.validate(namaPegawai);
-      } catch (e) {
-        res.status(504).json({ error: "Data tidak valid" });
-        res.end();
-      }
-
       const listPegawai = namaPegawai.map((v) => {
         const [durasi] = v.durasi.split(",");
         let halfDay = 0;
 
-        const { format } = new Intl.NumberFormat("de-DE", {
-          style: "currency",
-          currency: "EUR",
-        });
-
-        const fullDay = parseFloat(durasi) * 0.84 * 415;
+        const fullDay = parseFloat(durasi) * 0.84 * parseFloat(v.jaldis);
 
         if (v.durasi.length > 1) {
-          halfDay = 0.4 * 415;
+          halfDay = 0.4 * parseFloat(v.jaldis);
         }
 
         const total = fullDay + halfDay;

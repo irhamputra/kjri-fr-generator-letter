@@ -7,6 +7,7 @@ import useQueryJalDir from "../../hooks/query/useQueryJalDir";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { NextSeo } from "next-seo";
+import { v4 } from "uuid";
 
 const ManageGolongan: NextPage = () => {
   const initialValues = {
@@ -24,10 +25,12 @@ const ManageGolongan: NextPage = () => {
   } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSubmitting(true);
+
       try {
         await axios.post("/api/v1/jaldir", {
+          golId: v4(),
           golongan: values.jenisGolongan,
           harga: values.hargaGolongan,
         });
@@ -39,6 +42,8 @@ const ManageGolongan: NextPage = () => {
         toast.error("Terjadi kesalahan teknis! Mohon ulangi kembali");
         throw new Error(e.message);
       }
+
+      resetForm();
     },
   });
 
@@ -95,8 +100,8 @@ const ManageGolongan: NextPage = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((v, i) => (
-            <tr key={i + 1}>
+          {data.map((v) => (
+            <tr key={v.golId}>
               <td scope="row">{v.golongan}</td>
               <td>$ {v.harga}</td>
             </tr>
