@@ -12,11 +12,19 @@ import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { object, string } from "yup";
 import { toast } from "react-hot-toast";
-import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
+import {
+  Trash as TrashIcon,
+  Plus as PlusIcon,
+  Search,
+} from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
-import Link from "next/link";
+import { MessageCard } from "../../../components/Card";
+import Fuse from "fuse.js";
 
 const Penugasan: NextPage = () => {
+  const [filteredList, setFilteredList] = React.useState([]);
+  const [searchQuery, setSearch] = React.useState("");
+
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
   const {
     data: listSuratTugas,
@@ -27,6 +35,21 @@ const Penugasan: NextPage = () => {
     namaPegawai: [],
     nomorSurat: "",
   };
+
+  const search = (query) => {
+    const options = {
+      includeScore: true,
+      key: ["tujuanDinas", "nomorSurat", "suratTugasId"],
+    };
+    const fuse = new Fuse(listSuratTugas, options);
+
+    const res = fuse.search(query);
+    setFilteredList(res);
+  };
+
+  React.useEffect(() => {
+    listSuratTugas && searchQuery.length > 1 && search(searchQuery);
+  }, [searchQuery, suratTugasLoading]);
 
   if (suratTugasLoading && jalDirLoading) return <h4>Loading...</h4>;
 
@@ -45,6 +68,8 @@ const Penugasan: NextPage = () => {
   const validationSchema = object().shape({
     nomorSurat: string().trim().required("Nomor Surat Wajib diisi!"),
   });
+
+  const usedList = searchQuery.length > 0 ? filteredList : listSuratTugas;
 
   return (
     <>
@@ -188,26 +213,39 @@ const Penugasan: NextPage = () => {
           )}
         </Formik>
 
-        <ul className="mt-3">
+        <div className="mt-5 row">
+          <div className="d-flex">
+            <h4 className="mb-3" style={{ flex: "1 1" }}>
+              Surat yang telah dibuat
+            </h4>
+            <div className="input-group" style={{ maxWidth: 200 }}>
+              <span className="input-group-text" id="durasi-hari">
+                <Search />
+              </span>
+              <input
+                className="form-control"
+                type="text"
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
           {suratTugasLoading ? (
             <p>Loading...</p>
           ) : (
-            listSuratTugas?.map?.((v) => {
+            usedList?.map?.((v) => {
               return (
-                <li key={v.nomorSurat}>
-                  <Link
-                    href="/layanan/penugasan/[id]"
-                    as={`/layanan/penugasan/${v.suratTugasId}`}
-                  >
-                    <a>
-                      {v.nomorSurat} - {v.tujuanDinas}
-                    </a>
-                  </Link>
-                </li>
+                <div className="col-4">
+                  <MessageCard
+                    key={v.nomorSurat}
+                    title={v.tujuanDinas}
+                    number={v.nomorSurat}
+                    link={`/layanan/penugasan/${v.suratTugasId}`}
+                  />
+                </div>
               );
             })
           )}
-        </ul>
+        </div>
       </div>
     </>
   );
