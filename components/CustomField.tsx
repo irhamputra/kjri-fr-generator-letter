@@ -1,7 +1,82 @@
-import { name } from "dayjs/locale/*";
 import * as React from "react";
 import Select, { components, SelectComponentsConfig } from "react-select";
 import { Props } from "react-select/src/Select";
+import styles from "./Dropzone.module.css";
+import { useDropzone, FileWithPath } from "react-dropzone";
+import { FileEarmark as DocIcon } from "react-bootstrap-icons";
+
+const DropzoneComponent: React.FC<any> = ({
+  field,
+  form: { setFieldValue, setFieldTouched, ...restForm },
+}) => {
+  const onDrop = (acceptedFiles) => {
+    console.log(acceptedFiles);
+    setFieldValue(field.name, acceptedFiles);
+  };
+
+  const handleOnFocus = () => {
+    setFieldTouched(field.name, true);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: ["image/jpeg", "image/png", "application/pdf"],
+  });
+
+  const removeAll = () => {
+    setFieldValue(field.name, []);
+  };
+
+  const files = field.value?.map((file: FileWithPath) => (
+    <div key={file.path}>
+      {file.path} - {file.size} bytes
+    </div>
+  ));
+
+  return (
+    <section style={{ background: "#f8f8f8" }} className="p-3 mb-3">
+      <div {...getRootProps({ className: styles.dropzone })}>
+        <input {...getInputProps()} />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <DocIcon
+            height={48}
+            width={48}
+            className="mb-3"
+            style={{ color: "rgba(0,0,0,0.5)" }}
+          />
+          <p>
+            {files?.length > 0
+              ? files[0]
+              : "File surat harus berekstensikan jpg, png atau pdf"}
+          </p>
+        </div>
+      </div>
+      {files?.length > 0 && (
+        <div
+          className="w-100 d-flex mt-1"
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
+          <small
+            onClick={() => removeAll()}
+            style={{
+              cursor: "pointer",
+            }}
+            className="m-0"
+          >
+            Pilih Ulang
+          </small>
+        </div>
+      )}
+    </section>
+  );
+};
 
 const InputComponent: React.FC = (props) => {
   return (
@@ -105,4 +180,4 @@ const SelectStaff = ({ placeholder, form, field, value }) => {
   );
 };
 
-export { InputComponent, SelectComponent, SelectStaff };
+export { InputComponent, SelectComponent, SelectStaff, DropzoneComponent };

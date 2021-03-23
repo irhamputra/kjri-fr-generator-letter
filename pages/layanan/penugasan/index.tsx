@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
 import {
+  DropzoneComponent,
   InputComponent,
   SelectComponent,
   SelectStaff,
@@ -73,9 +74,7 @@ const Penugasan: NextPage = () => {
         >
           {({ values }) => (
             <Form>
-              <div
-                style={{ padding: 16, background: "#f8f8f8", borderRadius: 4 }}
-              >
+              <div className="mb-3">
                 <label className="form-label">Nomor Surat</label>
                 <Field
                   className="form-control"
@@ -86,14 +85,24 @@ const Penugasan: NextPage = () => {
                 />
               </div>
 
-              <FieldArray
-                name="namaPegawai"
-                render={(arrayHelpers) => (
-                  <div className="mt-3">
-                    {values.namaPegawai.map((_, index) => (
-                      <div key={index} className="mt-3 container-fluid p-0">
-                        <div className="row">
-                          <div className="col-11">
+              <label className="form-label">Staff</label>
+              <div
+                style={{
+                  padding: 16,
+                  background: "#f8f8f8",
+                  borderRadius: 4,
+                }}
+              >
+                <FieldArray
+                  name="namaPegawai"
+                  render={(arrayHelpers) => (
+                    <>
+                      <div className="p-0">
+                        {values.namaPegawai.map((_, index) => (
+                          <div
+                            key={index}
+                            className={`mb-3 container-fluid p-0`}
+                          >
                             <div className="row">
                               <div className="col">
                                 <label className="form-label">Nama Staff</label>
@@ -126,63 +135,55 @@ const Penugasan: NextPage = () => {
                                 />
                               </div>
 
-                              <div className="col">
-                                <label className="form-label">
-                                  Lama Perjalanan
-                                </label>
-                                <Field
-                                  className="form-control"
-                                  name={`namaPegawai.${index}.durasi`}
-                                  as={InputComponent}
-                                  value={_.durasi}
-                                  style={{
-                                    height: 66,
-                                  }}
-                                  placeholder="(e.g 1 hari atau 2,5 hari)"
-                                />
+                              <div className="col-1 d-flex align-items-end">
+                                <button
+                                  className="btn btn-outline-danger w-100"
+                                  type="button"
+                                  style={{ height: 66 }}
+                                  onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                >
+                                  <TrashIcon height={20} width={20} />
+                                </button>
                               </div>
                             </div>
                           </div>
+                        ))}
 
-                          <div className="col-1 d-flex align-items-end">
-                            <button
-                              className="btn btn-outline-danger w-100"
-                              type="button"
-                              style={{ height: 66 }}
-                              onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
-                            >
-                              <TrashIcon height={20} width={20} />
-                            </button>
-                          </div>
-                        </div>
+                        <button
+                          className="btn btn-primary text-white mt-3"
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({
+                              nama: "",
+                              golongan: "",
+                              jabatan: "",
+                              durasi: "",
+                            })
+                          }
+                        >
+                          <PlusIcon />
+                          Tambah Pegawai
+                        </button>
                       </div>
-                    ))}
-                    <button
-                      className="btn btn-primary text-white w-100 mt-3"
-                      type="button"
-                      onClick={() =>
-                        arrayHelpers.push({
-                          pegawai: {},
-                          jaldis: "",
-                          durasi: "",
-                        })
-                      }
-                    >
-                      <PlusIcon />
-                      Tambah Pegawai
-                    </button>
-
-                    <div className="mt-3">
-                      <button
-                        className="btn btn-dark w-100 btn-lg"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                )}
-              />
+                    </>
+                  )}
+                />
+              </div>
+              <div className="mt-3">
+                <label className="form-label">Surat</label>
+                <Field
+                  className="form-control"
+                  name="surat"
+                  component={DropzoneComponent}
+                  options={optionsSuratTugas}
+                  placeholder="Pilih Surat"
+                />
+              </div>
+              <div className="mt-3">
+                <button className="btn btn-dark w-100 btn-lg" type="submit">
+                  Submit
+                </button>
+              </div>
             </Form>
           )}
         </Formik>

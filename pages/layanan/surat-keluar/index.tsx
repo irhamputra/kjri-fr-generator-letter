@@ -178,7 +178,18 @@ const Index: NextPage = () => {
             </div>
           )}
         </div>
-
+        <div className="row my-3">
+          <div>
+            <label className="form-label">Surat</label>
+            <Field
+              className="form-control"
+              name="surat"
+              component={DropzoneComponent}
+              options={optionsSuratTugas}
+              placeholder="Pilih Surat"
+            />
+          </div>
+        </div>
         <div className="row">
           <div className="col">
             <label className="form-label">Kepada</label>
