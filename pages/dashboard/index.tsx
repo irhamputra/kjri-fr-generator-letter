@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Card from "../../components/Card";
 import {
   FileEarmarkArrowUp as SuratKeluarIcon,
@@ -9,6 +9,8 @@ import {
 } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
 import useRefetchToken from "../../hooks/useRefetchToken";
+import axios from "axios";
+import cookie from "js-cookie";
 
 const iconProps = { height: 32, width: 32 };
 
@@ -38,24 +40,55 @@ const Dashboard: NextPage = () => {
               link="/layanan/surat-keputusan"
             />
           </div>
-          <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<SuratTugasIcon {...iconProps} />}
-              title="Surat Tugas (SPPD)"
-              link="/layanan/surat-tugas"
-            />
-          </div>
-          <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<SuratPenugasanIcon {...iconProps} />}
-              title="Surat Penugasan(SPD)"
-              link="/layanan/penugasan"
-            />
-          </div>
+
+          <>
+            <div className="col-md-4 col-sm-6 col-lg-3">
+              <Card
+                icon={<SuratTugasIcon {...iconProps} />}
+                title="Surat Tugas (SPPD)"
+                link="/layanan/surat-tugas"
+              />
+            </div>
+            <div className="col-md-4 col-sm-6 col-lg-3">
+              <Card
+                icon={<SuratPenugasanIcon {...iconProps} />}
+                title="Surat Penugasan(SPD)"
+                link="/layanan/penugasan"
+              />
+            </div>
+          </>
         </div>
       </section>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  // TODO: fetch email user
+  if (!cookie["KJRIFR-U"]) return { props: {} };
+
+  const BASE_URL =
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "https://sistem-nomor-surat-kjri-frankfurt.vercel.app";
+
+  const idToken = cookie["KJRIFR-U"];
+
+  console.log(idToken);
+
+  const response = await axios.get(`${BASE_URL}/api/v1/user`, {
+    headers: {
+      authorization: `Bearer ${idToken}`,
+    },
+  });
+
+  console.log(response);
+
+  return {
+    props: {
+      email: "",
+    },
+  };
 };
 
 export default Dashboard;

@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 import Link from "next/link";
 
 const Navigation: React.FC<{ email: string }> = ({ email }) => {
-  const { replace } = useRouter();
+  const { replace, reload } = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -16,12 +16,12 @@ const Navigation: React.FC<{ email: string }> = ({ email }) => {
 
       toast.success(data.message);
     } catch (e) {
-      toast.error("Terjadi kesalahan teknis!");
-      throw new Error(e.message);
+      reload();
     }
 
     cookie.remove("KJRIFR-U");
     cookie.remove("rtfa");
+    reload();
     await replace("/");
   };
 
