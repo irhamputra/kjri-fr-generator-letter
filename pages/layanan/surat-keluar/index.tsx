@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
-import { useFormik } from "formik";
+import { Field, useFormik } from "formik";
 import { object } from "yup";
 import createSchema from "../../../utils/validation/schema";
 import useQueryArsip from "../../../hooks/query/useQueryArsip";
@@ -8,6 +8,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useQuery } from "react-query";
 import { NextSeo } from "next-seo";
+import { UncontrolledDropzone } from "../../../components/CustomField";
 
 const listJenisSurat = [
   {
@@ -37,6 +38,7 @@ const Index: NextPage = () => {
 
   const initialValues = {
     recipient: "",
+    surat: [],
     content: "",
     jenisSurat: "",
     nomorSurat: "",
@@ -68,6 +70,10 @@ const Index: NextPage = () => {
       throw new Error(e.message);
     }
   });
+
+  const onDrop = (acceptedFiles) => {
+    setFieldValue("surat", acceptedFiles);
+  };
 
   const handleNomorSurat = async () => {
     if (!values.arsipId || !values.jenisSurat)
@@ -154,6 +160,9 @@ const Index: NextPage = () => {
                   );
                 })}
             </select>
+            {errors.arsipId && touched.arsipId && (
+              <small className="text-danger">{errors.arsipId}</small>
+            )}
           </div>
 
           <div className="col-3">
@@ -178,7 +187,19 @@ const Index: NextPage = () => {
             </div>
           )}
         </div>
-
+        <div className="row my-3">
+          <div>
+            <label className="form-label">Surat</label>
+            <UncontrolledDropzone
+              values={(values.surat as unknown) as File[]}
+              onDrop={onDrop}
+              onClickReset={() => setFieldValue("surat", [])}
+            />
+            {errors.surat && touched.surat && (
+              <small className="text-danger">{errors.surat}</small>
+            )}
+          </div>
+        </div>
         <div className="row">
           <div className="col">
             <label className="form-label">Kepada</label>

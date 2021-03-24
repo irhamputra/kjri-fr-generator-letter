@@ -1,10 +1,18 @@
 import * as React from "react";
 import Link from "next/link";
 import styles from "../styles/Card.module.css";
+import { FileEarmark } from "react-bootstrap-icons";
+
 interface CardProps {
   title: string;
   link: string;
   icon: React.ReactNode;
+}
+
+interface CardMessageProps {
+  title: string;
+  link: string;
+  number: number;
 }
 
 const Card: React.FC<CardProps> = ({ title, link, icon }) => {
@@ -36,4 +44,25 @@ const Card: React.FC<CardProps> = ({ title, link, icon }) => {
   );
 };
 
+const MessageCard: React.FC<CardMessageProps> = ({ link, title, number }) => {
+  return (
+    <Link href={link} passHref>
+      <a>
+        <div className="p-3 d-flex" style={{ background: "#f8f8f8" }}>
+          <FileEarmark
+            height={48}
+            width={48}
+            style={{ color: "rgba(0,0,0,0.5)" }}
+          />
+          <div className="mx-2">
+            <small>{number}</small>
+            <div style={{ fontWeight: "bold" }}>{title}</div>
+          </div>
+        </div>
+      </a>
+    </Link>
+  );
+};
+
 export default Card;
+export { MessageCard };

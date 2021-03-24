@@ -3,19 +3,28 @@ import { NextPage } from "next";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
 import {
+  DropzoneComponent,
   InputComponent,
   SelectComponent,
   SelectStaff,
 } from "../../../components/CustomField";
 import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
-import { object, string } from "yup";
+import { object, string, array } from "yup";
 import { toast } from "react-hot-toast";
-import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
+import {
+  Trash as TrashIcon,
+  Plus as PlusIcon,
+  Search,
+} from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
-import Link from "next/link";
+import { MessageCard } from "../../../components/Card";
+import Fuse from "fuse.js";
 
 const Penugasan: NextPage = () => {
+  const [filteredList, setFilteredList] = React.useState([]);
+  const [searchQuery, setSearch] = React.useState("");
+
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
   const {
     data: listSuratTugas,
@@ -25,7 +34,23 @@ const Penugasan: NextPage = () => {
   const initialValues = {
     namaPegawai: [],
     nomorSurat: "",
+    surat: [],
   };
+
+  const search = (query) => {
+    const options = {
+      includeScore: true,
+      key: ["tujuanDinas", "nomorSurat", "suratTugasId"],
+    };
+    const fuse = new Fuse(listSuratTugas, options);
+
+    const res = fuse.search(query);
+    setFilteredList(res);
+  };
+
+  React.useEffect(() => {
+    listSuratTugas && searchQuery.length > 1 && search(searchQuery);
+  }, [searchQuery, suratTugasLoading]);
 
   if (suratTugasLoading && jalDirLoading) return <h4>Loading...</h4>;
 
@@ -42,8 +67,14 @@ const Penugasan: NextPage = () => {
     }));
 
   const validationSchema = object().shape({
-    nomorSurat: string().trim().required("Nomor Surat Wajib diisi!"),
+    nomorSurat: string().trim().required("nomor surat wajib diisi!"),
+    surat: array().min(1).required("wajib menyertakan surat"),
+    namaPegawai: array()
+      .min(1, "nama pegawai wajib diisi")
+      .required("nama pegawai wajib diisi"),
   });
+
+  const usedList = searchQuery.length > 0 ? filteredList : listSuratTugas;
 
   return (
     <>
@@ -71,11 +102,9 @@ const Penugasan: NextPage = () => {
             setSubmitting(false);
           }}
         >
-          {({ values }) => (
+          {({ values, errors, touched }) => (
             <Form>
-              <div
-                style={{ padding: 16, background: "#f8f8f8", borderRadius: 4 }}
-              >
+              <div className="mb-3">
                 <label className="form-label">Nomor Surat</label>
                 <Field
                   className="form-control"
@@ -84,16 +113,29 @@ const Penugasan: NextPage = () => {
                   options={optionsSuratTugas}
                   placeholder="Pilih Surat"
                 />
+                {errors.nomorSurat && touched.nomorSurat && (
+                  <small className="text-danger">{errors.nomorSurat}</small>
+                )}
               </div>
 
-              <FieldArray
-                name="namaPegawai"
-                render={(arrayHelpers) => (
-                  <div className="mt-3">
-                    {values.namaPegawai.map((_, index) => (
-                      <div key={index} className="mt-3 container-fluid p-0">
-                        <div className="row">
-                          <div className="col-11">
+              <label className="form-label">Staff</label>
+              <div
+                style={{
+                  padding: 16,
+                  background: "#f8f8f8",
+                  borderRadius: 4,
+                }}
+              >
+                <FieldArray
+                  name="namaPegawai"
+                  render={(arrayHelpers) => (
+                    <>
+                      <div className="p-0 mb-1">
+                        {values.namaPegawai.map((_, index) => (
+                          <div
+                            key={index}
+                            className={`mb-3 container-fluid p-0`}
+                          >
                             <div className="row">
                               <div className="col">
                                 <label className="form-label">Nama Staff</label>
@@ -126,87 +168,101 @@ const Penugasan: NextPage = () => {
                                 />
                               </div>
 
-                              <div className="col">
-                                <label className="form-label">
-                                  Lama Perjalanan
-                                </label>
-                                <Field
-                                  className="form-control"
-                                  name={`namaPegawai.${index}.durasi`}
-                                  as={InputComponent}
-                                  value={_.durasi}
-                                  style={{
-                                    height: 66,
-                                  }}
-                                  placeholder="(e.g 1 hari atau 2,5 hari)"
-                                />
+                              <div className="col-1 d-flex align-items-end">
+                                <button
+                                  className="btn btn-outline-danger w-100"
+                                  type="button"
+                                  style={{ height: 66 }}
+                                  onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                >
+                                  <TrashIcon height={20} width={20} />
+                                </button>
                               </div>
                             </div>
                           </div>
+                        ))}
 
-                          <div className="col-1 d-flex align-items-end">
-                            <button
-                              className="btn btn-outline-danger w-100"
-                              type="button"
-                              style={{ height: 66 }}
-                              onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
-                            >
-                              <TrashIcon height={20} width={20} />
-                            </button>
-                          </div>
-                        </div>
+                        <button
+                          className="btn btn-primary text-white mt-3"
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({
+                              nama: "",
+                              golongan: "",
+                              jabatan: "",
+                              durasi: "",
+                            })
+                          }
+                        >
+                          <PlusIcon />
+                          Tambah Pegawai
+                        </button>
                       </div>
-                    ))}
-                    <button
-                      className="btn btn-primary text-white w-100 mt-3"
-                      type="button"
-                      onClick={() =>
-                        arrayHelpers.push({
-                          pegawai: {},
-                          jaldis: "",
-                          durasi: "",
-                        })
-                      }
-                    >
-                      <PlusIcon />
-                      Tambah Pegawai
-                    </button>
-
-                    <div className="mt-3">
-                      <button
-                        className="btn btn-dark w-100 btn-lg"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </div>
+                      {errors.namaPegawai && touched.namaPegawai && (
+                        <small className="text-danger">
+                          {errors.namaPegawai}
+                        </small>
+                      )}
+                    </>
+                  )}
+                />
+              </div>
+              <div className="mt-3">
+                <label className="form-label">Surat</label>
+                <Field
+                  className="form-control"
+                  name="surat"
+                  component={DropzoneComponent}
+                  options={optionsSuratTugas}
+                  placeholder="Pilih Surat"
+                />
+                {errors.surat && touched.surat && (
+                  <small className="text-danger">{errors.surat}</small>
                 )}
-              />
+              </div>
+              <div className="mt-3">
+                <button className="btn btn-dark w-100 btn-lg" type="submit">
+                  Submit
+                </button>
+              </div>
             </Form>
           )}
         </Formik>
 
-        <ul className="mt-3">
+        <div className="mt-5 row">
+          <div className="d-flex">
+            <h4 className="mb-3" style={{ flex: "1 1" }}>
+              Surat yang telah dibuat
+            </h4>
+            <div className="input-group" style={{ maxWidth: 200 }}>
+              <span className="input-group-text" id="durasi-hari">
+                <Search />
+              </span>
+              <input
+                className="form-control"
+                type="text"
+                placeholder="Telusuri surat..."
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
           {suratTugasLoading ? (
             <p>Loading...</p>
           ) : (
-            listSuratTugas?.map?.((v) => {
+            usedList?.map?.((v) => {
               return (
-                <li key={v.nomorSurat}>
-                  <Link
-                    href="/layanan/penugasan/[id]"
-                    as={`/layanan/penugasan/${v.suratTugasId}`}
-                  >
-                    <a>
-                      {v.nomorSurat} - {v.tujuanDinas}
-                    </a>
-                  </Link>
-                </li>
+                <div className="col-4">
+                  <MessageCard
+                    key={v.nomorSurat}
+                    title={v.tujuanDinas}
+                    number={v.nomorSurat}
+                    link={`/layanan/penugasan/${v.suratTugasId}`}
+                  />
+                </div>
               );
             })
           )}
-        </ul>
+        </div>
       </div>
     </>
   );
