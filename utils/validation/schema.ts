@@ -1,7 +1,6 @@
 import { string, array } from "yup";
 
 const schema = (type: string) => {
-  console.log("ASDAS", type);
   switch (type) {
     // common schema
     case "displayName":

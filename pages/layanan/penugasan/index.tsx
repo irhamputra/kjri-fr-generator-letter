@@ -38,11 +38,10 @@ const Penugasan: NextPage = () => {
   };
 
   const search = (query) => {
-    const options = {
+    const fuse = new Fuse(listSuratTugas, {
+      keys: ["tujuanDinas"],
       includeScore: true,
-      key: ["tujuanDinas", "nomorSurat", "suratTugasId"],
-    };
-    const fuse = new Fuse(listSuratTugas, options);
+    });
 
     const res = fuse.search(query);
     setFilteredList(res);
@@ -75,6 +74,8 @@ const Penugasan: NextPage = () => {
   });
 
   const usedList = searchQuery.length > 0 ? filteredList : listSuratTugas;
+
+  console.log(usedList);
 
   return (
     <>
@@ -246,22 +247,35 @@ const Penugasan: NextPage = () => {
               />
             </div>
           </div>
-          {suratTugasLoading ? (
-            <p>Loading...</p>
-          ) : (
-            usedList?.map?.((v) => {
-              return (
-                <div className="col-4">
-                  <MessageCard
-                    key={v.nomorSurat}
-                    title={v.tujuanDinas}
-                    number={v.nomorSurat}
-                    link={`/layanan/penugasan/${v.suratTugasId}`}
-                  />
-                </div>
-              );
-            })
-          )}
+          {suratTugasLoading ? <p>Loading...</p> : null}
+          {filteredList && searchQuery.length > 0
+            ? filteredList.map((v) => {
+                return (
+                  <div key={v.item.suratTugasId} className="col-4">
+                    <MessageCard
+                      key={v.item.nomorSurat}
+                      title={v.item.tujuanDinas}
+                      number={v.item.nomorSurat}
+                      link={`/layanan/penugasan/${v.item.suratTugasId}`}
+                    />
+                  </div>
+                );
+              })
+            : null}
+          {searchQuery.length > 0
+            ? null
+            : listSuratTugas?.map((v) => {
+                return (
+                  <div key={v.suratTugasId} className="col-4">
+                    <MessageCard
+                      key={v.nomorSurat}
+                      title={v.tujuanDinas}
+                      number={v.nomorSurat}
+                      link={`/layanan/penugasan/${v.suratTugasId}`}
+                    />
+                  </div>
+                );
+              })}
         </div>
       </div>
     </>

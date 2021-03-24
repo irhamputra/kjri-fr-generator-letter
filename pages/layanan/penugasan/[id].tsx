@@ -54,17 +54,19 @@ const SuratPenugasanId: NextPage = () => {
           </tr>
         </thead>
         <tbody>
-          {data.listPegawai.map((v) => (
-            <tr key={v.pegawai.nip}>
-              <td scope="row">{v.pegawai.nip}</td>
-              <td>{v.pegawai.nama}</td>
-              <td>{v.pegawai.golongan}</td>
-              <td>{v.pegawai.jabatan}</td>
-              <td>{v.pegawai.bidang}</td>
-              <td>{v.durasi} hari</td>
-              <td>{v.uangHarian}</td>
-            </tr>
-          ))}
+          {data?.listPegawai
+            ? data.listPegawai.map((v) => (
+                <tr key={v.pegawai.nip}>
+                  <td scope="row">{v.pegawai.nip}</td>
+                  <td>{v.pegawai.nama}</td>
+                  <td>{v.pegawai.golongan}</td>
+                  <td>{v.pegawai.jabatan}</td>
+                  <td>{v.pegawai.bidang}</td>
+                  <td>{v.durasi} hari</td>
+                  <td>{v.uangHarian}</td>
+                </tr>
+              ))
+            : null}
         </tbody>
       </table>
     </>
