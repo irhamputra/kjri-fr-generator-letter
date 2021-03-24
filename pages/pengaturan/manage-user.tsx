@@ -9,7 +9,14 @@ import { toast } from "react-hot-toast";
 const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
 
-  const { values, handleChange, handleSubmit, errors, touched } = useAuthForm(
+  const {
+    values,
+    handleChange,
+    handleSubmit,
+    errors,
+    touched,
+    isSubmitting,
+  } = useAuthForm(
     {
       displayName: "",
       email: "",
@@ -56,8 +63,9 @@ const ManageUser: NextPage = () => {
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-6 mt-3">
-            <label className="form-label">Nama Pegawai</label>
+            <label className="form-label">Nama Staff</label>
             <input
+              disabled={isSubmitting}
               className="form-control"
               type="text"
               name="displayName"
@@ -72,6 +80,7 @@ const ManageUser: NextPage = () => {
           <div className="col-6 mt-3">
             <label className="form-label">Email</label>
             <input
+              disabled={isSubmitting}
               className="form-control"
               name="email"
               type="email"
@@ -87,6 +96,7 @@ const ManageUser: NextPage = () => {
             <label className="form-label">Password</label>
             <input
               type="password"
+              disabled={isSubmitting}
               className="form-control"
               name="password"
               value={values.password}
@@ -102,6 +112,7 @@ const ManageUser: NextPage = () => {
             <input
               className="form-control"
               name="nip"
+              disabled={isSubmitting}
               type="text"
               value={values.nip}
               onChange={handleChange}
@@ -117,6 +128,7 @@ const ManageUser: NextPage = () => {
               className="form-control"
               name="golongan"
               type="text"
+              disabled={isSubmitting}
               value={values.golongan}
               onChange={handleChange}
             />
@@ -131,6 +143,7 @@ const ManageUser: NextPage = () => {
               className="form-control"
               name="jabatan"
               type="text"
+              disabled={isSubmitting}
               value={values.jabatan}
               onChange={handleChange}
             />
@@ -140,7 +153,11 @@ const ManageUser: NextPage = () => {
           </div>
 
           <div className="mt-3">
-            <button className="btn btn-dark" type="submit">
+            <button
+              disabled={isSubmitting}
+              className="btn btn-dark"
+              type="submit"
+            >
               Register User
             </button>
           </div>
@@ -153,6 +170,8 @@ const ManageUser: NextPage = () => {
           <tr>
             <th scope="col">NIP</th>
             <th scope="col">Nama Staff</th>
+            <th scope="col">Golongan</th>
+            <th scope="col">Jabatan</th>
             <th scope="col">Email</th>
             <th scope="col"> </th>
           </tr>
@@ -162,6 +181,8 @@ const ManageUser: NextPage = () => {
             <tr key={v.uid}>
               <td scope="row">{v.nip}</td>
               <td>{v.displayName}</td>
+              <td>{v.golongan}</td>
+              <td>{v.jabatan}</td>
               <td>{v.email}</td>
               <td>
                 <button
