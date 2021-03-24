@@ -15,7 +15,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "POST") {
-    const { email, password, displayName, nip } = req.body;
+    const { email, password, displayName, nip, golongan, jabatan } = req.body;
 
     try {
       const isAvailable = await db
@@ -44,6 +44,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           try {
             await db.collection("Users").doc(data.localId).set({
+              uid: data.localId,
+              golongan,
+              jabatan,
               email,
               displayName,
               nip,

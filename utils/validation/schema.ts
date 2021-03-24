@@ -1,7 +1,6 @@
 import { string, array } from "yup";
 
 const schema = (type: string) => {
-  console.log("ASDAS", type);
   switch (type) {
     // common schema
     case "displayName":
@@ -17,6 +16,8 @@ const schema = (type: string) => {
     case "jenisGolongan":
     case "namaPegawai":
     case "hargaGolongan":
+    case "golongan":
+    case "jabatan":
       return string()
         .trim()
         .required(
@@ -41,8 +42,6 @@ const schema = (type: string) => {
 
     // Server
     case "nama":
-    case "golongan":
-    case "jabatan":
       return string().trim().required("Value tidak valid");
 
     case "surat":
