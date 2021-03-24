@@ -170,13 +170,12 @@ const mockStaff = [
   },
 ];
 
-const mockOptions = mockStaff.map(({ nama, ...rest }) => ({
-  label: nama,
-  value: ({ nama, ...rest } as unknown) as string,
-}));
-
-const SelectStaff = ({ placeholder, form, field, value }) => {
+const SelectStaff = ({ placeholder, form, field, value, options }) => {
   // reconstruct option from value
+  const optionStaff = options.map(({ displayName, ...rest }) => ({
+    label: displayName,
+    value: ({ displayName, ...rest } as unknown) as string,
+  }));
 
   const SingleValue = (props) => {
     const { nip, golongan, bidang, jabatan } = value;
@@ -201,7 +200,7 @@ const SelectStaff = ({ placeholder, form, field, value }) => {
       value={value}
       field={field}
       styles={{ control: (provided) => ({ ...provided, height: 66 }) }}
-      options={mockOptions}
+      options={optionStaff}
     />
   );
 };

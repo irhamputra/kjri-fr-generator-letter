@@ -47,7 +47,6 @@ const SuratPenugasanId: NextPage = () => {
             <th scope="col">NIP</th>
             <th scope="col">Nama</th>
             <th scope="col">Golongan</th>
-            <th scope="col">Jabatan</th>
             <th scope="col">Bidang</th>
             <th scope="col">Durasi</th>
             <th scope="col">Uang Harian</th>
@@ -56,12 +55,11 @@ const SuratPenugasanId: NextPage = () => {
         <tbody>
           {data?.listPegawai
             ? data.listPegawai.map((v) => (
-                <tr key={v.pegawai.nip}>
+                <tr key={v.pegawai.uid}>
                   <td scope="row">{v.pegawai.nip}</td>
-                  <td>{v.pegawai.nama}</td>
+                  <td>{v.pegawai.displayName}</td>
                   <td>{v.pegawai.golongan}</td>
                   <td>{v.pegawai.jabatan}</td>
-                  <td>{v.pegawai.bidang}</td>
                   <td>{v.durasi} hari</td>
                   <td>{v.uangHarian}</td>
                 </tr>

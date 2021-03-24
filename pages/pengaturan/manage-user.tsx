@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
 import { Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
+import useQueryUsers from "../../hooks/query/useQueryUsers";
 
 const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
@@ -28,11 +29,7 @@ const ManageUser: NextPage = () => {
     "register"
   );
 
-  const { data, isLoading } = useQuery("fetchUser", async () => {
-    const { data } = await axios.get("/api/v1/users");
-
-    return data;
-  });
+  const { data, isLoading } = useQueryUsers();
 
   const { mutateAsync } = useMutation(
     "deleteUser",

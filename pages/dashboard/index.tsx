@@ -53,7 +53,7 @@ const Dashboard: NextPage = () => {
               <Card
                 icon={<SuratPenugasanIcon {...iconProps} />}
                 title="Surat Penugasan(SPD)"
-                link="/layanan/penugasan"
+                link="/layanan/penugasan/list"
               />
             </div>
           </>

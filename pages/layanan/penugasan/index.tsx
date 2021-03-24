@@ -12,24 +12,21 @@ import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { object, string, array } from "yup";
 import { toast } from "react-hot-toast";
-import {
-  Trash as TrashIcon,
-  Plus as PlusIcon,
-  Search,
-} from "react-bootstrap-icons";
+import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
-import { MessageCard } from "../../../components/Card";
-import Fuse from "fuse.js";
+import useQueryUsers from "../../../hooks/query/useQueryUsers";
+import { useRouter } from "next/router";
 
 const Penugasan: NextPage = () => {
-  const [filteredList, setFilteredList] = React.useState([]);
-  const [searchQuery, setSearch] = React.useState("");
-
+  const { push } = useRouter();
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
+
   const {
     data: listSuratTugas,
     isLoading: suratTugasLoading,
   } = useQuerySuratTugas();
+
+  const { data: listUsers, isLoading: usersLoading } = useQueryUsers();
 
   const initialValues = {
     namaPegawai: [],
@@ -37,21 +34,8 @@ const Penugasan: NextPage = () => {
     surat: [],
   };
 
-  const search = (query) => {
-    const fuse = new Fuse(listSuratTugas, {
-      keys: ["tujuanDinas"],
-      includeScore: true,
-    });
-
-    const res = fuse.search(query);
-    setFilteredList(res);
-  };
-
-  React.useEffect(() => {
-    listSuratTugas && searchQuery.length > 1 && search(searchQuery);
-  }, [searchQuery, suratTugasLoading]);
-
-  if (suratTugasLoading && jalDirLoading) return <h4>Loading...</h4>;
+  if (suratTugasLoading && jalDirLoading && usersLoading)
+    return <h4>Loading...</h4>;
 
   const optionsGolongan = listJalDir?.map((v) => ({
     label: v.golongan,
@@ -80,7 +64,7 @@ const Penugasan: NextPage = () => {
         description="Penugasan Sistem Aplikasi KJRI Frankfurt"
       />
       <h3 className="mt-3">Surat Penugasan Perjalanan Dinas (SPD)</h3>
-      <div>
+      <div className="row">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -88,14 +72,14 @@ const Penugasan: NextPage = () => {
             setSubmitting(true);
             let response: AxiosResponse;
             try {
-              console.log({ values });
-              // response = await axios.put("/api/v1/penugasan", values);
+              response = await axios.put("/api/v1/penugasan", values);
               toast.success("SPD berhasil disimpan");
             } catch (e) {
               console.log(response);
               toast.error(e.message);
             }
 
+            await push("/layanan/penugasan/list");
             resetForm();
             setSubmitting(false);
           }}
@@ -142,6 +126,7 @@ const Penugasan: NextPage = () => {
                                   name={`namaPegawai.${index}.pegawai`}
                                   value={_.pegawai}
                                   component={SelectStaff}
+                                  options={listUsers}
                                   placeholder="Input nama pegawai"
                                 />
                               </div>
@@ -240,54 +225,6 @@ const Penugasan: NextPage = () => {
             </Form>
           )}
         </Formik>
-
-        <div className="mt-5 row">
-          <div className="d-flex">
-            <h4 className="mb-3" style={{ flex: "1 1" }}>
-              Surat yang telah dibuat
-            </h4>
-            <div className="input-group" style={{ maxWidth: 200 }}>
-              <span className="input-group-text" id="durasi-hari">
-                <Search />
-              </span>
-              <input
-                className="form-control"
-                type="text"
-                placeholder="Telusuri surat..."
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-          </div>
-          {suratTugasLoading ? <p>Loading...</p> : null}
-          {filteredList && searchQuery.length > 0
-            ? filteredList.map((v) => {
-                return (
-                  <div key={v.item.suratTugasId} className="col-4">
-                    <MessageCard
-                      key={v.item.nomorSurat}
-                      title={v.item.tujuanDinas}
-                      number={v.item.nomorSurat}
-                      link={`/layanan/penugasan/${v.item.suratTugasId}`}
-                    />
-                  </div>
-                );
-              })
-            : null}
-          {searchQuery.length > 0
-            ? null
-            : listSuratTugas?.map((v) => {
-                return (
-                  <div key={v.suratTugasId} className="col-4">
-                    <MessageCard
-                      key={v.nomorSurat}
-                      title={v.tujuanDinas}
-                      number={v.nomorSurat}
-                      link={`/layanan/penugasan/${v.suratTugasId}`}
-                    />
-                  </div>
-                );
-              })}
-        </div>
       </div>
     </>
   );
