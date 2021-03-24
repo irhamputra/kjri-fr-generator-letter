@@ -32,32 +32,33 @@ const ListSurat: NextPage = () => {
 
   return (
     <div className="row mt-3">
-      <div className="d-flex">
-        <h4 className="mb-3" style={{ flex: "1 1" }}>
+      <div className="d-flex mb-5 justify-content-between align-items-center">
+        <h4 className="m-0" style={{ flex: "1 1" }}>
           SPPD yang telah dibuat
         </h4>
-        <div className="input-group w-25">
-          <span className="input-group-text" id="durasi-hari">
-            <Search />
-          </span>
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Telusuri surat..."
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="w-50 d-flex justify-content-between">
+          <div className="input-group">
+            <span className="input-group-text" id="durasi-hari">
+              <Search />
+            </span>
+            <input
+              className="form-control w-25"
+              type="text"
+              placeholder="Telusuri surat..."
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <button
+            onClick={async () => await push("/layanan/penugasan")}
+            type="button"
+            className="btn btn-dark w-25 mx-3"
+          >
+            Buat SPD Baru
+          </button>
         </div>
       </div>
 
-      <div className="my-3">
-        <button
-          onClick={async () => await push("/layanan/penugasan")}
-          type="button"
-          className="btn btn-dark"
-        >
-          Buat SPD Baru
-        </button>
-      </div>
       {suratTugasLoading ? <p>Loading...</p> : null}
       {filteredList && searchQuery.length > 0
         ? filteredList.map((v) => {

@@ -33,14 +33,6 @@ const Dashboard: NextPage = () => {
               link="/layanan/surat-keluar"
             />
           </div>
-          <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<SuratKeputusanIcon {...iconProps} />}
-              title="Surat Keputusan"
-              link="/layanan/surat-keputusan"
-            />
-          </div>
-
           <>
             <div className="col-md-4 col-sm-6 col-lg-3">
               <Card
