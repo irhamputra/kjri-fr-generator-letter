@@ -19,7 +19,7 @@ const SuratPenugasanId: NextPage = () => {
     <>
       <button
         onClick={async () => {
-          await push("/layanan/penugasan");
+          await push("/layanan/penugasan/list");
         }}
         className="btn-dark btn mt-3"
       >

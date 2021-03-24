@@ -36,7 +36,7 @@ const ListSurat: NextPage = () => {
         <h4 className="mb-3" style={{ flex: "1 1" }}>
           SPPD yang telah dibuat
         </h4>
-        <div className="input-group" style={{ maxWidth: 200 }}>
+        <div className="input-group w-25">
           <span className="input-group-text" id="durasi-hari">
             <Search />
           </span>
@@ -53,7 +53,7 @@ const ListSurat: NextPage = () => {
         <button
           onClick={async () => await push("/layanan/penugasan")}
           type="button"
-          className="btn btn-primary"
+          className="btn btn-dark"
         >
           Buat SPD Baru
         </button>
