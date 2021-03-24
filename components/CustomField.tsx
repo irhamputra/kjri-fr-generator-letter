@@ -2,15 +2,28 @@ import * as React from "react";
 import Select, { components, SelectComponentsConfig } from "react-select";
 import { Props } from "react-select/src/Select";
 import styles from "./Dropzone.module.css";
-import { useDropzone, FileWithPath } from "react-dropzone";
+import {
+  useDropzone,
+  FileWithPath,
+  FileRejection,
+  DropEvent,
+} from "react-dropzone";
 import { FileEarmark as DocIcon } from "react-bootstrap-icons";
 
+interface IUDropzone {
+  onDrop: <T extends File>(
+    acceptedFiles: T[],
+    fileRejections: FileRejection[],
+    event: DropEvent
+  ) => void;
+  values: File[];
+  onClickReset: (event: unknown) => void;
+}
 const DropzoneComponent: React.FC<any> = ({
   field,
   form: { setFieldValue, setFieldTouched, ...restForm },
 }) => {
   const onDrop = (acceptedFiles) => {
-    console.log(acceptedFiles);
     setFieldValue(field.name, acceptedFiles);
   };
 
@@ -18,16 +31,29 @@ const DropzoneComponent: React.FC<any> = ({
     setFieldTouched(field.name, true);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: ["image/jpeg", "image/png", "application/pdf"],
-  });
-
   const removeAll = () => {
     setFieldValue(field.name, []);
   };
 
-  const files = field.value?.map((file: FileWithPath) => (
+  return (
+    <UncontrolledDropzone
+      values={field.value as Array<File>}
+      onDrop={onDrop}
+      onClickReset={() => removeAll()}
+    />
+  );
+};
+
+const UncontrolledDropzone: React.FC<IUDropzone> = ({
+  onDrop,
+  values = [],
+  onClickReset,
+}) => {
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: ["image/jpeg", "image/png", "application/pdf"],
+  });
+  const files = values.map((file: FileWithPath) => (
     <div key={file.path}>
       {file.path} - {file.size} bytes
     </div>
@@ -64,7 +90,7 @@ const DropzoneComponent: React.FC<any> = ({
           style={{ justifyContent: "center", alignItems: "center" }}
         >
           <small
-            onClick={() => removeAll()}
+            onClick={onClickReset}
             style={{
               cursor: "pointer",
             }}
@@ -180,4 +206,10 @@ const SelectStaff = ({ placeholder, form, field, value }) => {
   );
 };
 
-export { InputComponent, SelectComponent, SelectStaff, DropzoneComponent };
+export {
+  InputComponent,
+  SelectComponent,
+  SelectStaff,
+  DropzoneComponent,
+  UncontrolledDropzone,
+};

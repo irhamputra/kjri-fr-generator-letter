@@ -10,7 +10,7 @@ import {
 } from "../../../components/CustomField";
 import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
-import { object, string } from "yup";
+import { object, string, array } from "yup";
 import { toast } from "react-hot-toast";
 import {
   Trash as TrashIcon,
@@ -34,6 +34,7 @@ const Penugasan: NextPage = () => {
   const initialValues = {
     namaPegawai: [],
     nomorSurat: "",
+    surat: [],
   };
 
   const search = (query) => {
@@ -66,7 +67,11 @@ const Penugasan: NextPage = () => {
     }));
 
   const validationSchema = object().shape({
-    nomorSurat: string().trim().required("Nomor Surat Wajib diisi!"),
+    nomorSurat: string().trim().required("nomor surat wajib diisi!"),
+    surat: array().min(1).required("wajib menyertakan surat"),
+    namaPegawai: array()
+      .min(1, "nama pegawai wajib diisi")
+      .required("nama pegawai wajib diisi"),
   });
 
   const usedList = searchQuery.length > 0 ? filteredList : listSuratTugas;
@@ -97,7 +102,7 @@ const Penugasan: NextPage = () => {
             setSubmitting(false);
           }}
         >
-          {({ values }) => (
+          {({ values, errors, touched }) => (
             <Form>
               <div className="mb-3">
                 <label className="form-label">Nomor Surat</label>
@@ -108,6 +113,9 @@ const Penugasan: NextPage = () => {
                   options={optionsSuratTugas}
                   placeholder="Pilih Surat"
                 />
+                {errors.nomorSurat && touched.nomorSurat && (
+                  <small className="text-danger">{errors.nomorSurat}</small>
+                )}
               </div>
 
               <label className="form-label">Staff</label>
@@ -122,7 +130,7 @@ const Penugasan: NextPage = () => {
                   name="namaPegawai"
                   render={(arrayHelpers) => (
                     <>
-                      <div className="p-0">
+                      <div className="p-0 mb-1">
                         {values.namaPegawai.map((_, index) => (
                           <div
                             key={index}
@@ -190,6 +198,11 @@ const Penugasan: NextPage = () => {
                           Tambah Pegawai
                         </button>
                       </div>
+                      {errors.namaPegawai && touched.namaPegawai && (
+                        <small className="text-danger">
+                          {errors.namaPegawai}
+                        </small>
+                      )}
                     </>
                   )}
                 />
@@ -203,6 +216,9 @@ const Penugasan: NextPage = () => {
                   options={optionsSuratTugas}
                   placeholder="Pilih Surat"
                 />
+                {errors.surat && touched.surat && (
+                  <small className="text-danger">{errors.surat}</small>
+                )}
               </div>
               <div className="mt-3">
                 <button className="btn btn-dark w-100 btn-lg" type="submit">
@@ -225,6 +241,7 @@ const Penugasan: NextPage = () => {
               <input
                 className="form-control"
                 type="text"
+                placeholder="Telusuri surat..."
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
