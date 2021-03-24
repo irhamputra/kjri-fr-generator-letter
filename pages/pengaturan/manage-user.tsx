@@ -1,7 +1,7 @@
 import * as React from "react";
 import { NextPage } from "next";
 import useAuthForm from "../../hooks/useAuthForm";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
