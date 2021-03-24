@@ -23,16 +23,18 @@ const MainLayout: React.FC<{ email: string; isAdmin: boolean }> = ({
         )}
       </div>
 
-      <footer className="footer text-center mt-auto py-3 bg-light fixed-bottom">
-        <div className="container-fluid d-flex justify-content-between">
-          <span className="text-muted small">
-            Built with ❤️ &nbsp; for KJRI Frankfurt 🇮🇩
-          </span>
-          <span className="text-muted small">
-            <a href="mailto:irhamputraprasetyo@gmail.com">Contact me</a>
-          </span>
-        </div>
-      </footer>
+      {!isAuthPage && (
+        <footer className="footer text-center mt-auto py-3 bg-light fixed-bottom">
+          <div className="container-fluid d-flex justify-content-between">
+            <span className="text-muted small">
+              Built with ❤️ &nbsp; for KJRI Frankfurt 🇮🇩
+            </span>
+            <span className="text-muted small">
+              <a href="mailto:irhamputraprasetyo@gmail.com">Contact me</a>
+            </span>
+          </div>
+        </footer>
+      )}
     </div>
   );
 };
