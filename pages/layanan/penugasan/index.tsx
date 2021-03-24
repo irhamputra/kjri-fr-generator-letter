@@ -73,10 +73,6 @@ const Penugasan: NextPage = () => {
       .required("nama pegawai wajib diisi"),
   });
 
-  const usedList = searchQuery.length > 0 ? filteredList : listSuratTugas;
-
-  console.log(usedList);
-
   return (
     <>
       <NextSeo
@@ -166,6 +162,22 @@ const Penugasan: NextPage = () => {
                                   value={_.jaldis}
                                   options={optionsGolongan}
                                   placeholder="Pilih Golongan Jalan Dinas"
+                                />
+                              </div>
+
+                              <div className="col">
+                                <label className="form-label">
+                                  Lama Perjalanan
+                                </label>
+                                <Field
+                                  className="form-control"
+                                  name={`namaPegawai.${index}.durasi`}
+                                  as={InputComponent}
+                                  value={_.durasi}
+                                  style={{
+                                    height: 66,
+                                  }}
+                                  placeholder="(e.g 1 hari atau 2,5 hari)"
                                 />
                               </div>
 
