@@ -1,6 +1,7 @@
-import { string } from "yup";
+import { string, array } from "yup";
 
 const schema = (type: string) => {
+  console.log("ASDAS", type);
   switch (type) {
     // common schema
     case "displayName":
@@ -14,6 +15,7 @@ const schema = (type: string) => {
     case "tujuanDinas":
     case "nomorSurat":
     case "jenisGolongan":
+    case "namaPegawai":
     case "hargaGolongan":
       return string()
         .trim()
@@ -42,6 +44,11 @@ const schema = (type: string) => {
     case "golongan":
     case "jabatan":
       return string().trim().required("Value tidak valid");
+
+    case "surat":
+      return array()
+        .min(1, "wajib menyertakan surat")
+        .required("Silahkan upload surat");
 
     case "durasi":
       return string().matches(/^[0-9]?,[5]$/, "Value bukan angka dan koma");
