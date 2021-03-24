@@ -3,13 +3,21 @@ import { NextPage } from "next";
 import useAuthForm from "../../hooks/useAuthForm";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
+import { Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
 
 const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
 
   const { values, handleChange, handleSubmit, errors, touched } = useAuthForm(
-    { displayName: "", email: "", password: "", nip: "" },
+    {
+      displayName: "",
+      email: "",
+      password: "",
+      nip: "",
+      golongan: "",
+      jabatan: "",
+    },
     "register"
   );
 
@@ -21,9 +29,9 @@ const ManageUser: NextPage = () => {
 
   const { mutateAsync } = useMutation(
     "deleteUser",
-    async (nip: string) => {
+    async (uid: string) => {
       try {
-        const { data } = await axios.delete(`/api/v1/user/${nip}`);
+        const { data } = await axios.delete(`/api/v1/user/${uid}`);
 
         return data;
       } catch (e) {
@@ -103,6 +111,34 @@ const ManageUser: NextPage = () => {
             )}
           </div>
 
+          <div className="col-6 mt-3">
+            <label className="form-label">Golongan</label>
+            <input
+              className="form-control"
+              name="golongan"
+              type="text"
+              value={values.golongan}
+              onChange={handleChange}
+            />
+            {errors.golongan && touched.golongan && (
+              <small className="text-danger">{errors.golongan}</small>
+            )}
+          </div>
+
+          <div className="col-6 mt-3">
+            <label className="form-label">Jabatan</label>
+            <input
+              className="form-control"
+              name="jabatan"
+              type="text"
+              value={values.jabatan}
+              onChange={handleChange}
+            />
+            {errors.jabatan && touched.jabatan && (
+              <small className="text-danger">{errors.jabatan}</small>
+            )}
+          </div>
+
           <div className="mt-3">
             <button className="btn btn-dark" type="submit">
               Register User
@@ -123,18 +159,18 @@ const ManageUser: NextPage = () => {
         </thead>
         <tbody>
           {data?.map?.((v) => (
-            <tr key={v.nip}>
+            <tr key={v.uid}>
               <td scope="row">{v.nip}</td>
               <td>{v.displayName}</td>
               <td>{v.email}</td>
               <td>
                 <button
                   onClick={async () => {
-                    await mutateAsync(v.nip);
+                    await mutateAsync(v.uid);
                   }}
                   className="btn-danger btn"
                 >
-                  Hapus
+                  <Trash size={20} />
                 </button>
               </td>
             </tr>

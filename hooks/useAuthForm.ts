@@ -12,7 +12,7 @@ const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
   return useFormik<T>({
     initialValues,
     validationSchema,
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSubmitting(true);
 
       try {
@@ -25,6 +25,10 @@ const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
 
       if (type === "login") {
         await replace("/dashboard");
+      }
+
+      if (type === "register") {
+        resetForm();
       }
 
       setSubmitting(false);

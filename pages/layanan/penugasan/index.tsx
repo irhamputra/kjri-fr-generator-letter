@@ -88,7 +88,8 @@ const Penugasan: NextPage = () => {
             setSubmitting(true);
             let response: AxiosResponse;
             try {
-              response = await axios.put("/api/v1/penugasan", values);
+              console.log({ values });
+              // response = await axios.put("/api/v1/penugasan", values);
               toast.success("SPD berhasil disimpan");
             } catch (e) {
               console.log(response);
@@ -200,10 +201,8 @@ const Penugasan: NextPage = () => {
                           type="button"
                           onClick={() =>
                             arrayHelpers.push({
-                              nama: "",
-                              golongan: "",
-                              jabatan: "",
                               durasi: "",
+                              pegawai: {},
                             })
                           }
                         >

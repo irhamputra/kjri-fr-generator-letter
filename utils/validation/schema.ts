@@ -16,6 +16,8 @@ const schema = (type: string) => {
     case "jenisGolongan":
     case "namaPegawai":
     case "hargaGolongan":
+    case "golongan":
+    case "jabatan":
       return string()
         .trim()
         .required(
@@ -40,8 +42,6 @@ const schema = (type: string) => {
 
     // Server
     case "nama":
-    case "golongan":
-    case "jabatan":
       return string().trim().required("Value tidak valid");
 
     case "surat":

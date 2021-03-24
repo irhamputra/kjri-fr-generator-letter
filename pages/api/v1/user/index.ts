@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import authInstance from "../../../utils/firebase/authInstance";
-import { cors } from "../../../utils/middlewares";
-import tokenInstance from "../../../utils/firebase/tokenInstance";
+import authInstance from "../../../../utils/firebase/authInstance";
+import { cors } from "../../../../utils/middlewares";
+import tokenInstance from "../../../../utils/firebase/tokenInstance";
 import qs from "qs";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
