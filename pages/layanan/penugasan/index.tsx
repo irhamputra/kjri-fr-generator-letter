@@ -16,8 +16,10 @@ import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
 import useQueryUsers from "../../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
+import parseCookies from "../../../utils/parseCookies";
+import apiInstance from "../../../utils/firebase/apiInstance";
 
-const Penugasan: NextPage = () => {
+const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
   const { push } = useRouter();
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
 
@@ -56,6 +58,8 @@ const Penugasan: NextPage = () => {
       .min(1, "nama pegawai wajib diisi")
       .required("nama pegawai wajib diisi"),
   });
+
+  if (!isAdmin) throw new Error("Invalid permission");
 
   return (
     <>
@@ -229,5 +233,28 @@ const Penugasan: NextPage = () => {
     </>
   );
 };
+
+export async function getServerSideProps({ req }) {
+  const cookie = parseCookies(req);
+  const idToken = cookie["KJRIFR-U"];
+  try {
+    const {
+      data: { email, isAdmin },
+    } = await apiInstance.get("/api/v1/user", {
+      headers: {
+        authorization: `Bearer ${idToken}`,
+      },
+    });
+
+    return {
+      props: {
+        isAdmin,
+        email,
+      },
+    };
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
 
 export default Penugasan;
