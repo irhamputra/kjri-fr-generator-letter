@@ -6,9 +6,10 @@ import createSchema from "../../../utils/validation/schema";
 import useQueryArsip from "../../../hooks/query/useQueryArsip";
 import axios from "axios";
 import dayjs from "dayjs";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { NextSeo } from "next-seo";
 import { UncontrolledDropzone } from "../../../components/CustomField";
+import { toast } from "react-hot-toast";
 
 const listJenisSurat = [
   {
@@ -71,8 +72,32 @@ const Index: NextPage = () => {
     }
   });
 
-  const onDrop = (acceptedFiles) => {
-    setFieldValue("surat", acceptedFiles);
+  const { mutateAsync } = useMutation(
+    "sentFile",
+    async (formData: FormData) => {
+      const { data } = await axios.post("/api/v1/uploadFile", formData, {
+        responseType: "blob",
+      });
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        toast.success(data.message);
+      },
+    }
+  );
+
+  const onDrop = async (acceptedFiles) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", acceptedFiles[0]);
+
+      await mutateAsync(formData);
+
+      await setFieldValue("surat", acceptedFiles);
+    } catch (e) {
+      throw new Error(e.message);
+    }
   };
 
   const handleNomorSurat = async () => {

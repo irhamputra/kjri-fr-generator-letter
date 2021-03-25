@@ -17,6 +17,6 @@ try {
 
 const db = admin.firestore();
 const auth = admin.auth();
-const storage = admin.storage();
+const storage = admin.storage().bucket(serviceAccount.bucket_name);
 
 export { db, auth, storage };

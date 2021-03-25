@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../utils/firebase";
+import { db, storage } from "../../../utils/firebase";
 import { cors } from "../../../utils/middlewares";
 
 const { format } = new Intl.NumberFormat("de-DE", {
@@ -33,6 +33,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "PUT") {
     const { nomorSurat, namaPegawai } = req.body;
+
+    console.log(req.body);
 
     if (namaPegawai.length <= 0) {
       res.status(404).json({ error: "Tidak ada data yang tersimpan" });

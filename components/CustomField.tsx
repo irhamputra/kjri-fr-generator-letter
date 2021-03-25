@@ -24,6 +24,7 @@ const DropzoneComponent: React.FC<any> = ({
   form: { setFieldValue, setFieldTouched, ...restForm },
 }) => {
   const onDrop = (acceptedFiles) => {
+    console.log(acceptedFiles);
     setFieldValue(field.name, acceptedFiles);
   };
 
@@ -77,11 +78,11 @@ const UncontrolledDropzone: React.FC<IUDropzone> = ({
             className="mb-3"
             style={{ color: "rgba(0,0,0,0.5)" }}
           />
-          <p>
+          <span>
             {files?.length > 0
               ? files[0]
               : "File surat harus berekstensikan jpg, png atau pdf"}
-          </p>
+          </span>
         </div>
       </div>
       {files?.length > 0 && (

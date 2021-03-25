@@ -1,4 +1,5 @@
 import Cors from "cors";
+import multer from "multer";
 
 export default function middlewares(middleware) {
   return (req, res) =>
@@ -13,3 +14,4 @@ export default function middlewares(middleware) {
 }
 
 export const cors = middlewares(Cors());
+export const upload = middlewares(multer());
