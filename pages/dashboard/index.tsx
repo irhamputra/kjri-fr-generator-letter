@@ -11,10 +11,11 @@ import { NextSeo } from "next-seo";
 import useRefetchToken from "../../hooks/useRefetchToken";
 import axios from "axios";
 import cookie from "js-cookie";
+import parseCookies from "../../utils/parseCookies";
 
 const iconProps = { height: 32, width: 32 };
 
-const Dashboard: NextPage = () => {
+const Dashboard: NextPage<{ isAdmin: boolean }> = ({ isAdmin }) => {
   useRefetchToken();
 
   return (
@@ -33,30 +34,34 @@ const Dashboard: NextPage = () => {
               link="/layanan/surat-keluar"
             />
           </div>
-          <>
-            <div className="col-md-4 col-sm-6 col-lg-3">
-              <Card
-                icon={<SuratTugasIcon {...iconProps} />}
-                title="Surat Tugas (SPPD)"
-                link="/layanan/surat-tugas"
-              />
-            </div>
-            <div className="col-md-4 col-sm-6 col-lg-3">
-              <Card
-                icon={<SuratPenugasanIcon {...iconProps} />}
-                title="Surat Penugasan(SPD)"
-                link="/layanan/penugasan/list"
-              />
-            </div>
-          </>
+          {isAdmin && (
+            <>
+              <div className="col-md-4 col-sm-6 col-lg-3">
+                <Card
+                  icon={<SuratTugasIcon {...iconProps} />}
+                  title="Surat Tugas (SPPD)"
+                  link="/layanan/surat-tugas"
+                />
+              </div>
+              <div className="col-md-4 col-sm-6 col-lg-3">
+                <Card
+                  icon={<SuratPenugasanIcon {...iconProps} />}
+                  title="Surat Penugasan(SPD)"
+                  link="/layanan/penugasan/list"
+                />
+              </div>
+            </>
+          )}
         </div>
       </section>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   // TODO: fetch email user
+  const cookie = parseCookies(req);
+
   if (!cookie["KJRIFR-U"]) return { props: {} };
 
   const BASE_URL =
@@ -66,19 +71,21 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   const idToken = cookie["KJRIFR-U"];
 
-  console.log(idToken);
-
-  const response = await axios.get(`${BASE_URL}/api/v1/user`, {
-    headers: {
-      authorization: `Bearer ${idToken}`,
-    },
-  });
-
-  console.log(response);
+  const {
+    data: { email, isAdmin },
+  } = await axios.get<{}, { data: { email: string; isAdmin: boolean } }>(
+    `${BASE_URL}/api/v1/user`,
+    {
+      headers: {
+        authorization: `Bearer ${idToken}`,
+      },
+    }
+  );
 
   return {
     props: {
-      email: "",
+      email,
+      isAdmin,
     },
   };
 };

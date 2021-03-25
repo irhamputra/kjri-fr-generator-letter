@@ -6,6 +6,7 @@ import qs from "qs";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
+  const adminList = ["tu@kjri-frankfurt.de", "admin@kjri-frankfurt.de"];
 
   if (req.method === "GET") {
     const token = req.headers.authorization.replace("Bearer ", "");
@@ -15,8 +16,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const [user] = data.users;
-
-    res.status(200).json({ email: user.email });
+    res
+      .status(200)
+      .json({ email: user.email, isAdmin: adminList.includes(user.email) });
     res.end();
   }
 

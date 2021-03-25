@@ -54,14 +54,14 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const idToken = cookie["KJRIFR-U"];
 
     const {
-      data: { email },
+      data: { email, isAdmin },
     } = await axios.get(`${BASE_URL}/api/v1/user`, {
       headers: {
         authorization: `Bearer ${idToken}`,
       },
     });
 
-    return { email, isAdmin: email.includes("admin") };
+    return { email, isAdmin };
   } catch (e) {
     throw new Error(e.message);
   }
