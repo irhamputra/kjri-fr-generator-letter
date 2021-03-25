@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../utils/firebase";
-import { cors } from "../../../utils/middlewares";
+import { db } from "../../../../utils/firebase";
+import { cors } from "../../../../utils/middlewares";
 
 const { format } = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -20,7 +20,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       let result = [];
 
       snapshot.forEach((docs) => {
-        result.push(docs.data());
+        if (docs.get("listPegawai")) {
+          result.push(docs.data());
+        }
       });
 
       res.status(200).json(result);

@@ -1,11 +1,17 @@
 import { useQuery } from "react-query";
 import axios from "axios";
+import { useRouter } from "next/router";
 
-const useQuerySuratTugas = () =>
-  useQuery(
+const useQuerySuratTugas = () => {
+  const { pathname } = useRouter();
+  const isList = pathname === "/layanan/penugasan/list";
+
+  return useQuery(
     "fetchSuratTugas",
     async () => {
-      const { data } = await axios.get("/api/v1/penugasan");
+      const { data } = await axios.get(
+        `/api/v1/penugasan${!isList ? "/create" : ""}`
+      );
 
       return data;
     },
@@ -13,5 +19,6 @@ const useQuerySuratTugas = () =>
       enabled: true,
     }
   );
+};
 
 export default useQuerySuratTugas;
