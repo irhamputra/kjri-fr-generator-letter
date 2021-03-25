@@ -12,7 +12,7 @@ const DashboardLayout: React.FC<{ email: string; isAdmin: boolean }> = ({
       <Navigation email={email} />
       <div className="row">
         <Sidebar isAdmin={isAdmin} />
-        <div className="col-9">{children}</div>
+        <div className="col">{children}</div>
       </div>
     </>
   );

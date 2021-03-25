@@ -2,7 +2,6 @@ import { NextPage } from "next";
 import * as React from "react";
 import Link from "next/link";
 import useAuthForm from "../hooks/useAuthForm";
-import parseCookies from "../utils/parseCookies";
 
 const Home: NextPage = () => {
   const {

@@ -222,8 +222,16 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                 )}
               </div>
               <div className="mt-3">
-                <button className="btn btn-dark w-100 btn-lg" type="submit">
-                  Submit
+                <button className="btn btn-dark btn" type="submit">
+                  Submit SPD
+                </button>
+
+                <button
+                  onClick={async () => await push("/layanan/penugasan/list")}
+                  className="btn btn-outline-dark ms-2 btn"
+                  type="button"
+                >
+                  Kembali ke list
                 </button>
               </div>
             </Form>

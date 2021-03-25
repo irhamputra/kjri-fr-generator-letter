@@ -5,6 +5,7 @@ import { MessageCard } from "../../../components/Card";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import Fuse from "fuse.js";
 import { useRouter } from "next/router";
+import { FileEarmarkExcel } from "react-bootstrap-icons";
 
 const ListSurat: NextPage = () => {
   const [searchQuery, setSearch] = React.useState("");
@@ -52,7 +53,7 @@ const ListSurat: NextPage = () => {
           <button
             onClick={async () => await push("/layanan/penugasan")}
             type="button"
-            className="btn btn-dark w-25 mx-3"
+            className="btn btn-dark w-25 ms-3"
           >
             Buat SPD Baru
           </button>
@@ -63,7 +64,7 @@ const ListSurat: NextPage = () => {
       {filteredList && searchQuery.length > 0
         ? filteredList.map((v) => {
             return (
-              <div key={v.item.suratTugasId} className="col-4">
+              <div key={v.item.suratTugasId} className="col-4 my-2">
                 <MessageCard
                   key={v.item.nomorSurat}
                   title={v.item.tujuanDinas}
@@ -74,11 +75,24 @@ const ListSurat: NextPage = () => {
             );
           })
         : null}
+
+      {filteredList.length <= 0 && searchQuery.length > 0 ? (
+        <div className="my-5">
+          <div className="my-5 text-center">
+            <FileEarmarkExcel size={50} />
+            <h5 className="mt-3">
+              Surat <strong>"{searchQuery}"</strong> Tidak ditemukan! Mohon
+              gunakan kata kunci dengan benar.
+            </h5>
+          </div>
+        </div>
+      ) : null}
+
       {searchQuery.length > 0
         ? null
         : listSuratTugas?.map?.((v) => {
             return (
-              <div key={v.suratTugasId} className="col-4">
+              <div key={v.suratTugasId} className="col-4 my-2">
                 <MessageCard
                   key={v.nomorSurat}
                   title={v.tujuanDinas}

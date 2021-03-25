@@ -3,14 +3,12 @@ import { GetServerSideProps, NextPage } from "next";
 import Card from "../../components/Card";
 import {
   FileEarmarkArrowUp as SuratKeluarIcon,
-  FileMedical as SuratKeputusanIcon,
   FileEarmarkRichtext as SuratPenugasanIcon,
   FileEarmarkText as SuratTugasIcon,
 } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
 import useRefetchToken from "../../hooks/useRefetchToken";
 import axios from "axios";
-import cookie from "js-cookie";
 import parseCookies from "../../utils/parseCookies";
 
 const iconProps = { height: 32, width: 32 };
