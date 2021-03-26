@@ -26,7 +26,7 @@ const SuratPenugasanId: NextPage = () => {
         Kembali ke list
       </button>
 
-      <div className="row mt-3">
+      <div className="row">
         <div className="col-2">
           <h5>Nomor Surat</h5>
           <p>{data.nomorSurat}</p>

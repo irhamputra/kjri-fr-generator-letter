@@ -68,7 +68,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
         description="Penugasan Sistem Aplikasi KJRI Frankfurt"
       />
       <h3 className="mt-3">Surat Penugasan Perjalanan Dinas (SPD)</h3>
-      <div className="row">
+      <div className="row mb-5">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -221,7 +221,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                   <small className="text-danger">{errors.surat}</small>
                 )}
               </div>
-              <div className="mt-3">
+              <div className="mt-3 mb-5">
                 <button className="btn btn-dark btn" type="submit">
                   Submit SPD
                 </button>

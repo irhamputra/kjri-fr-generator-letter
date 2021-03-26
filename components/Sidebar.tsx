@@ -9,7 +9,7 @@ const Sidebar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const isActive = pathname === "/pengaturan";
 
   return (
-    <div className="col-2 mt-3">
+    <div className="col-2 mt-5">
       <ul className="list-group list-group-flush">
         <li className="list-group-item">
           <Link href="/dashboard">

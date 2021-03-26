@@ -111,7 +111,7 @@ const Index: NextPage = () => {
         title="Surat Keluar | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Keluar Sistem Aplikasi KJRI Frankfurt"
       />
-      <h3 className="mt-3">Surat Keluar</h3>
+      <h3>Surat Keluar</h3>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-3">

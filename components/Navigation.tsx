@@ -26,7 +26,7 @@ const Navigation: React.FC<{ email: string }> = ({ email }) => {
   };
 
   return (
-    <nav className="bg-dark d-flex justify-content-between p-3 align-items-center">
+    <nav className="bg-dark d-flex justify-content-between fixed-top p-3 align-items-center">
       <Link href="/dashboard">
         <a>
           <h4 className="text-white my-0">Sistem Aplikasi KJRI Frankfurt</h4>

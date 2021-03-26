@@ -32,7 +32,7 @@ const ListSurat: NextPage = () => {
   }, [searchQuery, suratTugasLoading]);
 
   return (
-    <div className="row mt-3">
+    <div className="row">
       <div className="d-flex mb-5 justify-content-between align-items-center">
         <h4 className="m-0" style={{ flex: "1 1" }}>
           SPPD yang telah dibuat
