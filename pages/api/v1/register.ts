@@ -3,6 +3,7 @@ import { db } from "../../../utils/firebase";
 import authInstance from "../../../utils/firebase/authInstance";
 import type { AuthResponse } from "../../../typings/AuthResponse";
 import { cors } from "../../../utils/middlewares";
+import capitalizeFirstLetter from "../../../utils/capitalize";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   /**
@@ -43,15 +44,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           });
 
           try {
-            await db.collection("Users").doc(data.localId).set({
-              uid: data.localId,
-              golongan,
-              jabatan,
-              email,
-              displayName,
-              nip,
-              role: "default",
-            });
+            await db
+              .collection("Users")
+              .doc(data.localId)
+              .set({
+                uid: data.localId,
+                golongan,
+                jabatan,
+                email,
+                displayName: capitalizeFirstLetter(displayName),
+                nip,
+                role: "default",
+              });
           } catch (e) {
             res.status(500).end(e);
           }
