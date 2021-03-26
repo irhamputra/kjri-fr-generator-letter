@@ -23,7 +23,7 @@ const Dashboard: NextPage<{ isAdmin: boolean }> = ({ isAdmin }) => {
         description="Dashboard Arsip Sistem Aplikasi KJRI Frankfurt"
       />
       <section className="container-fluid">
-        <h3 className="mx-3">Layanan Sistem Aplikasi Surat</h3>
+        <h4 className="mx-3">Layanan Sistem Aplikasi Surat</h4>
         <div className="row mt-3">
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card

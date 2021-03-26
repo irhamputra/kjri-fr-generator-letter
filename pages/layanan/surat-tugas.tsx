@@ -85,7 +85,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
         title="Surat Tugas | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Tugas Sistem Aplikasi KJRI Frankfurt"
       />
-      <h3>Surat Tugas (SPPD)</h3>
+      <h4>Surat Tugas (SPPD)</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <label className="form-label">Nomor Surat Arsip</label>

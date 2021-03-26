@@ -46,7 +46,7 @@ const ManageGolongan: NextPage = () => {
         title="Manage Golongan | Sistem Aplikasi KJRI Frankfurt"
         description="Manage Golongan Sistem Aplikasi KJRI Frankfurt"
       />
-      <h4 className="mt-3">Manage Golongan</h4>
+      <h4>Manage Golongan</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col">

@@ -56,7 +56,7 @@ const ManageUser: NextPage = () => {
 
   return (
     <>
-      <h4 className="mt-3">Manage User</h4>
+      <h4>Manage User</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-6 mt-3">

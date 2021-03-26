@@ -53,7 +53,7 @@ const ManageArsip: NextPage = () => {
         title="Manage Arsip | Sistem Aplikasi KJRI Frankfurt"
         description="Manage Arsip Sistem Aplikasi KJRI Frankfurt"
       />
-      <h3 className="mt-3">Manage Arsip</h3>
+      <h4>Manage Arsip</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col">

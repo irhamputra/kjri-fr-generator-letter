@@ -9,7 +9,7 @@ const ManageDepartemen: NextPage = () => {
         title="Manage Departmen | Sistem Aplikasi KJRI Frankfurt"
         description="Manage Departmen Sistem Aplikasi KJRI Frankfurt"
       />
-      <h1>Manage Departemen</h1>
+      <h4>Manage Departemen</h4>
     </>
   );
 };

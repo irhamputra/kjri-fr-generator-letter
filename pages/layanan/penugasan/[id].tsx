@@ -21,7 +21,7 @@ const SuratPenugasanId: NextPage = () => {
         onClick={async () => {
           await push("/layanan/penugasan/list");
         }}
-        className="btn-dark btn mt-3"
+        className="btn-dark btn mb-3"
       >
         Kembali ke list
       </button>
