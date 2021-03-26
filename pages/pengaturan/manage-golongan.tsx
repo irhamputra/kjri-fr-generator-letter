@@ -16,7 +16,9 @@ const ManageGolongan: NextPage = () => {
     golId: "",
   };
 
+  const { data, isLoading } = useQueryJalDir();
   const { mutateAsync: createGolongan } = useCreateGolonganMutation();
+  const { mutateAsync: deleteGolongan } = useDeleteGolonganMutation();
 
   const { handleChange, handleSubmit, values, errors, touched } = useFormik({
     initialValues,
@@ -36,14 +38,7 @@ const ManageGolongan: NextPage = () => {
     },
   });
 
-  const { mutateAsync: deleteGolongan } = useDeleteGolonganMutation();
-  const { data, isLoading } = useQueryJalDir();
-
   if (isLoading) return <h4>Loading...</h4>;
-
-  const handleDelete = async (id: string) => {
-    await deleteGolongan(id);
-  };
 
   return (
     <>
@@ -102,7 +97,7 @@ const ManageGolongan: NextPage = () => {
               <td>
                 <button
                   className="btn btn-danger mx-3"
-                  onClick={() => handleDelete(v.golId)}
+                  onClick={async () => await deleteGolongan(v.golId)}
                 >
                   Delete
                 </button>

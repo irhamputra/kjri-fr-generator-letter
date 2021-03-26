@@ -160,16 +160,6 @@ const SelectComponent: React.FC<Props> = ({
   );
 };
 
-const mockStaff = [
-  {
-    nama: "Acep Somantri",
-    nip: 1908283909123819,
-    golongan: "IV/c",
-    jabatan: "Kepala Perwakilan",
-    bidang: "Konsul Jendral",
-  },
-];
-
 const SelectStaff = ({ placeholder, form, field, value, options }) => {
   // reconstruct option from value
   const optionStaff = options.map(({ displayName, ...rest }) => ({
@@ -178,14 +168,14 @@ const SelectStaff = ({ placeholder, form, field, value, options }) => {
   }));
 
   const SingleValue = (props) => {
-    const { nip, golongan, bidang, jabatan } = value;
+    const { nip, golongan, jabatan } = value;
 
     return (
       <components.SingleValue {...props}>
         <div>
           <div>{props.children}</div>
           <div style={{ fontSize: 10, color: "rgba(0, 0, 0, 0.6)" }}>
-            {`${nip} | Gol ${golongan} | ${jabatan} | ${bidang}`}
+            {`${nip} | Gol ${golongan} | ${jabatan}`}
           </div>
         </div>
       </components.SingleValue>

@@ -41,6 +41,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     errors,
     touched,
     resetForm,
+    isSubmitting,
   } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
@@ -117,6 +118,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
         <div className="mt-3">
           <label className="form-label">Nama Dinas / Tujuan Dinas</label>
           <input
+            disabled={isSubmitting}
             className="form-control"
             name="tujuanDinas"
             onChange={handleChange}
@@ -128,7 +130,11 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
         </div>
 
         <div className="mt-3">
-          <button className="btn btn-dark " type="submit">
+          <button
+            disabled={isSubmitting}
+            className="btn btn-dark "
+            type="submit"
+          >
             Simpan Surat
           </button>
 

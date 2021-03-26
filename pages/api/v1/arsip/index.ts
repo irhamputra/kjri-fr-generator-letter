@@ -1,12 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../utils/firebase";
-import { cors } from "../../../utils/middlewares";
+import { db } from "../../../../utils/firebase";
+import { cors } from "../../../../utils/middlewares";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "GET") {
-    const snapshot = await db.collection("Arsip").get();
+    const snapshot = await db
+      .collection("Arsip")
+      .orderBy("jenisArsip", "asc")
+      .get();
     let result = [];
 
     snapshot.forEach((doc) => {
@@ -16,9 +19,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json(result);
     res.end();
   }
+
   if (req.method === "POST") {
+    const { arsipId } = req.body;
+
     try {
-      await db.collection("Arsip").add(req.body);
+      await db.collection("Arsip").doc(arsipId).set(req.body);
 
       res.status(200).json({ message: "Berhasil membuat Arsip!" });
       res.end();

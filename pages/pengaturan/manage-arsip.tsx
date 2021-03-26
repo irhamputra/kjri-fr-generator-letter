@@ -4,15 +4,21 @@ import { useFormik } from "formik";
 import { object } from "yup";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
-import axios from "axios";
 import { NextSeo } from "next-seo";
 import useQueryArsip from "../../hooks/query/useQueryArsip";
+import { Trash } from "react-bootstrap-icons";
+import useDeleteArsipMutatition from "../../hooks/mutation/useDeleteArsipMutatition";
+import useCreateArsipMutation from "../../hooks/mutation/useCreateArsipMutation";
 
 const ManageArsip: NextPage = () => {
   const initialValues = {
     jenisArsip: "",
     acronym: "",
   };
+
+  const { isLoading, data } = useQueryArsip();
+  const { mutateAsync: createArsip } = useCreateArsipMutation();
+  const { mutateAsync: deleteArsip } = useDeleteArsipMutatition();
 
   const {
     handleChange,
@@ -28,8 +34,7 @@ const ManageArsip: NextPage = () => {
       setSubmitting(true);
 
       try {
-        await axios.post("/api/v1/arsip", values);
-        toast.success("Berhasil menyimpan data!");
+        await createArsip(values);
       } catch (e) {
         toast.error("Gagal menyimpan data!");
         throw new Error(e.message);
@@ -39,8 +44,6 @@ const ManageArsip: NextPage = () => {
       setSubmitting(false);
     },
   });
-
-  const { isLoading, data } = useQueryArsip(isSubmitting);
 
   if (isLoading) return <h4>Loading...</h4>;
 
@@ -56,6 +59,7 @@ const ManageArsip: NextPage = () => {
           <div className="col">
             <label className="form-label">Jenis Arsip</label>
             <input
+              disabled={isSubmitting}
               className="form-control"
               name="jenisArsip"
               value={values.jenisArsip}
@@ -69,6 +73,7 @@ const ManageArsip: NextPage = () => {
           <div className="col">
             <label className="form-label">Akronim</label>
             <input
+              disabled={isSubmitting}
               className="form-control"
               name="acronym"
               value={values.acronym}
@@ -81,7 +86,11 @@ const ManageArsip: NextPage = () => {
           </div>
         </div>
 
-        <button className="btn-dark btn mt-3" type="submit">
+        <button
+          className="btn-dark btn mt-3"
+          disabled={isSubmitting}
+          type="submit"
+        >
           Simpan Arsip
         </button>
       </form>
@@ -91,6 +100,7 @@ const ManageArsip: NextPage = () => {
           <tr>
             <th scope="col">Jenis Arsip</th>
             <th scope="col">Akronim</th>
+            <th scope="col"> </th>
           </tr>
         </thead>
         <tbody>
@@ -99,6 +109,17 @@ const ManageArsip: NextPage = () => {
               <tr key={v.jenisArsip}>
                 <th scope="row">{v.jenisArsip}</th>
                 <td>{v.acronym}</td>
+                <td>
+                  <button
+                    type="button"
+                    className="btn btn btn-outline-danger"
+                    onClick={async () => {
+                      await deleteArsip(v.arsipId);
+                    }}
+                  >
+                    <Trash size={20} />
+                  </button>
+                </td>
               </tr>
             );
           })}
