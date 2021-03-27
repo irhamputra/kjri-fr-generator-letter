@@ -188,6 +188,7 @@ const SuratKeluar: NextPage = () => {
             <div className="col-3 d-flex align-items-end">
               <button
                 className="btn btn-dark"
+                disabled={!values.arsipId || !values.jenisSurat}
                 onClick={handleNomorSurat}
                 type="button"
               >
