@@ -5,24 +5,36 @@ import { object } from "yup";
 import Link from "next/link";
 import createSchema from "../utils/validation/schema";
 import { ArrowLeftShort } from "react-bootstrap-icons";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 const LupaPassword: NextPage = () => {
+  const { replace } = useRouter();
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
       email: "",
     },
     validationSchema: object().shape(createSchema({ email: "" })),
-    onSubmit: (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSubmitting(true);
 
-      console.log(values);
+      try {
+        const { data } = await axios.post("/api/v1/forget-password", values);
+        toast.success(data.message);
+      } catch (e) {
+        toast.error("Terjadi kesalahan teknis, mohon coba kembali");
+        throw new Error(e.message);
+      }
 
+      resetForm();
+      await replace("/");
       setSubmitting(false);
     },
   });
 
   return (
-    <div className="m-auto row px-5 w-25 mt-5">
+    <div className="m-auto row px-5 w-50 mt-5">
       <form onSubmit={handleSubmit}>
         <div className="col-12 mt-5">
           <h1 style={{ fontSize: 50 }}>Lupa Password</h1>

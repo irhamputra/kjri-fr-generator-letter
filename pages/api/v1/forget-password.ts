@@ -9,20 +9,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
    * @body idToken
    */
   await cors(req, res);
+  const { email } = req.body;
 
   if (req.method === "POST") {
     try {
-      const { email } = req.body;
-      const { data } = await authInstance.post("/accounts:sendOobCode", {
+      await authInstance.post("/accounts:sendOobCode", {
         requestType: "PASSWORD_RESET",
         email,
       });
       res.status(200).json({
-        message: `Link untuk reset password sudah dikirim ke alamat ${data.email}`,
+        message: "Link reset password berhasil terkirim",
       });
       res.end();
     } catch (e) {
-      res.status(400).json({ message: "Tidak ada akun yang terkirim" });
+      res.status(404).json({ messaage: `Email ${email} tidak ditemukan` });
       res.end();
     }
   }
