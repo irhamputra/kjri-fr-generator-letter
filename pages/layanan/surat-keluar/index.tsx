@@ -4,11 +4,13 @@ import { useFormik } from "formik";
 import { object } from "yup";
 import createSchema from "../../../utils/validation/schema";
 import useQueryArsip from "../../../hooks/query/useQueryArsip";
-import axios from "axios";
 import dayjs from "dayjs";
-import { useQuery } from "react-query";
 import { NextSeo } from "next-seo";
 import { UncontrolledDropzone } from "../../../components/CustomField";
+import useCreateSuratKeluarMutation from "../../../hooks/mutation/useCreateSuratKeluarMutation";
+import { toast } from "react-hot-toast";
+import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
+import { useRouter } from "next/router";
 
 const listJenisSurat = [
   {
@@ -33,8 +35,9 @@ const listJenisSurat = [
   },
 ];
 
-const Index: NextPage = () => {
+const SuratKeluar: NextPage = () => {
   const [disabled, setDisabled] = React.useState(false);
+  const { push } = useRouter();
 
   const initialValues = {
     recipient: "",
@@ -45,6 +48,10 @@ const Index: NextPage = () => {
     arsipId: "",
   };
 
+  const { data: listArsip } = useQueryArsip();
+  const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation();
+  const { data: listSuratKeluar } = useQuerySuratKeluar();
+
   const {
     values,
     handleSubmit,
@@ -52,23 +59,25 @@ const Index: NextPage = () => {
     errors,
     touched,
     setFieldValue,
+    isSubmitting,
     resetForm,
   } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
-    onSubmit: (values) => console.log(values),
-  });
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      setSubmitting(true);
 
-  const { data } = useQueryArsip();
+      try {
+        await createSuratKeluar(values);
+      } catch (e) {
+        toast.error("Gagal membuat surat keluar!");
+        throw new Error(e.message);
+      }
 
-  const { data: suratTugas } = useQuery("fetchSuratKeluar", async () => {
-    try {
-      const { data } = await axios.get("/api/v1/surat-keluar");
-
-      return data;
-    } catch (e) {
-      throw new Error(e.message);
-    }
+      await push("/layanan/surat-keluar/list");
+      resetForm();
+      setSubmitting(false);
+    },
   });
 
   const onDrop = (acceptedFiles) => {
@@ -80,7 +89,7 @@ const Index: NextPage = () => {
       return await setFieldValue("nomorSurat", "");
 
     try {
-      const incrementNumber = suratTugas?.total + 1;
+      const incrementNumber = listSuratKeluar?.total + 1;
       const thisMonth = dayjs().month() + 1;
       const thisYear = dayjs().year();
 
@@ -149,7 +158,7 @@ const Index: NextPage = () => {
               onChange={handleChange}
             >
               <option value="">Pilih Arsip</option>
-              {data
+              {listArsip
                 ?.sort((a, b) => a.jenisArsip - b.jenisArsip)
                 .map((v) => {
                   return (
@@ -230,11 +239,16 @@ const Index: NextPage = () => {
         </div>
 
         <div className="mt-3">
-          <button type="submit" className="btn btn-dark">
-            Simpan Surat
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn btn-dark"
+          >
+            {isSubmitting ? "Membuat Surat Keluar" : "Simpan Surat"}
           </button>
 
           <button
+            disabled={isSubmitting}
             type="reset"
             onClick={() => {
               setDisabled(false);
@@ -250,4 +264,4 @@ const Index: NextPage = () => {
   );
 };
 
-export default Index;
+export default SuratKeluar;
