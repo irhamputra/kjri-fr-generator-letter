@@ -62,13 +62,13 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
   if (!isAdmin) throw new Error("Invalid permission");
 
   return (
-    <>
+    <section className="mt-3">
       <NextSeo
         title="Penugasan | Sistem Aplikasi KJRI Frankfurt"
         description="Penugasan Sistem Aplikasi KJRI Frankfurt"
       />
       <h3>Surat Penugasan Perjalanan Dinas (SPD)</h3>
-      <div className="row mb-5">
+      <div className="row">
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -238,7 +238,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
           )}
         </Formik>
       </div>
-    </>
+    </section>
   );
 };
 

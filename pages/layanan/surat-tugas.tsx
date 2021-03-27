@@ -80,7 +80,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
   };
 
   return (
-    <>
+    <section className="mt-3">
       <NextSeo
         title="Surat Tugas | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Tugas Sistem Aplikasi KJRI Frankfurt"
@@ -147,7 +147,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
           </button>
         </div>
       </form>
-    </>
+    </section>
   );
 };
 

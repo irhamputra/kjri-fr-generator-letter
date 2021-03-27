@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import Link from "next/link";
 
 const Navigation: React.FC<{ email: string }> = ({ email }) => {
   const { replace, reload } = useRouter();
@@ -26,16 +25,16 @@ const Navigation: React.FC<{ email: string }> = ({ email }) => {
   };
 
   return (
-    <nav className="bg-dark d-flex justify-content-between fixed-top p-3 align-items-center">
-      <Link href="/dashboard">
-        <a>
-          <h4 className="text-white my-0">Sistem Aplikasi KJRI Frankfurt</h4>
-        </a>
-      </Link>
+    <nav className="bg-light d-flex justify-content-end p-3">
       <div className="d-flex align-items-center">
-        <p className="ms-auto my-0 text-white">Hello, {email}</p>
-        <button className="btn btn-link text-white" onClick={handleLogout}>
-          Sign Out
+        <p className="ms-auto my-0">
+          Hello, <strong>{email}</strong>
+        </p>
+        <button
+          className="btn btn-link fw-bold text-dark"
+          onClick={handleLogout}
+        >
+          Keluar
         </button>
       </div>
     </nav>

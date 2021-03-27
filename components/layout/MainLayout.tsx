@@ -24,7 +24,7 @@ const MainLayout: React.FC<{ email: string; isAdmin: boolean }> = ({
       </div>
 
       {!isAuthPage && (
-        <footer className="footer text-center mt-auto py-3 bg-light fixed-bottom">
+        <footer className="footer text-center mt-auto py-1 bg-light fixed-bottom">
           <div className="container-fluid d-flex justify-content-between">
             <span className="text-muted small">
               Built with ❤️ &nbsp; for KJRI Frankfurt 🇮🇩

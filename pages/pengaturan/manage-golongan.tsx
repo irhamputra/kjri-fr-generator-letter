@@ -41,7 +41,7 @@ const ManageGolongan: NextPage = () => {
   if (isLoading) return <h4>Loading...</h4>;
 
   return (
-    <>
+    <section className="mt-3">
       <NextSeo
         title="Manage Golongan | Sistem Aplikasi KJRI Frankfurt"
         description="Manage Golongan Sistem Aplikasi KJRI Frankfurt"
@@ -106,7 +106,7 @@ const ManageGolongan: NextPage = () => {
           ))}
         </tbody>
       </table>
-    </>
+    </section>
   );
 };
 

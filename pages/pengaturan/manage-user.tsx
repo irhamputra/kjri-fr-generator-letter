@@ -55,7 +55,7 @@ const ManageUser: NextPage = () => {
   if (isLoading) return <h4>Loading...</h4>;
 
   return (
-    <>
+    <section className="mt-3">
       <h4>Manage User</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">
@@ -195,7 +195,7 @@ const ManageUser: NextPage = () => {
           ))}
         </tbody>
       </table>
-    </>
+    </section>
   );
 };
 

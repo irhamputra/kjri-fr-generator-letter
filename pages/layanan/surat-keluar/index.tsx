@@ -106,7 +106,7 @@ const Index: NextPage = () => {
   };
 
   return (
-    <>
+    <div className="mt-3">
       <NextSeo
         title="Surat Keluar | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Keluar Sistem Aplikasi KJRI Frankfurt"
@@ -245,7 +245,7 @@ const Index: NextPage = () => {
           </button>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 
