@@ -173,45 +173,32 @@ const SuratKeluar: NextPage = () => {
             )}
           </div>
 
-          <div className="col-3">
-            <label className="form-label">Generate Nomor</label>
-            <input
-              className="form-control"
-              name="nomorSurat"
-              value={values.nomorSurat}
-              onChange={handleChange}
-              disabled
-            />
-          </div>
-
-          {values.nomorSurat ? null : (
-            <div className="col-3 d-flex align-items-end">
-              <button
-                className="btn btn-dark"
-                disabled={!values.arsipId || !values.jenisSurat}
-                onClick={handleNomorSurat}
-                type="button"
-              >
-                Generate Surat Nomer
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div className="row my-3">
           <div className="col">
-            <label className="form-label">Upload Surat</label>
-            <UncontrolledDropzone
-              values={(values.surat as unknown) as File[]}
-              onDrop={onDrop}
-              onClickReset={() => setFieldValue("surat", [])}
-            />
-            {errors.surat && touched.surat && (
-              <small className="text-danger">{errors.surat}</small>
-            )}
+            <label className="form-label">Nomor Surat</label>
+
+            <div className="input-group">
+              <input
+                className="form-control"
+                name="nomorSurat"
+                value={values.nomorSurat}
+                onChange={handleChange}
+                disabled
+              />
+              {values.nomorSurat ? null : (
+                <button
+                  className="btn btn-dark"
+                  disabled={!values.arsipId || !values.jenisSurat}
+                  onClick={handleNomorSurat}
+                  type="button"
+                >
+                  Generate Surat Nomer
+                </button>
+              )}
+            </div>
           </div>
         </div>
-        <div className="row">
+
+        <div className="row mt-3">
           <div className="col">
             <label className="form-label">Kepada</label>
             <input
@@ -239,27 +226,35 @@ const SuratKeluar: NextPage = () => {
           </div>
         </div>
 
-        <div className="mt-3">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="btn btn-dark"
-          >
-            {isSubmitting ? "Membuat Surat Keluar" : "Simpan Surat"}
-          </button>
-
-          <button
-            disabled={isSubmitting}
-            type="reset"
-            onClick={() => {
-              setDisabled(false);
-              resetForm();
-            }}
-            className="btn btn-outline-danger mx-3"
-          >
-            Ulangi
-          </button>
+        <div className="row mt-3">
+          <div className="col">
+            <label className="form-label">Upload Surat</label>
+            <UncontrolledDropzone
+              values={(values.surat as unknown) as File[]}
+              onDrop={onDrop}
+              onClickReset={() => setFieldValue("surat", [])}
+            />
+            {errors.surat && touched.surat && (
+              <small className="text-danger">{errors.surat}</small>
+            )}
+          </div>
         </div>
+
+        <button type="submit" disabled={isSubmitting} className="btn btn-dark">
+          {isSubmitting ? "Membuat Surat Keluar" : "Simpan Surat"}
+        </button>
+
+        <button
+          disabled={isSubmitting}
+          type="reset"
+          onClick={() => {
+            setDisabled(false);
+            resetForm();
+          }}
+          className="btn btn-outline-danger mx-3"
+        >
+          Ulangi
+        </button>
       </form>
     </div>
   );
