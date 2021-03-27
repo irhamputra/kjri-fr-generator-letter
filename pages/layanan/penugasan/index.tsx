@@ -75,13 +75,15 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
           onSubmit={async (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
             let response: AxiosResponse;
+
             try {
               response = await axios.put("/api/v1/penugasan", values);
-              toast.success("SPD berhasil disimpan");
             } catch (e) {
-              console.log(response);
               toast.error(e.message);
+              throw new Error(e.message);
             }
+
+            toast.success(response.data.message);
 
             await push("/layanan/penugasan/list");
             resetForm();

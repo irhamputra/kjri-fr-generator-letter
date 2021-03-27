@@ -29,7 +29,7 @@ const Dashboard: NextPage<{ isAdmin: boolean }> = ({ isAdmin }) => {
             <Card
               icon={<SuratKeluarIcon {...iconProps} />}
               title="Surat Keluar"
-              link="/layanan/surat-keluar"
+              link="/layanan/surat-keluar/list"
             />
           </div>
           {isAdmin && (

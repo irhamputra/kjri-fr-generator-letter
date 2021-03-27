@@ -7,11 +7,14 @@ import axios from "axios";
 const SuratPenugasanId: NextPage = () => {
   const { query, push } = useRouter();
 
-  const { data, isLoading } = useQuery("fetchSingleSurat", async () => {
-    const { data } = await axios.get(`/api/v1/surat-tugas/${query.id}`);
+  const { data, isLoading } = useQuery(
+    ["fetchSingleSurat", query.id],
+    async () => {
+      const { data } = await axios.get(`/api/v1/surat-tugas/${query.id}`);
 
-    return data;
-  });
+      return data;
+    }
+  );
 
   if (isLoading) return <h4>Loading...</h4>;
 
