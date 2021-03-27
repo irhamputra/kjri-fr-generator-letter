@@ -115,6 +115,7 @@ const Index: NextPage = () => {
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-3">
+            <label className="form-label">Jenis Surat</label>
             <select
               disabled={disabled}
               className="form-select"
@@ -136,11 +137,9 @@ const Index: NextPage = () => {
               <small className="text-danger">{errors.jenisSurat}</small>
             )}
           </div>
-        </div>
 
-        <div className="row my-3">
-          <label className="form-label">Nomor Surat</label>
           <div className="col-3">
+            <label className="form-label">Arsip</label>
             <select
               disabled={disabled}
               className="form-select"
@@ -166,6 +165,7 @@ const Index: NextPage = () => {
           </div>
 
           <div className="col-3">
+            <label className="form-label">Generate Nomor</label>
             <input
               className="form-control"
               name="nomorSurat"
@@ -176,7 +176,7 @@ const Index: NextPage = () => {
           </div>
 
           {values.nomorSurat ? null : (
-            <div className="col-3">
+            <div className="col-3 d-flex align-items-end">
               <button
                 className="btn btn-dark"
                 onClick={handleNomorSurat}
@@ -187,9 +187,10 @@ const Index: NextPage = () => {
             </div>
           )}
         </div>
+
         <div className="row my-3">
-          <div>
-            <label className="form-label">Surat</label>
+          <div className="col">
+            <label className="form-label">Upload Surat</label>
             <UncontrolledDropzone
               values={(values.surat as unknown) as File[]}
               onDrop={onDrop}
