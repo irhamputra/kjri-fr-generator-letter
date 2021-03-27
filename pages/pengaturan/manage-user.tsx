@@ -6,6 +6,7 @@ import axios from "axios";
 import { Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
 import useQueryUsers from "../../hooks/query/useQueryUsers";
+import capitalizeFirstLetter from "../../utils/capitalize";
 
 const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
@@ -17,6 +18,7 @@ const ManageUser: NextPage = () => {
     errors,
     touched,
     isSubmitting,
+    resetForm,
   } = useAuthForm(
     {
       displayName: "",
@@ -25,6 +27,7 @@ const ManageUser: NextPage = () => {
       nip: "",
       golongan: "",
       jabatan: "",
+      role: "",
     },
     "register"
   );
@@ -59,14 +62,14 @@ const ManageUser: NextPage = () => {
       <h4>Manage User</h4>
       <form onSubmit={handleSubmit}>
         <div className="row">
-          <div className="col-6 mt-3">
+          <div className="col-3 mt-3">
             <label className="form-label">Nama Staff</label>
             <input
               disabled={isSubmitting}
               className="form-control"
               type="text"
               name="displayName"
-              value={values.displayName}
+              value={capitalizeFirstLetter(values.displayName)}
               onChange={handleChange}
             />
             {errors.displayName && touched.displayName && (
@@ -74,7 +77,7 @@ const ManageUser: NextPage = () => {
             )}
           </div>
 
-          <div className="col-6 mt-3">
+          <div className="col-3 mt-3">
             <label className="form-label">Email</label>
             <input
               disabled={isSubmitting}
@@ -89,7 +92,7 @@ const ManageUser: NextPage = () => {
             )}
           </div>
 
-          <div className="col-6 mt-3">
+          <div className="col-3 mt-3">
             <label className="form-label">Password</label>
             <input
               type="password"
@@ -104,7 +107,7 @@ const ManageUser: NextPage = () => {
             )}
           </div>
 
-          <div className="col-6 mt-3">
+          <div className="col-3 mt-3">
             <label className="form-label">NIP</label>
             <input
               className="form-control"
@@ -119,7 +122,7 @@ const ManageUser: NextPage = () => {
             )}
           </div>
 
-          <div className="col-6 mt-3">
+          <div className="col-3 mt-3">
             <label className="form-label">Golongan</label>
             <input
               className="form-control"
@@ -134,18 +137,41 @@ const ManageUser: NextPage = () => {
             )}
           </div>
 
-          <div className="col-6 mt-3">
+          <div className="col-3 mt-3">
             <label className="form-label">Jabatan</label>
             <input
               className="form-control"
               name="jabatan"
               type="text"
               disabled={isSubmitting}
-              value={values.jabatan}
+              value={capitalizeFirstLetter(values.jabatan)}
               onChange={handleChange}
             />
             {errors.jabatan && touched.jabatan && (
               <small className="text-danger">{errors.jabatan}</small>
+            )}
+          </div>
+
+          <div className="col mt-3">
+            <label className="form-label">Role</label>
+            <select
+              className="form-select"
+              aria-label="Role"
+              name="role"
+              onChange={handleChange}
+            >
+              <option value="">Pilih Role</option>
+              <option value="default">Staff</option>
+              <option value="TU">Tata Usaha</option>
+            </select>
+
+            {errors.role && touched.role && (
+              <small className="text-danger">{errors.role}</small>
+            )}
+            {values.role === "TU" && (
+              <small className="text-info">
+                Role "Tata Usaha" tidak akan muncul di list Staff
+              </small>
             )}
           </div>
 
@@ -156,6 +182,14 @@ const ManageUser: NextPage = () => {
               type="submit"
             >
               Register User
+            </button>
+            <button
+              disabled={isSubmitting}
+              onClick={() => resetForm()}
+              className="btn btn-outline-danger ms-3"
+              type="button"
+            >
+              Ulangi
             </button>
           </div>
         </div>

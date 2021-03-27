@@ -11,6 +11,7 @@ import useCreateSuratKeluarMutation from "../../../hooks/mutation/useCreateSurat
 import { toast } from "react-hot-toast";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
 import { useRouter } from "next/router";
+import capitalizeFirstLetter from "../../../utils/capitalize";
 
 const listJenisSurat = [
   {
@@ -191,7 +192,7 @@ const SuratKeluar: NextPage = () => {
                   onClick={handleNomorSurat}
                   type="button"
                 >
-                  Generate Surat Nomer
+                  Generate Nomor Surat
                 </button>
               )}
             </div>
@@ -203,7 +204,7 @@ const SuratKeluar: NextPage = () => {
             <label className="form-label">Kepada</label>
             <input
               className="form-control"
-              value={values.recipient}
+              value={capitalizeFirstLetter(values.recipient)}
               name="recipient"
               onChange={handleChange}
             />
@@ -216,7 +217,7 @@ const SuratKeluar: NextPage = () => {
             <label className="form-label">Isi Surat</label>
             <input
               className="form-control"
-              value={values.content}
+              value={capitalizeFirstLetter(values.content)}
               name="content"
               onChange={handleChange}
             />

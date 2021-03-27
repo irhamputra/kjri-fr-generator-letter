@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "POST") {
-    const { email, password, displayName, nip, golongan, jabatan } = req.body;
+    const { email, password, ...restBody } = req.body;
 
     try {
       const isAvailable = await db
@@ -49,12 +49,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
               .doc(data.localId)
               .set({
                 uid: data.localId,
-                golongan,
-                jabatan,
                 email,
-                displayName: capitalizeFirstLetter(displayName),
-                nip,
-                role: "default",
+                ...restBody,
               });
           } catch (e) {
             res.status(500).end(e);

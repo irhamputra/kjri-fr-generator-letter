@@ -1,10 +1,10 @@
 import { string, array } from "yup";
+import capitalizeFirstLetter from "../capitalize";
 
 const schema = (type: string) => {
   switch (type) {
     // common schema
     case "displayName":
-    case "nip":
     case "arsipId":
     case "jenisSurat":
     case "recipient":
@@ -18,11 +18,22 @@ const schema = (type: string) => {
     case "hargaGolongan":
     case "golongan":
     case "jabatan":
+    case "roles":
       return string()
         .trim()
         .required(
-          `${type === "displayName" ? "Nama Pegawai" : type} wajib diisi!`
+          `${
+            type === "displayName"
+              ? "Nama Pegawai"
+              : capitalizeFirstLetter(type)
+          } wajib diisi!`
         );
+
+    case "nip":
+      return string()
+        .trim()
+        .matches(/[^\D]/g, "NIP wajib berupa nomor")
+        .required("NIP wajib diisi");
 
     // Login & Register schema
     case "email":
