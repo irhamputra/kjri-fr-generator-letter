@@ -3,33 +3,24 @@ import { NextPage } from "next";
 import { Search } from "react-bootstrap-icons";
 import { MessageCard } from "../../../components/Card";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
-import Fuse from "fuse.js";
 import { useRouter } from "next/router";
-import { FileEarmarkExcel, File } from "react-bootstrap-icons";
+import { FileEarmarkExcel } from "react-bootstrap-icons";
+import useFuse from "../../../hooks/useFuse";
 
 const ListSurat: NextPage = () => {
-  const [searchQuery, setSearch] = React.useState("");
-  const [filteredList, setFilteredList] = React.useState([]);
   const { push } = useRouter();
-
   const {
     data: listSuratTugas,
     isLoading: suratTugasLoading,
   } = useQuerySuratTugas();
 
-  const search = (query) => {
-    const fuse = new Fuse(listSuratTugas, {
-      keys: ["tujuanDinas"],
-      includeScore: true,
-    });
+  const { setSearch, filteredList, searchQuery } = useFuse(listSuratTugas, {
+    keys: ["tujuanDinas"],
+    includeScore: true,
+    loading: suratTugasLoading,
+  });
 
-    const res = fuse.search(query);
-    setFilteredList(res);
-  };
-
-  React.useEffect(() => {
-    listSuratTugas && searchQuery.length > 1 && search(searchQuery);
-  }, [searchQuery, suratTugasLoading]);
+  if (suratTugasLoading) return <p>Loading...</p>;
 
   return (
     <div className="row">
@@ -60,7 +51,6 @@ const ListSurat: NextPage = () => {
         </button>
       </div>
 
-      {suratTugasLoading ? <p>Loading...</p> : null}
       {filteredList && searchQuery.length > 0
         ? filteredList.map((v) => {
             return (
