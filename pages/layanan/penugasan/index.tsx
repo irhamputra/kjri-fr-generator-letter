@@ -10,7 +10,7 @@ import {
 } from "../../../components/CustomField";
 import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
-import { object, string, array } from "yup";
+import { object, string, array, number, mixed, bool } from "yup";
 import { toast } from "react-hot-toast";
 import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
@@ -18,6 +18,11 @@ import useQueryUsers from "../../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
 import parseCookies from "../../../utils/parseCookies";
 import apiInstance from "../../../utils/firebase/apiInstance";
+
+const { format } = new Intl.NumberFormat("de-DE", {
+  style: "currency",
+  currency: "EUR",
+});
 
 const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
   const { push } = useRouter();
@@ -34,10 +39,9 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     namaPegawai: [],
     nomorSurat: "",
     surat: [],
+    fullDayKurs: 0.84,
+    halfDayKurs: 0.4,
   };
-
-  if (suratTugasLoading && jalDirLoading && usersLoading)
-    return <h4>Loading...</h4>;
 
   const optionsGolongan = listJalDir?.map((v) => ({
     label: v.golongan,
@@ -55,9 +59,53 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     nomorSurat: string().trim().required("nomor surat wajib diisi!"),
     surat: array().min(1).required("wajib menyertakan surat"),
     namaPegawai: array()
-      .min(1, "nama pegawai wajib diisi")
-      .required("nama pegawai wajib diisi"),
+      .of(
+        object().shape({
+          pegawai: object().required(),
+          jaldis: string().required(),
+          durasi: string()
+            .matches(/^\d+(,5)?$/, "Masukan kelipatan 0,5. contoh : 7 atau 8,5")
+            .required(),
+        })
+      )
+      .min(1, "Need at least a friend"),
   });
+
+  const countEstimateCost = (v = [], fullDayKurs, halfDayKurs) => {
+    let text = "";
+    const listPegawai = v.map((v, index) => {
+      if (index !== 0) text += " + ";
+      const [fullDayDur, halfDayDur = ""] = v.durasi.split(",");
+      let halfDay = 0;
+
+      const fullDay =
+        parseFloat(fullDayDur) * fullDayKurs * parseFloat(v.jaldis);
+
+      text +=
+        "(" +
+        parseFloat(fullDayDur) +
+        " x " +
+        fullDayKurs +
+        " x " +
+        parseFloat(v.jaldis) +
+        ")";
+
+      if (halfDayDur === "5") {
+        halfDay = halfDayKurs * parseFloat(v.jaldis);
+
+        text += " + (" + halfDayKurs + " x " + parseFloat(v.jaldis) + ")";
+      }
+
+      const total = fullDay + halfDay;
+
+      return total;
+    });
+
+    return { value: listPegawai.reduce((acc, cur) => acc + cur, 0), text };
+  };
+
+  if (suratTugasLoading && jalDirLoading && usersLoading)
+    return <h4>Loading...</h4>;
 
   if (!isAdmin) throw new Error("Invalid permission");
 
@@ -72,172 +120,264 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={async (values, { setSubmitting, resetForm }) => {
+          onSubmit={async (
+            { namaPegawai, halfDayKurs, fullDayKurs, ...values },
+            { setSubmitting, resetForm }
+          ) => {
             setSubmitting(true);
             let response: AxiosResponse;
+            const newValues = {
+              listPegawai: namaPegawai.map((v) => {
+                const [fullDayDur, halfDayDur = ""] = v.durasi.split(",");
+                let halfDay = 0;
+
+                const fullDay =
+                  parseFloat(fullDayDur) * fullDayKurs * parseFloat(v.jaldis);
+
+                if (halfDayDur === "5") {
+                  halfDay = halfDayKurs * parseFloat(v.jaldis);
+                }
+
+                const total = fullDay + halfDay;
+
+                return { ...v, uangHarian: format(total) };
+              }),
+              ...values,
+            };
 
             try {
-              response = await axios.put("/api/v1/penugasan", values);
+              response = await axios.put("/api/v1/penugasan", newValues);
+              toast.success("SPD berhasil disimpan");
             } catch (e) {
+              console.log(response);
               toast.error(e.message);
-              throw new Error(e.message);
             }
-
-            toast.success(response.data.message);
 
             await push("/layanan/penugasan/list");
             resetForm();
             setSubmitting(false);
           }}
         >
-          {({ values, errors, touched }) => (
-            <Form>
-              <div className="mb-3">
-                <label className="form-label">Nomor Surat</label>
-                <Field
-                  className="form-control"
-                  name="nomorSurat"
-                  component={SelectComponent}
-                  options={optionsSuratTugas}
-                  placeholder="Pilih Surat"
-                />
-                {errors.nomorSurat && touched.nomorSurat && (
-                  <small className="text-danger">{errors.nomorSurat}</small>
-                )}
-              </div>
-
-              <label className="form-label">Staff</label>
-              <div
-                style={{
-                  padding: 16,
-                  background: "#f8f8f8",
-                  borderRadius: 4,
-                }}
-              >
-                <FieldArray
-                  name="namaPegawai"
-                  render={(arrayHelpers) => (
-                    <>
-                      <div className="p-0 mb-1">
-                        {values.namaPegawai.map((_, index) => (
-                          <div
-                            key={index}
-                            className={`mb-3 container-fluid p-0`}
-                          >
-                            <div className="row">
-                              <div className="col">
-                                <label className="form-label">Nama Staff</label>
-                                <Field
-                                  className="form-control"
-                                  name={`namaPegawai.${index}.pegawai`}
-                                  value={_.pegawai}
-                                  component={SelectStaff}
-                                  options={listUsers}
-                                  placeholder="Input nama pegawai"
-                                />
-                              </div>
-
-                              <div className="col">
-                                <label className="form-label">
-                                  Golongan Jalan Dinas
-                                </label>
-                                <Field
-                                  className="form-control"
-                                  name={`namaPegawai.${index}.jaldis`}
-                                  component={SelectComponent}
-                                  styles={{
-                                    control: (provided) => ({
-                                      ...provided,
-                                      height: 66,
-                                    }),
-                                  }}
-                                  value={_.jaldis}
-                                  options={optionsGolongan}
-                                  placeholder="Pilih Golongan Jalan Dinas"
-                                />
-                              </div>
-
-                              <div className="col">
-                                <label className="form-label">
-                                  Lama Perjalanan
-                                </label>
-                                <Field
-                                  className="form-control"
-                                  name={`namaPegawai.${index}.durasi`}
-                                  as={InputComponent}
-                                  value={_.durasi}
-                                  style={{
-                                    height: 66,
-                                  }}
-                                  placeholder="(e.g 1 hari atau 2,5 hari)"
-                                />
-                              </div>
-
-                              <div className="col-1 d-flex align-items-end">
-                                <button
-                                  className="btn btn-outline-danger w-100"
-                                  type="button"
-                                  style={{ height: 66 }}
-                                  onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
-                                >
-                                  <TrashIcon height={20} width={20} />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-
-                        <button
-                          className="btn btn-primary text-white mt-3"
-                          type="button"
-                          onClick={() =>
-                            arrayHelpers.push({
-                              durasi: "",
-                              pegawai: {},
-                            })
-                          }
-                        >
-                          <PlusIcon />
-                          Tambah Pegawai
-                        </button>
-                      </div>
-                      {errors.namaPegawai && touched.namaPegawai && (
-                        <small className="text-danger">
-                          {errors.namaPegawai}
-                        </small>
-                      )}
-                    </>
+          {({ values, errors, touched }) => {
+            const estimate = countEstimateCost(
+              values.namaPegawai,
+              values.fullDayKurs,
+              values.halfDayKurs
+            );
+            return (
+              <Form>
+                <div className="mb-3">
+                  <label className="form-label">Nomor Surat</label>
+                  <Field
+                    className="form-control"
+                    name="nomorSurat"
+                    component={SelectComponent}
+                    options={optionsSuratTugas}
+                    placeholder="Pilih Surat"
+                  />
+                  {errors.nomorSurat && touched.nomorSurat && (
+                    <small className="text-danger">{errors.nomorSurat}</small>
                   )}
-                />
-              </div>
-              <div className="mt-3">
-                <label className="form-label">Surat</label>
-                <Field
-                  className="form-control"
-                  name="surat"
-                  component={DropzoneComponent}
-                  options={optionsSuratTugas}
-                  placeholder="Pilih Surat"
-                />
-                {errors.surat && touched.surat && (
-                  <small className="text-danger">{errors.surat}</small>
-                )}
-              </div>
-              <div className="mt-3">
-                <button className="btn btn-dark btn" type="submit">
-                  Submit SPD
-                </button>
+                </div>
 
-                <button
-                  onClick={async () => await push("/layanan/penugasan/list")}
-                  className="btn btn-outline-dark ms-2 btn"
-                  type="button"
+                <label className="form-label">Staff</label>
+                <div
+                  style={{
+                    padding: 16,
+                    background: "#f8f8f8",
+                    borderRadius: 4,
+                  }}
                 >
-                  Kembali ke list
-                </button>
-              </div>
-            </Form>
-          )}
+                  <FieldArray
+                    name="namaPegawai"
+                    render={(arrayHelpers) => (
+                      <>
+                        <div className="p-0 mb-1">
+                          {values.namaPegawai.map((_, index) => {
+                            const error = errors.namaPegawai?.[index] || {};
+                            const touch = touched.namaPegawai?.[index] || {};
+                            return (
+                              <div
+                                key={index}
+                                className={`mb-3 container-fluid p-0`}
+                              >
+                                <div className="row">
+                                  <div className="col">
+                                    <label className="form-label">
+                                      Nama Staff
+                                    </label>
+                                    <Field
+                                      className="form-control"
+                                      name={`namaPegawai.${index}.pegawai`}
+                                      value={_.pegawai}
+                                      component={SelectStaff}
+                                      options={listUsers}
+                                      placeholder="Input nama pegawai"
+                                    />
+                                    {error.pegawai && touch.pegawai && (
+                                      <small className="text-danger">
+                                        {error.pegawai}
+                                      </small>
+                                    )}
+                                  </div>
+
+                                  <div className="col">
+                                    <label className="form-label">
+                                      Golongan Jalan Dinas
+                                    </label>
+                                    <Field
+                                      className="form-control"
+                                      name={`namaPegawai.${index}.jaldis`}
+                                      component={SelectComponent}
+                                      styles={{
+                                        control: (provided) => ({
+                                          ...provided,
+                                          height: 66,
+                                        }),
+                                      }}
+                                      value={_.jaldis}
+                                      options={optionsGolongan}
+                                      placeholder="Pilih Golongan Jalan Dinas"
+                                    />
+                                    {error.jaldis && touch.jaldis && (
+                                      <small className="text-danger">
+                                        {error.jaldis}
+                                      </small>
+                                    )}
+                                  </div>
+
+                                  <div className="col">
+                                    <label className="form-label">
+                                      Lama Perjalanan
+                                    </label>
+                                    <Field
+                                      className="form-control"
+                                      name={`namaPegawai.${index}.durasi`}
+                                      as={InputComponent}
+                                      value={_.durasi}
+                                      style={{
+                                        height: 66,
+                                      }}
+                                      placeholder="(e.g 1 hari atau 2,5 hari)"
+                                    />
+                                    {error.durasi && touch.durasi && (
+                                      <small className="text-danger">
+                                        {error.durasi}
+                                      </small>
+                                    )}
+                                  </div>
+
+                                  <div className="col-1 d-flex align-items-end">
+                                    <button
+                                      className="btn btn-outline-danger w-100"
+                                      type="button"
+                                      style={{ height: 66 }}
+                                      onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                    >
+                                      <TrashIcon height={20} width={20} />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                          <button
+                            className="btn btn-primary text-white mt-3"
+                            type="button"
+                            onClick={() =>
+                              arrayHelpers.push({
+                                durasi: "",
+                                pegawai: {},
+                              })
+                            }
+                          >
+                            <PlusIcon />
+                            Tambah Pegawai
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mt-3">
+                  <label className="form-label">Surat</label>
+                  <Field
+                    className="form-control"
+                    name="surat"
+                    component={DropzoneComponent}
+                    options={optionsSuratTugas}
+                    placeholder="Pilih Surat"
+                  />
+                  {errors.surat && touched.surat && (
+                    <small className="text-danger">{errors.surat}</small>
+                  )}
+                </div>
+                <div className="mt-3">
+                  <label className="form-label">Kurs</label>
+
+                  <div
+                    style={{
+                      padding: 16,
+                      background: "#f8f8f8",
+                      borderRadius: 4,
+                    }}
+                  >
+                    <div className="row">
+                      <div className="col">
+                        <label className="form-label">Sehari penuh :</label>
+                        <Field
+                          className="form-control"
+                          name="fullDayKurs"
+                          endText="$"
+                          value={values.fullDayKurs}
+                          as={InputComponent}
+                          options={optionsSuratTugas}
+                          placeholder="Pilih Surat"
+                        />
+                      </div>
+                      <div className="col">
+                        <label className="form-label">Setengah hari :</label>
+                        <Field
+                          className="form-control"
+                          name="halfDayKurs"
+                          endText="$"
+                          as={InputComponent}
+                          value={values.halfDayKurs}
+                          options={optionsSuratTugas}
+                          placeholder="Pilih Surat"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="d-flex mt-3"
+                  style={{
+                    alignItems: "baseline",
+                  }}
+                >
+                  <h3>Biaya : {format(estimate.value)}</h3>
+                  <p style={{ color: "rgba(0,0,0,0.6)", marginLeft: 16 }}>
+                    {estimate.text}
+                  </p>
+                </div>
+                <div className="mt-3">
+                  <button className="btn btn-dark btn" type="submit">
+                    Submit SPD
+                  </button>
+
+                  <button
+                    onClick={async () => await push("/layanan/penugasan/list")}
+                    className="btn btn-outline-dark ms-2 btn"
+                    type="button"
+                  >
+                    Kembali ke list
+                  </button>
+                </div>
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </section>

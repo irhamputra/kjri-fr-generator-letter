@@ -34,32 +34,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const { nomorSurat, namaPegawai } = req.body;
+    const { nomorSurat, listPegawai } = req.body;
 
-    if (namaPegawai.length <= 0) {
+    if (listPegawai.length <= 0) {
       res.status(404).json({ error: "Tidak ada data yang tersimpan" });
       res.end();
     }
 
     try {
-      const listPegawai = namaPegawai.map((v) => {
-        const [durasi] = v.durasi.split(",");
-        let halfDay = 0;
-
-        const fullDay = parseFloat(durasi) * 0.84 * parseFloat(v.jaldis);
-
-        if (v.durasi.length > 1) {
-          halfDay = 0.4 * parseFloat(v.jaldis);
-        }
-
-        const total = fullDay + halfDay;
-
-        return {
-          ...v,
-          uangHarian: format(total),
-        };
-      });
-
       let id = "";
 
       const snapshot = await db
