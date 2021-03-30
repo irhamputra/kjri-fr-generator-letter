@@ -7,8 +7,13 @@ import { Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
 import useQueryUsers from "../../hooks/query/useQueryUsers";
 import capitalizeFirstLetter from "../../utils/capitalize";
+import apiInstance from "../../utils/firebase/apiInstance";
+import parseCookies from "../../utils/parseCookies";
 
-const ManageUser: NextPage = () => {
+const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
+  isAdmin,
+  role,
+}) => {
   const queryClient = useQueryClient();
 
   const {
@@ -54,6 +59,8 @@ const ManageUser: NextPage = () => {
       },
     }
   );
+
+  if (!isAdmin && role !== "tu") throw Error("Invalid permission");
 
   if (isLoading) return <h4>Loading...</h4>;
 
@@ -232,5 +239,29 @@ const ManageUser: NextPage = () => {
     </section>
   );
 };
+
+export async function getServerSideProps({ req }) {
+  const cookie = parseCookies(req);
+  const idToken = cookie["KJRIFR-U"];
+  try {
+    const {
+      data: { email, isAdmin, role },
+    } = await apiInstance.get("/api/v1/user", {
+      headers: {
+        authorization: `Bearer ${idToken}`,
+      },
+    });
+
+    return {
+      props: {
+        isAdmin,
+        email,
+        role,
+      },
+    };
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 export default ManageUser;
