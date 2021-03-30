@@ -10,7 +10,7 @@ import {
 } from "../../../components/CustomField";
 import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
-import { object, string, array, number, mixed, bool } from "yup";
+import { object, string, array } from "yup";
 import { toast } from "react-hot-toast";
 import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
@@ -68,7 +68,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
             .required(),
         })
       )
-      .min(1, "Need at least a friend"),
+      .min(1, "Minimal 1 pegawai"),
   });
 
   const countEstimateCost = (v = [], fullDayKurs, halfDayKurs) => {
@@ -104,6 +104,20 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     return { value: listPegawai.reduce((acc, cur) => acc + cur, 0), text };
   };
 
+  const countDailyCost = (jaldis, duration, fullDayKurs, halfDayKurs) => {
+    const [fullDayDur, halfDayDur = ""] = duration.split(",");
+
+    let halfDay = 0;
+
+    const fullDay = parseFloat(fullDayDur) * fullDayKurs * parseFloat(jaldis);
+
+    if (halfDayDur === "5") {
+      halfDay = halfDayKurs * parseFloat(jaldis);
+    }
+
+    return fullDay + halfDay || 0;
+  };
+
   if (suratTugasLoading && jalDirLoading && usersLoading)
     return <h4>Loading...</h4>;
 
@@ -128,17 +142,12 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
             let response: AxiosResponse;
             const newValues = {
               listPegawai: namaPegawai.map((v) => {
-                const [fullDayDur, halfDayDur = ""] = v.durasi.split(",");
-                let halfDay = 0;
-
-                const fullDay =
-                  parseFloat(fullDayDur) * fullDayKurs * parseFloat(v.jaldis);
-
-                if (halfDayDur === "5") {
-                  halfDay = halfDayKurs * parseFloat(v.jaldis);
-                }
-
-                const total = fullDay + halfDay;
+                const total = countDailyCost(
+                  v.jaldis,
+                  v.durasi,
+                  fullDayKurs,
+                  halfDayKurs
+                );
 
                 return { ...v, uangHarian: format(total) };
               }),
@@ -179,7 +188,43 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                     <small className="text-danger">{errors.nomorSurat}</small>
                   )}
                 </div>
-
+                <div className="mb-3">
+                  <label className="form-label">Kurs Uang harian</label>
+                  <div
+                    style={{
+                      padding: 16,
+                      background: "#f8f8f8",
+                      borderRadius: 4,
+                    }}
+                  >
+                    <div className="row">
+                      <div className="col-3">
+                        <label className="form-label">Sehari penuh :</label>
+                        <Field
+                          className="form-control"
+                          name="fullDayKurs"
+                          endText="$"
+                          value={values.fullDayKurs}
+                          as={InputComponent}
+                          options={optionsSuratTugas}
+                          placeholder="Pilih Surat"
+                        />
+                      </div>
+                      <div className="col-3">
+                        <label className="form-label">Setengah hari :</label>
+                        <Field
+                          className="form-control"
+                          name="halfDayKurs"
+                          endText="$"
+                          as={InputComponent}
+                          value={values.halfDayKurs}
+                          options={optionsSuratTugas}
+                          placeholder="Pilih Surat"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <label className="form-label">Staff</label>
                 <div
                   style={{
@@ -266,6 +311,21 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       </small>
                                     )}
                                   </div>
+                                  <div className="col-1">
+                                    <label className="form-label">
+                                      Uang Harian
+                                    </label>
+                                    <h6>
+                                      {format(
+                                        countDailyCost(
+                                          _.jaldis,
+                                          _.durasi,
+                                          values.fullDayKurs,
+                                          values.halfDayKurs
+                                        )
+                                      )}
+                                    </h6>
+                                  </div>
 
                                   <div className="col-1 d-flex align-items-end">
                                     <button
@@ -312,45 +372,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                   {errors.surat && touched.surat && (
                     <small className="text-danger">{errors.surat}</small>
                   )}
-                </div>
-                <div className="mt-3">
-                  <label className="form-label">Kurs</label>
-
-                  <div
-                    style={{
-                      padding: 16,
-                      background: "#f8f8f8",
-                      borderRadius: 4,
-                    }}
-                  >
-                    <div className="row">
-                      <div className="col">
-                        <label className="form-label">Sehari penuh :</label>
-                        <Field
-                          className="form-control"
-                          name="fullDayKurs"
-                          endText="$"
-                          value={values.fullDayKurs}
-                          as={InputComponent}
-                          options={optionsSuratTugas}
-                          placeholder="Pilih Surat"
-                        />
-                      </div>
-                      <div className="col">
-                        <label className="form-label">Setengah hari :</label>
-                        <Field
-                          className="form-control"
-                          name="halfDayKurs"
-                          endText="$"
-                          as={InputComponent}
-                          value={values.halfDayKurs}
-                          options={optionsSuratTugas}
-                          placeholder="Pilih Surat"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                </div>{" "}
                 <div
                   className="d-flex mt-3"
                   style={{
