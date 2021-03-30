@@ -71,39 +71,6 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
       .min(1, "Minimal 1 pegawai"),
   });
 
-  const countEstimateCost = (v = [], fullDayKurs, halfDayKurs) => {
-    let text = "";
-    const listPegawai = v.map((v, index) => {
-      if (index !== 0) text += " + ";
-      const [fullDayDur, halfDayDur = ""] = v.durasi.split(",");
-      let halfDay = 0;
-
-      const fullDay =
-        parseFloat(fullDayDur) * fullDayKurs * parseFloat(v.jaldis);
-
-      text +=
-        "(" +
-        parseFloat(fullDayDur) +
-        " x " +
-        fullDayKurs +
-        " x " +
-        parseFloat(v.jaldis) +
-        ")";
-
-      if (halfDayDur === "5") {
-        halfDay = halfDayKurs * parseFloat(v.jaldis);
-
-        text += " + (" + halfDayKurs + " x " + parseFloat(v.jaldis) + ")";
-      }
-
-      const total = fullDay + halfDay;
-
-      return total;
-    });
-
-    return { value: listPegawai.reduce((acc, cur) => acc + cur, 0), text };
-  };
-
   const countDailyCost = (jaldis, duration, fullDayKurs, halfDayKurs) => {
     const [fullDayDur, halfDayDur = ""] = duration.split(",");
 
@@ -139,7 +106,9 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
             { setSubmitting, resetForm }
           ) => {
             setSubmitting(true);
+
             let response: AxiosResponse;
+
             const newValues = {
               listPegawai: namaPegawai.map((v) => {
                 const total = countDailyCost(
@@ -156,11 +125,12 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
 
             try {
               response = await axios.put("/api/v1/penugasan", newValues);
-              toast.success("SPD berhasil disimpan");
             } catch (e) {
-              toast.error(e.message);
+              toast.error(response.data.message);
               throw new Error(e.message);
             }
+
+            toast.success(response.data.message);
 
             await push("/layanan/penugasan/list");
             resetForm();
@@ -236,6 +206,8 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                           {values.namaPegawai.map((_, index) => {
                             const error = errors.namaPegawai?.[index] || {};
                             const touch = touched.namaPegawai?.[index] || {};
+                            // @ts-ignore
+                            // @ts-ignore
                             return (
                               <div
                                 key={index}
@@ -254,8 +226,10 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       options={listUsers}
                                       placeholder="Input nama pegawai"
                                     />
+                                    {/* @ts-ignore */}
                                     {error?.pegawai && touch.pegawai && (
                                       <small className="text-danger">
+                                        {/* @ts-ignore */}
                                         {error?.pegawai}
                                       </small>
                                     )}
@@ -279,8 +253,10 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       options={optionsGolongan}
                                       placeholder="Pilih Golongan Jalan Dinas"
                                     />
+                                    {/* @ts-ignore */}
                                     {error?.jaldis && touch.jaldis && (
                                       <small className="text-danger">
+                                        {/* @ts-ignore */}
                                         {error?.jaldis}
                                       </small>
                                     )}
@@ -300,8 +276,10 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       }}
                                       placeholder="(e.g 1 hari atau 2,5 hari)"
                                     />
+                                    {/* @ts-ignore */}
                                     {error?.durasi && touch.durasi && (
                                       <small className="text-danger">
+                                        {/* @ts-ignore */}
                                         {error?.durasi}
                                       </small>
                                     )}

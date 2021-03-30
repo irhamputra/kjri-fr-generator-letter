@@ -104,7 +104,10 @@ const UncontrolledDropzone: React.FC<IUDropzone> = ({
   );
 };
 
-const InputComponent: React.FC = ({ endText = "hari", ...props }) => {
+const InputComponent: React.FC<{ endText: string }> = ({
+  endText = "hari",
+  ...props
+}) => {
   return (
     <div className="input-group">
       <input className="form-control" type="text" {...props} />
