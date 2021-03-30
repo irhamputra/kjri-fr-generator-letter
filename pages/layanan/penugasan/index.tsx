@@ -158,8 +158,8 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
               response = await axios.put("/api/v1/penugasan", newValues);
               toast.success("SPD berhasil disimpan");
             } catch (e) {
-              console.log(response);
               toast.error(e.message);
+              throw new Error(e.message);
             }
 
             await push("/layanan/penugasan/list");
@@ -168,11 +168,6 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
           }}
         >
           {({ values, errors, touched }) => {
-            const estimate = countEstimateCost(
-              values.namaPegawai,
-              values.fullDayKurs,
-              values.halfDayKurs
-            );
             return (
               <Form>
                 <div className="mb-3">
@@ -247,7 +242,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                 className={`mb-3 container-fluid p-0`}
                               >
                                 <div className="row">
-                                  <div className="col">
+                                  <div className="col-4">
                                     <label className="form-label">
                                       Nama Staff
                                     </label>
@@ -259,14 +254,14 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       options={listUsers}
                                       placeholder="Input nama pegawai"
                                     />
-                                    {error.pegawai && touch.pegawai && (
+                                    {error?.pegawai && touch.pegawai && (
                                       <small className="text-danger">
-                                        {error.pegawai}
+                                        {error?.pegawai}
                                       </small>
                                     )}
                                   </div>
 
-                                  <div className="col">
+                                  <div className="col-3">
                                     <label className="form-label">
                                       Golongan Jalan Dinas
                                     </label>
@@ -284,14 +279,14 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       options={optionsGolongan}
                                       placeholder="Pilih Golongan Jalan Dinas"
                                     />
-                                    {error.jaldis && touch.jaldis && (
+                                    {error?.jaldis && touch.jaldis && (
                                       <small className="text-danger">
-                                        {error.jaldis}
+                                        {error?.jaldis}
                                       </small>
                                     )}
                                   </div>
 
-                                  <div className="col">
+                                  <div className="col-2">
                                     <label className="form-label">
                                       Lama Perjalanan
                                     </label>
@@ -305,26 +300,28 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       }}
                                       placeholder="(e.g 1 hari atau 2,5 hari)"
                                     />
-                                    {error.durasi && touch.durasi && (
+                                    {error?.durasi && touch.durasi && (
                                       <small className="text-danger">
-                                        {error.durasi}
+                                        {error?.durasi}
                                       </small>
                                     )}
                                   </div>
-                                  <div className="col-1">
+                                  <div className="col">
                                     <label className="form-label">
                                       Uang Harian
                                     </label>
-                                    <h6>
-                                      {format(
-                                        countDailyCost(
-                                          _.jaldis,
-                                          _.durasi,
-                                          values.fullDayKurs,
-                                          values.halfDayKurs
-                                        )
-                                      )}
-                                    </h6>
+                                    <div className="d-flex align-items-center h-75">
+                                      <h6>
+                                        {format(
+                                          countDailyCost(
+                                            _.jaldis,
+                                            _.durasi,
+                                            values.fullDayKurs,
+                                            values.halfDayKurs
+                                          )
+                                        )}
+                                      </h6>
+                                    </div>
                                   </div>
 
                                   <div className="col-1 d-flex align-items-end">
@@ -372,18 +369,8 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                   {errors.surat && touched.surat && (
                     <small className="text-danger">{errors.surat}</small>
                   )}
-                </div>{" "}
-                <div
-                  className="d-flex mt-3"
-                  style={{
-                    alignItems: "baseline",
-                  }}
-                >
-                  <h3>Biaya : {format(estimate.value)}</h3>
-                  <p style={{ color: "rgba(0,0,0,0.6)", marginLeft: 16 }}>
-                    {estimate.text}
-                  </p>
                 </div>
+
                 <div className="mt-3">
                   <button className="btn btn-dark btn" type="submit">
                     Submit SPD
