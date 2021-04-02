@@ -40,7 +40,6 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     nomorSurat: "",
     surat: [],
     fullDayKurs: 0.84,
-    halfDayKurs: 0.4,
   };
 
   const optionsGolongan = listJalDir?.map((v) => ({
@@ -71,7 +70,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
       .min(1, "Minimal 1 pegawai"),
   });
 
-  const countDailyCost = (jaldis, duration, fullDayKurs, halfDayKurs) => {
+  const countDailyCost = (jaldis, duration, fullDayKurs) => {
     const [fullDayDur, halfDayDur = ""] = duration.split(",");
 
     let halfDay = 0;
@@ -79,7 +78,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     const fullDay = parseFloat(fullDayDur) * fullDayKurs * parseFloat(jaldis);
 
     if (halfDayDur === "5") {
-      halfDay = halfDayKurs * parseFloat(jaldis);
+      halfDay = fullDay * 0.4;
     }
 
     return fullDay + halfDay || 0;
@@ -102,7 +101,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={async (
-            { namaPegawai, halfDayKurs, fullDayKurs, ...values },
+            { namaPegawai, fullDayKurs, ...values },
             { setSubmitting, resetForm }
           ) => {
             setSubmitting(true);
@@ -111,12 +110,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
 
             const newValues = {
               listPegawai: namaPegawai.map((v) => {
-                const total = countDailyCost(
-                  v.jaldis,
-                  v.durasi,
-                  fullDayKurs,
-                  halfDayKurs
-                );
+                const total = countDailyCost(v.jaldis, v.durasi, fullDayKurs);
 
                 return { ...v, uangHarian: format(total) };
               }),
@@ -175,18 +169,6 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                           placeholder="Pilih Surat"
                         />
                       </div>
-                      <div className="col-3">
-                        <label className="form-label">Setengah hari :</label>
-                        <Field
-                          className="form-control"
-                          name="halfDayKurs"
-                          endText="$"
-                          as={InputComponent}
-                          value={values.halfDayKurs}
-                          options={optionsSuratTugas}
-                          placeholder="Pilih Surat"
-                        />
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -206,8 +188,6 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                           {values.namaPegawai.map((_, index) => {
                             const error = errors.namaPegawai?.[index] || {};
                             const touch = touched.namaPegawai?.[index] || {};
-                            // @ts-ignore
-                            // @ts-ignore
                             return (
                               <div
                                 key={index}
@@ -294,8 +274,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                           countDailyCost(
                                             _.jaldis,
                                             _.durasi,
-                                            values.fullDayKurs,
-                                            values.halfDayKurs
+                                            values.fullDayKurs
                                           )
                                         )}
                                       </h6>
