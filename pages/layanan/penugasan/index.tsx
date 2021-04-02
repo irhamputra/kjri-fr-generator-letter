@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import parseCookies from "../../../utils/parseCookies";
 import apiInstance from "../../../utils/firebase/apiInstance";
 
-const { format } = new Intl.NumberFormat("de-DE", {
+const { format } = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "EUR",
 });
