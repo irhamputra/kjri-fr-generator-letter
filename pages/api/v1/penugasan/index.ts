@@ -2,11 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
 
-const { format } = new Intl.NumberFormat("de-DE", {
-  style: "currency",
-  currency: "EUR",
-});
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
