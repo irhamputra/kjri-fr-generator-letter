@@ -133,11 +133,15 @@ const SelectComponent: React.FC<Props> = ({
     ? matcher(options)
     : options?.findIndex((valueProp) => valueProp === value);
 
-  const option = options?.[index];
+  const _value = index !== -1 ? options[index] : null;
 
   const handleOnChange = (option, { action }) => {
     if (action === "select-option") {
       setFieldValue(field.name, option?.value);
+    }
+
+    if (action === "clear") {
+      setFieldValue(field.name, "");
     }
   };
 
@@ -149,7 +153,7 @@ const SelectComponent: React.FC<Props> = ({
     <div>
       <Select
         id={field.name}
-        value={value ? option : value}
+        value={_value}
         instanceId={field.name}
         isClearable
         placeholder={placeholder}
@@ -192,6 +196,11 @@ const SelectStaff = ({ placeholder, form, field, value, options }) => {
       form={form}
       value={value}
       field={field}
+      matcher={(opt) =>
+        opt.findIndex((v) => {
+          return v.value?.uid === value.uid;
+        })
+      }
       styles={{ control: (provided) => ({ ...provided, height: 66 }) }}
       options={optionStaff}
     />
