@@ -59,7 +59,7 @@ const ListSurat: NextPage = () => {
                   key={v.item.nomorSurat}
                   title={v.item.tujuanDinas}
                   number={v.item.nomorSurat}
-                  link={`/layanan/penugasan/${v.item.suratTugasId}`}
+                  messageId={v.item.suratTugasId}
                 />
               </div>
             );
@@ -87,7 +87,7 @@ const ListSurat: NextPage = () => {
                   key={v.nomorSurat}
                   title={v.tujuanDinas}
                   number={v.nomorSurat}
-                  link={`/layanan/penugasan/${v.suratTugasId}`}
+                  messageId={v.suratTugasId}
                 />
               </div>
             );

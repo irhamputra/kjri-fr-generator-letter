@@ -1,7 +1,13 @@
 import * as React from "react";
 import Link from "next/link";
 import styles from "../styles/Card.module.css";
-import { FileEarmark } from "react-bootstrap-icons";
+import {
+  FileEarmark,
+  ThreeDotsVertical as MoreVertIcon,
+} from "react-bootstrap-icons";
+
+import { usePopper } from "react-popper";
+import Popup from "./Popup";
 
 interface CardProps {
   title: string;
@@ -11,8 +17,8 @@ interface CardProps {
 
 interface CardMessageProps {
   title: string;
-  link: string;
   number: number;
+  messageId: string;
 }
 
 const Card: React.FC<CardProps> = ({ title, link, icon }) => {
@@ -44,23 +50,77 @@ const Card: React.FC<CardProps> = ({ title, link, icon }) => {
   );
 };
 
-const MessageCard: React.FC<CardMessageProps> = ({ link, title, number }) => {
+const MessageCard: React.FC<CardMessageProps> = ({
+  title,
+  number,
+  messageId,
+}) => {
+  const [showOption, setShowOption] = React.useState(false);
+  const [referenceElement, setReferenceElement] = React.useState(null);
+
+  const [showMenu, setShowMenu] = React.useState(false);
+
   return (
-    <Link href={link} passHref>
-      <a>
-        <div className="p-3 d-flex" style={{ background: "#f8f8f8" }}>
-          <FileEarmark
-            height={48}
-            width={48}
-            style={{ color: "rgba(0,0,0,0.5)" }}
-          />
-          <div className="mx-2">
-            <small>{number}</small>
-            <div style={{ fontWeight: "bold" }}>{title}</div>
+    <div
+      style={{ position: "relative" }}
+      onMouseEnter={() => setShowOption(true)}
+      onMouseLeave={() => setShowOption(false)}
+    >
+      <Link href={"/layanan/penugasan/" + messageId} passHref>
+        <a>
+          <div className="p-3 d-flex " style={{ background: "#f8f8f8" }}>
+            <FileEarmark
+              height={48}
+              width={48}
+              style={{ color: "rgba(0,0,0,0.5)" }}
+            />
+            <div className="mx-2">
+              <small>{number}</small>
+              <div style={{ fontWeight: "bold" }}>{title}</div>
+            </div>
           </div>
+        </a>
+      </Link>
+
+      <div
+        className={styles.messageCard}
+        style={{ visibility: showOption || showMenu ? "visible" : "hidden" }}
+      >
+        <div ref={setReferenceElement}>
+          <MoreVertIcon
+            className={styles.iconMC}
+            onClick={() => setShowMenu(true)}
+          />
         </div>
-      </a>
-    </Link>
+
+        <Popup
+          open={showMenu}
+          anchorRef={referenceElement}
+          onClickOutside={() => setShowMenu(false)}
+        >
+          <div
+            className="p-1"
+            style={{
+              background: "white",
+            }}
+          >
+            <div className="dropdown-menu-left">
+              <Link href={`/layanan/penugasan/${messageId}?edit=true`} passHref>
+                <a>
+                  <button className="dropdown-item" type="button">
+                    Edit
+                  </button>
+                </a>
+              </Link>
+
+              <button className="dropdown-item" type="button">
+                Delete
+              </button>
+            </div>
+          </div>
+        </Popup>
+      </div>
+    </div>
   );
 };
 
