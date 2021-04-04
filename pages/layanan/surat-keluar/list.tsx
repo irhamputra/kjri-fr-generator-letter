@@ -57,7 +57,8 @@ const ListSuratKeluar: NextPage = () => {
                     key={v.item.id}
                     title={v.item.content}
                     number={v.item.nomorSurat}
-                    link={`/layanan/surat-keluar/${v.item.id}`}
+                    messageId={v.item.id}
+                    type="SK"
                   />
                 </div>
               );
@@ -85,7 +86,8 @@ const ListSuratKeluar: NextPage = () => {
                     key={v.id}
                     title={v.content}
                     number={v.nomorSurat}
-                    link={`/layanan/surat-keluar/${v.id}`}
+                    messageId={v.id}
+                    type="SK"
                   />
                 </div>
               );

@@ -19,6 +19,7 @@ interface CardMessageProps {
   title: string;
   number: number;
   messageId: string;
+  type?: "SPD" | "SK";
 }
 
 const Card: React.FC<CardProps> = ({ title, link, icon }) => {
@@ -54,19 +55,21 @@ const MessageCard: React.FC<CardMessageProps> = ({
   title,
   number,
   messageId,
+  type = "SPD",
 }) => {
   const [showOption, setShowOption] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState(null);
 
   const [showMenu, setShowMenu] = React.useState(false);
-
+  const baseLink =
+    type === "SPD" ? "/layanan/penugasan/" : "/layanan/surat-keluar/";
   return (
     <div
       style={{ position: "relative" }}
       onMouseEnter={() => setShowOption(true)}
       onMouseLeave={() => setShowOption(false)}
     >
-      <Link href={"/layanan/penugasan/" + messageId} passHref>
+      <Link href={"" + messageId} passHref>
         <a>
           <div className="p-3 d-flex " style={{ background: "#f8f8f8" }}>
             <FileEarmark
@@ -105,7 +108,7 @@ const MessageCard: React.FC<CardMessageProps> = ({
             }}
           >
             <div className="dropdown-menu-left">
-              <Link href={`/layanan/penugasan/${messageId}?edit=true`} passHref>
+              <Link href={`${baseLink}${messageId}?edit=true`} passHref>
                 <a>
                   <button className="dropdown-item" type="button">
                     Edit
