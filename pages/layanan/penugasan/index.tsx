@@ -25,7 +25,10 @@ const { format } = new Intl.NumberFormat("en-US", {
   currency: "EUR",
 });
 
-const Penugasan: NextPage<{ isAdmin: boolean }> = ({ isAdmin, editId }) => {
+const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
+  isAdmin,
+  editId,
+}) => {
   const { push } = useRouter();
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
 
@@ -47,9 +50,8 @@ const Penugasan: NextPage<{ isAdmin: boolean }> = ({ isAdmin, editId }) => {
   } = useQuerySuratTugas();
 
   const { data: listUsers, isLoading: usersLoading } = useQueryUsers();
-  console.log(editedData);
   const initialValues = {
-    namaPegawai: !editedDataLoading ? editedData.listPegawai : [],
+    namaPegawai: editedData?.listPegawai || [],
     nomorSurat: editedData?.nomorSurat || "",
     surat: [],
     fullDayKurs: 0.84,
@@ -210,8 +212,6 @@ const Penugasan: NextPage<{ isAdmin: boolean }> = ({ isAdmin, editId }) => {
                     render={(arrayHelpers) => (
                       <>
                         <div className="p-0 mb-1">
-                          {console.log(values.namaPegawai, '"ASDsa')}
-
                           {values.namaPegawai.map((_, index) => {
                             const error = errors.namaPegawai?.[index] || {};
                             const touch = touched.namaPegawai?.[index] || {};
@@ -257,15 +257,9 @@ const Penugasan: NextPage<{ isAdmin: boolean }> = ({ isAdmin, editId }) => {
                                         }),
                                       }}
                                       value={_.jaldis}
-                                      matcher={(opt) =>
-                                        opt.findIndex((v) => {
-                                          return v.value === _.jaldis;
-                                        })
-                                      }
                                       options={optionsGolongan}
                                       placeholder="Pilih Golongan Jalan Dinas"
                                     />
-                                    {JSON.stringify(_.jaldis)}
                                     {/* @ts-ignore */}
                                     {error?.jaldis && touch.jaldis && (
                                       <small className="text-danger">
@@ -363,7 +357,7 @@ const Penugasan: NextPage<{ isAdmin: boolean }> = ({ isAdmin, editId }) => {
 
                 <div className="mt-3">
                   <button className="btn btn-dark btn" type="submit">
-                    Submit SPD
+                    {editId ? "Edit SPD" : "Submit SPD"}
                   </button>
 
                   <button
