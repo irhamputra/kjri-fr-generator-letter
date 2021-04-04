@@ -18,15 +18,28 @@ import useQueryUsers from "../../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
 import parseCookies from "../../../utils/parseCookies";
 import apiInstance from "../../../utils/firebase/apiInstance";
+import { useQuery } from "react-query";
 
 const { format } = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "EUR",
 });
 
-const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
+const Penugasan: NextPage<{ isAdmin: boolean }> = ({ isAdmin, editId }) => {
   const { push } = useRouter();
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
+
+  const { data: editedData, isLoading: editedDataLoading } = useQuery(
+    ["fetchSingleSurat", editId],
+    async () => {
+      const { data } = await axios.get(`/api/v1/surat-tugas/${editId}`);
+
+      return data;
+    },
+    {
+      enabled: !!editId,
+    }
+  );
 
   const {
     data: listSuratTugas,
@@ -34,10 +47,10 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
   } = useQuerySuratTugas();
 
   const { data: listUsers, isLoading: usersLoading } = useQueryUsers();
-
+  console.log(editedData);
   const initialValues = {
-    namaPegawai: [],
-    nomorSurat: "",
+    namaPegawai: !editedDataLoading ? editedData.listPegawai : [],
+    nomorSurat: editedData?.nomorSurat || "",
     surat: [],
     fullDayKurs: 0.84,
   };
@@ -100,6 +113,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
+          enableReinitialize
           onSubmit={async (
             { namaPegawai, fullDayKurs, ...values },
             { setSubmitting, resetForm }
@@ -136,15 +150,26 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
               <Form>
                 <div className="mb-3">
                   <label className="form-label">Nomor Surat</label>
-                  <Field
-                    className="form-control"
-                    name="nomorSurat"
-                    component={SelectComponent}
-                    options={optionsSuratTugas}
-                    placeholder="Pilih Surat"
-                  />
-                  {errors.nomorSurat && touched.nomorSurat && (
-                    <small className="text-danger">{errors.nomorSurat}</small>
+                  {editedData?.nomorSurat && editedData?.tujuanDinas ? (
+                    <h5>
+                      {editedData.nomorSurat + " - " + editedData.tujuanDinas}
+                    </h5>
+                  ) : (
+                    <>
+                      <Field
+                        className="form-control"
+                        name="nomorSurat"
+                        component={SelectComponent}
+                        value={values.nomorSurat}
+                        options={optionsSuratTugas}
+                        placeholder="Pilih Surat"
+                      />
+                      {errors.nomorSurat && touched.nomorSurat && (
+                        <small className="text-danger">
+                          {errors.nomorSurat}
+                        </small>
+                      )}
+                    </>
                   )}
                 </div>
                 <div className="mb-3">
@@ -185,6 +210,8 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                     render={(arrayHelpers) => (
                       <>
                         <div className="p-0 mb-1">
+                          {console.log(values.namaPegawai, '"ASDsa')}
+
                           {values.namaPegawai.map((_, index) => {
                             const error = errors.namaPegawai?.[index] || {};
                             const touch = touched.namaPegawai?.[index] || {};
@@ -203,7 +230,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       name={`namaPegawai.${index}.pegawai`}
                                       value={_.pegawai}
                                       component={SelectStaff}
-                                      options={listUsers}
+                                      options={usersLoading ? [] : listUsers}
                                       placeholder="Input nama pegawai"
                                     />
                                     {/* @ts-ignore */}
@@ -230,9 +257,15 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                         }),
                                       }}
                                       value={_.jaldis}
+                                      matcher={(opt) =>
+                                        opt.findIndex((v) => {
+                                          return v.value === _.jaldis;
+                                        })
+                                      }
                                       options={optionsGolongan}
                                       placeholder="Pilih Golongan Jalan Dinas"
                                     />
+                                    {JSON.stringify(_.jaldis)}
                                     {/* @ts-ignore */}
                                     {error?.jaldis && touch.jaldis && (
                                       <small className="text-danger">
