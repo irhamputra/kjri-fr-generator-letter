@@ -131,7 +131,7 @@ const SelectComponent: React.FC<Props> = ({
   // reconstruct option from value
   const index = matcher
     ? matcher(options)
-    : options?.findIndex((valueProp) => valueProp === value);
+    : options?.findIndex((valueProp) => valueProp.value === value);
 
   const _value = index !== -1 ? options[index] : null;
 
