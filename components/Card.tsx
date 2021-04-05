@@ -6,8 +6,9 @@ import {
   ThreeDotsVertical as MoreVertIcon,
 } from "react-bootstrap-icons";
 
-import { usePopper } from "react-popper";
 import Popup from "./Popup";
+import useDeleteSPDMutation from "../hooks/mutation/useDeleteSPDMutation";
+import Modal from "react-modal";
 
 interface CardProps {
   title: string;
@@ -59,10 +60,27 @@ const MessageCard: React.FC<CardMessageProps> = ({
 }) => {
   const [showOption, setShowOption] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState(null);
-
   const [showMenu, setShowMenu] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const { mutateAsync } = useDeleteSPDMutation();
+
   const baseLink =
     type === "SPD" ? "/layanan/penugasan/" : "/layanan/surat-keluar/";
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      border: "0px",
+    },
+  };
+
+  const handleDelete = type === "SPD" ? mutateAsync : () => {};
+
   return (
     <div
       style={{ position: "relative" }}
@@ -116,13 +134,63 @@ const MessageCard: React.FC<CardMessageProps> = ({
                 </a>
               </Link>
 
-              <button className="dropdown-item" type="button">
+              <button
+                className="dropdown-item"
+                type="button"
+                onClick={() => {
+                  setOpen(true);
+                  setShowMenu(false);
+                }}
+              >
                 Delete
               </button>
             </div>
           </div>
         </Popup>
       </div>
+      <Modal
+        isOpen={open}
+        onRequestClose={() => setOpen(false)}
+        contentLabel="Example Modal"
+        style={customStyles}
+      >
+        <div
+          className="modal-dialog"
+          role="document"
+          style={{ width: "100vw" }}
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Hapus SPPD?</h5>
+            </div>
+            <div className="modal-body">
+              <p>
+                Kamu tidak akan bisa mengembalikan surat yang telah dihapus.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={async () => {
+                  await handleDelete(messageId);
+                  setOpen(false);
+                }}
+              >
+                Hapus
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-dismiss="modal"
+                onClick={() => setOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

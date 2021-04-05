@@ -21,4 +21,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.end();
     }
   }
+
+  if (req.method === "DELETE") {
+    try {
+      await db
+        .collection("SuratTugas")
+        .doc(req.query.id as string)
+        .delete();
+
+      res.status(200).json({ message: "data deleted successfully" });
+      res.end();
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+      res.end();
+    }
+  }
 };
