@@ -72,12 +72,14 @@ const SuratKeluar: NextPage = () => {
       const incrementNumber = `00${listSuratKeluar?.total + 1}`;
       const thisMonth = dayjs().month() + 1;
       const thisYear = dayjs().year();
+
       const labelJenisSurat = listJenisSurat?.find(
         (v) => v.label === values.jenisSurat
       ).label;
 
       let jenisSurat = "";
       let suffixFRA = false;
+      let suratKeputusan = "";
 
       if (labelJenisSurat === "Surat Pengumuman") {
         jenisSurat = "PEN";
@@ -87,15 +89,23 @@ const SuratKeluar: NextPage = () => {
         jenisSurat = "SUKET";
       }
 
-      if (!["Nota Dinas", "Surat Edaran"].includes(labelJenisSurat)) {
+      if (
+        !["Nota Dinas", "Surat Edaran", "Surat Keputusan"].includes(
+          labelJenisSurat
+        )
+      ) {
         suffixFRA = true;
+      }
+
+      if (labelJenisSurat === "Surat Keputusan") {
+        suratKeputusan = "SK-FRA";
       }
 
       await setFieldValue(
         "nomorSurat",
-        `${incrementNumber}/${jenisSurat ? `${jenisSurat}/` : ""}${
-          values.arsipId
-        }/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`
+        `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
+          jenisSurat ? `${jenisSurat}/` : ""
+        }${values.arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`
       );
       setDisabled(true);
     } catch (e) {
