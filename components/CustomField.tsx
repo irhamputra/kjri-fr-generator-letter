@@ -19,6 +19,15 @@ interface IUDropzone {
   values: File[];
   onClickReset: (event: unknown) => void;
 }
+
+interface InputProps
+  extends React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
+  endText: string;
+}
+
 const DropzoneComponent: React.FC<any> = ({
   field,
   form: { setFieldValue, setFieldTouched, ...restForm },
@@ -104,16 +113,18 @@ const UncontrolledDropzone: React.FC<IUDropzone> = ({
   );
 };
 
-const InputComponent: React.FC<{ endText: string }> = ({
+const InputComponent: React.FC<InputProps> = ({
   endText = "hari",
   ...props
 }) => {
   return (
     <div className="input-group">
       <input className="form-control" type="text" {...props} />
-      <span className="input-group-text" id="durasi-hari">
-        {endText}
-      </span>
+      {endText && (
+        <span className="input-group-text" id="durasi-hari">
+          {endText}
+        </span>
+      )}
     </div>
   );
 };
