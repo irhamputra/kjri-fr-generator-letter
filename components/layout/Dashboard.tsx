@@ -5,7 +5,6 @@ import Sidebar from "../Sidebar";
 const DashboardLayout: React.FC<{
   displayName: string;
   isAdmin: boolean;
-  uid: string;
 }> = ({ children, isAdmin, displayName }) => {
   return (
     <>
