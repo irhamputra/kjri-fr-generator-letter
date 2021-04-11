@@ -25,13 +25,41 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .where("email", "==", user.email)
       .get();
     const dataSnapshot = snapshot.docs[0].data();
+    res.status(200).json({
+      isAdmin: adminRole.includes(dataSnapshot.role),
+      ...dataSnapshot,
+    });
+    res.end();
+  }
 
-    res
-      .status(200)
-      .json({
-        isAdmin: adminRole.includes(dataSnapshot.role),
-        ...dataSnapshot,
-      });
+  if (req.method === "PUT") {
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const { displayName, nip } = req.body;
+
+    let id = "";
+
+    const { data } = await authInstance.post("/accounts:lookup", {
+      idToken: token,
+    });
+
+    const [user] = data.users;
+
+    const snapshot = await db
+      .collection("Users")
+      .limit(1)
+      .where("email", "==", user.email)
+      .get();
+
+    snapshot.forEach((doc) => {
+      id = doc.id;
+    });
+
+    await db.collection("Users").doc(id).update({
+      displayName,
+      nip,
+    });
+
+    res.status(200).json({ message: "Update Profile" });
     res.end();
   }
 
