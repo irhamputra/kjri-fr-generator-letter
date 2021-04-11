@@ -10,14 +10,14 @@ import { DefaultSeo } from "next-seo";
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps, email, isAdmin }) {
+function MyApp({ Component, pageProps, displayName, isAdmin }) {
   return (
     <QueryClientProvider client={queryClient}>
       <DefaultSeo
         title="Sistem Aplikasi KJRI Frankfurt"
         description="Sistem Aplikasi KJRI Frankfurt"
       />
-      <MainLayout email={email} isAdmin={isAdmin}>
+      <MainLayout displayName={displayName} isAdmin={isAdmin}>
         <Component {...pageProps} />
         <Toaster
           position="bottom-right"
@@ -54,14 +54,14 @@ MyApp.getInitialProps = async ({ ctx }) => {
     const idToken = cookie["KJRIFR-U"];
 
     const {
-      data: { email, isAdmin },
+      data: { isAdmin, displayName },
     } = await axios.get(`${BASE_URL}/api/v1/user`, {
       headers: {
         authorization: `Bearer ${idToken}`,
       },
     });
 
-    return { email, isAdmin };
+    return { displayName, isAdmin };
   } catch (e) {
     throw new Error(e.message);
   }
