@@ -144,7 +144,7 @@ const SelectComponent: React.FC<Props> = ({
     ? matcher(options)
     : options?.findIndex((valueProp) => valueProp.value === value);
 
-  const _value = index !== -1 ? options[index] : null;
+  const _value = index !== -1 ? options?.[index] : null;
 
   const handleOnChange = (option, { action }) => {
     if (action === "select-option") {
