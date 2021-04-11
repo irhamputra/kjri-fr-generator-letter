@@ -2,11 +2,10 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import DashboardLayout from "./Dashboard";
 
-const MainLayout: React.FC<{ email: string; isAdmin: boolean }> = ({
-  children,
-  isAdmin,
-  email,
-}) => {
+const MainLayout: React.FC<{
+  displayName: string;
+  isAdmin: boolean;
+}> = ({ children, isAdmin, displayName }) => {
   const { pathname } = useRouter();
 
   const isAuthPage = ["/", "/forget-password", "/_error"].includes(pathname);
@@ -17,7 +16,7 @@ const MainLayout: React.FC<{ email: string; isAdmin: boolean }> = ({
         {isAuthPage ? (
           children
         ) : (
-          <DashboardLayout email={email} isAdmin={isAdmin}>
+          <DashboardLayout displayName={displayName} isAdmin={isAdmin}>
             {children}
           </DashboardLayout>
         )}

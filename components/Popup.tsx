@@ -1,3 +1,4 @@
+import { Placement } from "@popperjs/core";
 import React from "react";
 import { usePopper } from "react-popper";
 import useOnClickOutside from "../hooks/useOnClickOutside";
@@ -6,6 +7,7 @@ interface PopupProps {
   anchorRef: Element;
   onClickOutside: () => void;
   open: boolean;
+  placement?: Placement;
 }
 
 const Popup: React.FC<PopupProps> = ({
@@ -13,6 +15,7 @@ const Popup: React.FC<PopupProps> = ({
   onClickOutside,
   open,
   children,
+  placement = "left-start",
 }) => {
   const [popperElement, setPopperElement] = React.useState(null);
   const [arrowElement, setArrowElement] = React.useState(null);
@@ -24,7 +27,7 @@ const Popup: React.FC<PopupProps> = ({
     popperElement,
     {
       modifiers: [{ name: "arrow", options: { element: arrowElement } }],
-      placement: "left-start",
+      placement,
     }
   );
   return (
