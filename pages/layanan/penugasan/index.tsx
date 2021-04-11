@@ -18,15 +18,31 @@ import useQueryUsers from "../../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
 import parseCookies from "../../../utils/parseCookies";
 import apiInstance from "../../../utils/firebase/apiInstance";
+import { useQuery } from "react-query";
 
 const { format } = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "EUR",
 });
 
-const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
+const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
+  isAdmin,
+  editId,
+}) => {
   const { push } = useRouter();
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
+
+  const { data: editedData, isLoading: editedDataLoading } = useQuery(
+    ["fetchSingleSurat", editId],
+    async () => {
+      const { data } = await axios.get(`/api/v1/surat-tugas/${editId}`);
+
+      return data;
+    },
+    {
+      enabled: !!editId,
+    }
+  );
 
   const {
     data: listSuratTugas,
@@ -34,10 +50,9 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
   } = useQuerySuratTugas();
 
   const { data: listUsers, isLoading: usersLoading } = useQueryUsers();
-
   const initialValues = {
-    namaPegawai: [],
-    nomorSurat: "",
+    namaPegawai: editedData?.listPegawai || [],
+    nomorSurat: editedData?.nomorSurat || "",
     surat: [],
     fullDayKurs: 0.84,
   };
@@ -101,6 +116,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
+          enableReinitialize
           onSubmit={async (
             { namaPegawai, fullDayKurs, ...values },
             { setSubmitting, resetForm }
@@ -137,15 +153,26 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
               <Form>
                 <div className="mb-3">
                   <label className="form-label">Nomor Surat</label>
-                  <Field
-                    className="form-control"
-                    name="nomorSurat"
-                    component={SelectComponent}
-                    options={optionsSuratTugas}
-                    placeholder="Pilih Surat"
-                  />
-                  {errors.nomorSurat && touched.nomorSurat && (
-                    <small className="text-danger">{errors.nomorSurat}</small>
+                  {editedData?.nomorSurat && editedData?.tujuanDinas ? (
+                    <h5>
+                      {editedData.nomorSurat + " - " + editedData.tujuanDinas}
+                    </h5>
+                  ) : (
+                    <>
+                      <Field
+                        className="form-control"
+                        name="nomorSurat"
+                        component={SelectComponent}
+                        value={values.nomorSurat}
+                        options={optionsSuratTugas}
+                        placeholder="Pilih Surat"
+                      />
+                      {errors.nomorSurat && touched.nomorSurat && (
+                        <small className="text-danger">
+                          {errors.nomorSurat}
+                        </small>
+                      )}
+                    </>
                   )}
                 </div>
                 <div className="mb-3">
@@ -204,7 +231,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
                                       name={`namaPegawai.${index}.pegawai`}
                                       value={_.pegawai}
                                       component={SelectStaff}
-                                      options={listUsers}
+                                      options={usersLoading ? [] : listUsers}
                                       placeholder="Input nama pegawai"
                                     />
                                     {/* @ts-ignore */}
@@ -331,7 +358,7 @@ const Penugasan: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
 
                 <div className="mt-3">
                   <button className="btn btn-dark btn" type="submit">
-                    Submit SPD
+                    {editId ? "Edit SPD" : "Submit SPD"}
                   </button>
 
                   <button

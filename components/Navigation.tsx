@@ -3,9 +3,14 @@ import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { ChevronDown } from "react-bootstrap-icons";
+import Popup from "./Popup";
+import Link from "next/link";
 
-const Navigation: React.FC<{ email: string }> = ({ email }) => {
-  const { replace, reload } = useRouter();
+const Navigation: React.FC<{ displayName: string }> = ({ displayName }) => {
+  const { replace, reload, push } = useRouter();
+  const [showMenu, setShowMenu] = React.useState(false);
+  const [referenceElement, setReferenceElement] = React.useState(null);
 
   const handleLogout = async () => {
     try {
@@ -27,15 +32,55 @@ const Navigation: React.FC<{ email: string }> = ({ email }) => {
   return (
     <nav className="bg-light d-flex justify-content-end p-3">
       <div className="d-flex align-items-center">
-        <p className="ms-auto my-0">
-          Hello, <strong>{email}</strong>
-        </p>
-        <button
+        <div
+          className="d-flex p-2 align-items-center px-3"
+          style={{ borderRadius: 20, cursor: "pointer" }}
+          onClick={() => setShowMenu(true)}
+          ref={setReferenceElement}
+        >
+          <p className="ms-auto my-0 mx-2">
+            Hello, <strong>{displayName}</strong>
+          </p>
+          <ChevronDown />
+        </div>
+        <Popup
+          open={showMenu}
+          anchorRef={referenceElement}
+          onClickOutside={() => setShowMenu(false)}
+          placement="bottom"
+        >
+          <div
+            className="p-2"
+            style={{
+              background: "white",
+            }}
+          >
+            <div className="dropdown-menu-left">
+              <button
+                className="dropdown-item"
+                type="button"
+                onClick={() => push("/profile/me")}
+              >
+                Edit Profile
+              </button>
+              <li className="dropdown-divider"></li>
+              <button
+                className="dropdown-item"
+                type="button"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </Popup>
+
+        {/* <button
           className="btn btn-link fw-bold text-dark"
           onClick={handleLogout}
         >
           Keluar
-        </button>
+        </button> */}
       </div>
     </nav>
   );

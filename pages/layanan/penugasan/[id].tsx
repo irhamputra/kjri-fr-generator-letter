@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import axios from "axios";
+import Penugasan from ".";
 
 const SuratPenugasanId: NextPage = () => {
   const { query, push } = useRouter();
@@ -13,11 +14,17 @@ const SuratPenugasanId: NextPage = () => {
       const { data } = await axios.get(`/api/v1/surat-tugas/${query.id}`);
 
       return data;
+    },
+    {
+      enabled: !query.edit,
     }
   );
 
   if (isLoading) return <h4>Loading...</h4>;
 
+  if (query.edit) {
+    return <Penugasan isAdmin={true} editId={query.id as string} />;
+  }
   return (
     <>
       <button

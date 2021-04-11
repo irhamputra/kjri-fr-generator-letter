@@ -19,6 +19,15 @@ interface IUDropzone {
   values: File[];
   onClickReset: (event: unknown) => void;
 }
+
+interface InputProps
+  extends React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
+  endText: string;
+}
+
 const DropzoneComponent: React.FC<any> = ({
   field,
   form: { setFieldValue, setFieldTouched, ...restForm },
@@ -104,16 +113,18 @@ const UncontrolledDropzone: React.FC<IUDropzone> = ({
   );
 };
 
-const InputComponent: React.FC<{ endText: string }> = ({
+const InputComponent: React.FC<InputProps> = ({
   endText = "hari",
   ...props
 }) => {
   return (
     <div className="input-group">
       <input className="form-control" type="text" {...props} />
-      <span className="input-group-text" id="durasi-hari">
-        {endText}
-      </span>
+      {endText && (
+        <span className="input-group-text" id="durasi-hari">
+          {endText}
+        </span>
+      )}
     </div>
   );
 };
@@ -131,13 +142,17 @@ const SelectComponent: React.FC<Props> = ({
   // reconstruct option from value
   const index = matcher
     ? matcher(options)
-    : options?.findIndex((valueProp) => valueProp === value);
+    : options?.findIndex((valueProp) => valueProp.value === value);
 
-  const option = options?.[index];
+  const _value = index !== -1 ? options?.[index] : null;
 
   const handleOnChange = (option, { action }) => {
     if (action === "select-option") {
       setFieldValue(field.name, option?.value);
+    }
+
+    if (action === "clear") {
+      setFieldValue(field.name, "");
     }
   };
 
@@ -149,7 +164,7 @@ const SelectComponent: React.FC<Props> = ({
     <div>
       <Select
         id={field.name}
-        value={value ? option : value}
+        value={_value}
         instanceId={field.name}
         isClearable
         placeholder={placeholder}
@@ -192,6 +207,11 @@ const SelectStaff = ({ placeholder, form, field, value, options }) => {
       form={form}
       value={value}
       field={field}
+      matcher={(opt) =>
+        opt.findIndex((v) => {
+          return v.value?.uid === value.uid;
+        })
+      }
       styles={{ control: (provided) => ({ ...provided, height: 66 }) }}
       options={optionStaff}
     />
