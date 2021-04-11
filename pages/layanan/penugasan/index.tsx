@@ -90,13 +90,14 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
 
     let halfDay = 0;
 
-    const fullDay = parseFloat(fullDayDur) * fullDayKurs * parseFloat(jaldis);
+    const days = parseFloat(fullDayDur) * fullDayKurs * parseFloat(jaldis);
+    const oneFullDay = 1 * fullDayKurs * parseFloat(jaldis);
 
     if (halfDayDur === "5") {
-      halfDay = fullDay * 0.4;
+      halfDay = oneFullDay * 0.4;
     }
 
-    return fullDay + halfDay || 0;
+    return days + halfDay || 0;
   };
 
   if (suratTugasLoading && jalDirLoading && usersLoading)

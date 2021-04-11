@@ -12,29 +12,7 @@ import { toast } from "react-hot-toast";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
 import { useRouter } from "next/router";
 import capitalizeFirstLetter from "../../../utils/capitalize";
-
-const listJenisSurat = [
-  {
-    id: 2983748,
-    label: "Surat Biasa",
-    value: "1",
-  },
-  {
-    id: 234235235,
-    label: "Surat Pengumuman",
-    value: "2",
-  },
-  {
-    id: 4576457,
-    label: "Surat Pengantar",
-    value: "3",
-  },
-  {
-    id: 3463463463,
-    label: "Surat Keterangan",
-    value: "4",
-  },
-];
+import useQueryJenisSurat from "../../../hooks/query/useQueryJenisSurat";
 
 const SuratKeluar: NextPage = () => {
   const [disabled, setDisabled] = React.useState(false);
@@ -52,6 +30,7 @@ const SuratKeluar: NextPage = () => {
   const { data: listArsip } = useQueryArsip();
   const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation();
   const { data: listSuratKeluar } = useQuerySuratKeluar();
+  const { data: listJenisSurat } = useQueryJenisSurat();
 
   const {
     values,
@@ -90,24 +69,43 @@ const SuratKeluar: NextPage = () => {
       return await setFieldValue("nomorSurat", "");
 
     try {
-      const incrementNumber = listSuratKeluar?.total + 1;
+      const incrementNumber = `00${listSuratKeluar?.total + 1}`;
       const thisMonth = dayjs().month() + 1;
       const thisYear = dayjs().year();
 
-      let jenisSurat = "";
+      const labelJenisSurat = listJenisSurat?.find(
+        (v) => v.label === values.jenisSurat
+      ).label;
 
-      if (values.jenisSurat === "2") {
+      let jenisSurat = "";
+      let suffixFRA = false;
+      let suratKeputusan = "";
+
+      if (labelJenisSurat === "Surat Pengumuman") {
         jenisSurat = "PEN";
       }
-      if (values.jenisSurat === "4") {
-        jenisSurat = "KET";
+
+      if (labelJenisSurat === "Surat Keterangan") {
+        jenisSurat = "SUKET";
+      }
+
+      if (
+        !["Nota Dinas", "Surat Edaran", "Surat Keputusan"].includes(
+          labelJenisSurat
+        )
+      ) {
+        suffixFRA = true;
+      }
+
+      if (labelJenisSurat === "Surat Keputusan") {
+        suratKeputusan = "SK-FRA";
       }
 
       await setFieldValue(
         "nomorSurat",
-        `${incrementNumber}/${jenisSurat ? `${jenisSurat}/` : ""}${
-          values.arsipId
-        }/${thisMonth}/${thisYear}`
+        `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
+          jenisSurat ? `${jenisSurat}/` : ""
+        }${values.arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`
       );
       setDisabled(true);
     } catch (e) {
@@ -135,9 +133,9 @@ const SuratKeluar: NextPage = () => {
               onChange={handleChange}
             >
               <option value="">Pilih Jenis Surat</option>
-              {listJenisSurat.map((v) => {
+              {listJenisSurat?.map((v) => {
                 return (
-                  <option key={v.id} value={v.value}>
+                  <option key={v.id} value={v.label}>
                     {v.label}
                   </option>
                 );
