@@ -36,6 +36,8 @@ const MyProfile: React.FC<{ userData }> = ({
   return (
     <form onSubmit={handleSubmit}>
       <div className="container-sm" style={{ maxWidth: "576px" }}>
+        <h3 className="mt-5 mb-3">Profile</h3>
+
         <div className="row">
           <div className="col">
             <label className="form-label">Nama Tampilan</label>
