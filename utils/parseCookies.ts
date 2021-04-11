@@ -6,7 +6,7 @@ import { parse } from "cookie";
 
 type ParsedCookie = { [p: string]: string };
 
-const parseCookies = (req: IncomingMessage): ParsedCookie => {
+const parseCookies = (req?: IncomingMessage): ParsedCookie => {
   return cookie.parse(req ? req.headers.cookie || "" : document.cookie);
 };
 
