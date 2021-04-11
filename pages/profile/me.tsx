@@ -4,14 +4,17 @@ import React from "react";
 import { object } from "yup";
 import useEditUser from "../../hooks/mutation/useUserMutation";
 import useQueryUser from "../../hooks/query/useQueryUser";
+import apiInstance from "../../utils/firebase/apiInstance";
+import parseCookies from "../../utils/parseCookies";
 import createSchema from "../../utils/validation/schema";
 
-const MyProfile: React.FC<{}> = () => {
-  const { data, isFetched } = useQueryUser();
+const MyProfile: React.FC<{ userData }> = ({
+  userData: { displayName, nip },
+}) => {
   const { back } = useRouter();
   const initialValues = {
-    displayName: data?.displayName,
-    nip: data?.nip,
+    displayName: displayName,
+    nip: nip,
   };
 
   const { mutateAsync, isLoading } = useEditUser();
@@ -29,7 +32,6 @@ const MyProfile: React.FC<{}> = () => {
     },
   });
 
-  if (!isFetched) return <div>Loading...</div>;
   if (isLoading) return <div>Updating...</div>;
   return (
     <form onSubmit={handleSubmit}>
@@ -82,5 +84,30 @@ const MyProfile: React.FC<{}> = () => {
     </form>
   );
 };
+
+export async function getServerSideProps({ req }) {
+  const cookie = parseCookies(req);
+  const idToken = cookie["KJRIFR-U"];
+  try {
+    const {
+      data: { nip, displayName },
+    } = await apiInstance.get("/api/v1/user", {
+      headers: {
+        authorization: `Bearer ${idToken}`,
+      },
+    });
+
+    return {
+      props: {
+        userData: {
+          displayName,
+          nip,
+        },
+      },
+    };
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
 
 export default MyProfile;
