@@ -59,7 +59,7 @@ const Navigation: React.FC<{ displayName: string }> = ({ displayName }) => {
               <button
                 className="dropdown-item"
                 type="button"
-                onClick={() => push("/profile/me?edit=true")}
+                onClick={() => push("/profile/me")}
               >
                 Edit Profile
               </button>
