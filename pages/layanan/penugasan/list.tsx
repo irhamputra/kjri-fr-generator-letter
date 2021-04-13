@@ -82,7 +82,7 @@ const ListSurat: NextPage = () => {
         ? null
         : listSuratTugas?.map?.((v) => {
             return (
-              <div key={v.suratTugasId} className="col-4 my-2">
+              <div key={v.suratTugasId} className="col-4 col-sm-6 my-2">
                 <MessageCard
                   key={v.nomorSurat}
                   title={v.tujuanDinas}

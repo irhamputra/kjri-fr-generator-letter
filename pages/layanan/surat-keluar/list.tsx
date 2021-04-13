@@ -52,7 +52,7 @@ const ListSuratKeluar: NextPage = () => {
         {filteredList && searchQuery.length > 0
           ? filteredList.map((v) => {
               return (
-                <div key={v.item.id} className="col-4 my-2">
+                <div key={v.item.id} className="col-md-4 col-sm-6 my-2">
                   <MessageCard
                     key={v.item.id}
                     title={v.item.content}
@@ -81,7 +81,7 @@ const ListSuratKeluar: NextPage = () => {
           ? null
           : listSuratKeluar?.listSurat?.map((v) => {
               return (
-                <div key={v.id} className="col-4 my-2">
+                <div key={v.id} className="col-md-4 col-sm-6 my-2">
                   <MessageCard
                     key={v.id}
                     title={v.content}

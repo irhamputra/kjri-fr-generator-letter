@@ -13,9 +13,11 @@ const getDeviceConfig = (width) => {
 };
 
 const useBreakpoint = () => {
-  const [breakpoint, setBrkPnt] = useState(() =>
-    getDeviceConfig(window.innerWidth)
-  );
+  const [breakpoint, setBrkPnt] = useState();
+
+  useEffect(() => {
+    setBrkPnt(getDeviceConfig(window.innerWidth));
+  }, []);
 
   useEffect(() => {
     const calcInnerWidth = () => setBrkPnt(getDeviceConfig(window.innerWidth));
