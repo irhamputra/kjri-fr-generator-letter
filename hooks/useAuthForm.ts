@@ -4,7 +4,10 @@ import { toast } from "react-hot-toast";
 import useValidation from "./useValidation";
 import useAuthMutation from "./mutation/useAuthMutation";
 
-const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
+const useAuthForm = <T extends { nip: string }>(
+  initialValues: T,
+  type: "login" | "register"
+) => {
   const { replace } = useRouter();
   const validationSchema = useValidation<T>(initialValues);
   const { mutateAsync } = useAuthMutation<T>(type);
@@ -14,9 +17,12 @@ const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
     validationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSubmitting(true);
+      const { nip: nipVal, ...restValues } = values;
+
+      const nip = nipVal === "" ? "-" : nipVal;
 
       try {
-        await mutateAsync(values);
+        await mutateAsync({ nip, ...restValues } as T);
       } catch (e) {
         return toast.error(e.message);
       }
