@@ -12,7 +12,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const allSuratKeluar = await db.collection("SuratKeluar").get();
 
       allSuratKeluar.forEach((docs) => {
-        listSurat.push(docs.data());
+        if (docs.get("content")) {
+          listSurat.push(docs.data());
+        }
       });
 
       res.status(200).json({ listSurat, total: allSuratKeluar.docs.length });
