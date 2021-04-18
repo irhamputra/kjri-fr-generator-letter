@@ -15,10 +15,14 @@ import capitalizeFirstLetter from "../../../utils/capitalize";
 import useQueryJenisSurat from "../../../hooks/query/useQueryJenisSurat";
 import { v4 } from "uuid";
 import useUpdateSuratKeluarMutation from "../../../hooks/mutation/useUpdateSuratKeluarMutation";
+import { useAuthContext } from "../../../context/AuthContext";
 
 const SuratKeluar: NextPage = () => {
   const [disabled, setDisabled] = React.useState(false);
   const { push } = useRouter();
+  const {
+    data: { email },
+  } = useAuthContext();
 
   const initialValues = {
     recipient: "",
@@ -28,6 +32,7 @@ const SuratKeluar: NextPage = () => {
     nomorSurat: "",
     arsipId: "",
     id: "",
+    author: "",
   };
 
   const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation();
@@ -96,8 +101,9 @@ const SuratKeluar: NextPage = () => {
 
       await setFieldValue("id", id);
       await setFieldValue("nomorSurat", nomorSurat);
+      await setFieldValue("author", email);
 
-      await createSuratKeluar({ id, nomorSurat });
+      await createSuratKeluar({ id, author: email, nomorSurat });
 
       setDisabled(true);
     } catch (e) {

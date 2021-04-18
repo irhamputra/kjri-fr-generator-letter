@@ -2,25 +2,14 @@ import * as React from "react";
 import { useRouter } from "next/router";
 import DashboardLayout from "./Dashboard";
 
-const MainLayout: React.FC<{
-  displayName: string;
-  isAdmin: boolean;
-}> = ({ children, isAdmin, displayName }) => {
+const MainLayout: React.FC = ({ children }) => {
   const { pathname } = useRouter();
 
   const isAuthPage = ["/", "/forget-password", "/_error"].includes(pathname);
 
   return (
     <div className="container-fluid h-100">
-      <div className="row h-100">
-        {isAuthPage ? (
-          children
-        ) : (
-          <DashboardLayout displayName={displayName} isAdmin={isAdmin}>
-            {children}
-          </DashboardLayout>
-        )}
-      </div>
+      <div className="row h-100">{isAuthPage ? children : <DashboardLayout children={children} />}</div>
 
       {!isAuthPage && (
         <footer className="footer text-center mt-auto py-1 bg-light fixed-bottom">

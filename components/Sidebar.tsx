@@ -3,9 +3,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { House, Gear } from "react-bootstrap-icons";
 import styles from "../styles/Sidebar.module.css";
+import { useAuthContext } from "../context/AuthContext";
 
-const Sidebar: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
+const Sidebar: React.FC = () => {
   const { pathname } = useRouter();
+  const {
+    data: { isAdmin },
+  } = useAuthContext();
 
   const isActive = pathname === "/pengaturan";
 

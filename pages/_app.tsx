@@ -7,17 +7,20 @@ import parseCookies from "../utils/parseCookies";
 import axios from "axios";
 
 import { DefaultSeo } from "next-seo";
+import AuthProvider from "../context/AuthContext";
 
 const queryClient = new QueryClient();
 
-function MyApp({ Component, pageProps, displayName, isAdmin }) {
+function MyApp({ Component, pageProps, data }) {
   return (
     <QueryClientProvider client={queryClient}>
       <DefaultSeo title="Sistem Aplikasi KJRI Frankfurt" description="Sistem Aplikasi KJRI Frankfurt" />
-      <MainLayout displayName={displayName} isAdmin={isAdmin}>
-        <Component {...pageProps} />
-        <Toaster position="bottom-right" toastOptions={{ success: { duration: 2000 } }} />
-      </MainLayout>
+      <AuthProvider value={{ data }}>
+        <MainLayout>
+          <Component {...pageProps} />
+          <Toaster position="bottom-right" toastOptions={{ success: { duration: 2000 } }} />
+        </MainLayout>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
@@ -47,15 +50,15 @@ MyApp.getInitialProps = async ({ ctx }) => {
   try {
     const idToken = cookie["KJRIFR-U"];
 
-    const {
-      data: { isAdmin, displayName },
-    } = await axios.get(`${BASE_URL}/api/v1/user`, {
+    const { data } = await axios.get(`${BASE_URL}/api/v1/user`, {
       headers: {
         authorization: `Bearer ${idToken}`,
       },
     });
 
-    return { displayName, isAdmin };
+    return {
+      data,
+    };
   } catch (e) {
     throw new Error(e.message);
   }
