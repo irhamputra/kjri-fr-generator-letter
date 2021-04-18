@@ -24,8 +24,10 @@ const MyProfile: React.FC<{ userData }> = ({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
+      const { nip: nipVal, ...rest } = values;
+      const nip = nipVal === "" ? "-" : nipVal;
       setSubmitting(true);
-      await mutateAsync(values);
+      await mutateAsync({ nip, ...rest });
       resetForm();
       setSubmitting(false);
       back();

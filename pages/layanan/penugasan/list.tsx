@@ -1,11 +1,12 @@
 import * as React from "react";
 import { NextPage } from "next";
 import { Search } from "react-bootstrap-icons";
-import { MessageCard } from "../../../components/Card";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { useRouter } from "next/router";
-import { FileEarmarkExcel } from "react-bootstrap-icons";
-import useFuse from "../../../hooks/useFuse";
+import Table from "../../../components/Table";
+import Link from "next/link";
+import useDeleteSPDMutation from "../../../hooks/mutation/useDeleteSPDMutation";
+import Modal from "react-modal";
 
 const ListSurat: NextPage = () => {
   const { push } = useRouter();
@@ -14,11 +15,44 @@ const ListSurat: NextPage = () => {
     isLoading: suratTugasLoading,
   } = useQuerySuratTugas();
 
-  const { setSearch, filteredList, searchQuery } = useFuse(listSuratTugas, {
-    keys: ["tujuanDinas"],
-    includeScore: true,
-    loading: suratTugasLoading,
-  });
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "#",
+        accessor: "col1", // accessor is the "key" in the data
+      },
+      {
+        Header: "Nomor Surat",
+        accessor: "col2", // accessor is the "key" in the data
+      },
+      {
+        Header: "Tujuan Dinas",
+        accessor: "col3",
+      },
+      {
+        Header: "Opsi",
+        accessor: "col4",
+        Cell: ({ value }) => (
+          <div style={{ display: "flex" }}>
+            <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
+              <a>Edit</a>
+            </Link>
+            <DeleteAction messageId={value} />
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const data = listSuratTugas?.map?.(
+    ({ nomorSurat, tujuanDinas, suratTugasId }, index) => ({
+      col1: index + 1,
+      col2: nomorSurat,
+      col3: tujuanDinas,
+      col4: suratTugasId,
+    })
+  );
 
   if (suratTugasLoading) return <p>Loading...</p>;
 
@@ -28,71 +62,113 @@ const ListSurat: NextPage = () => {
         <h4 className="m-0" style={{ flex: "1 1" }}>
           SPPD yang telah dibuat
         </h4>
-        <div className="input-group w-25">
-          <span className="input-group-text" id="durasi-hari">
-            <Search />
-          </span>
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Telusuri surat..."
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
       </div>
 
-      <div className="col-12 mb-5 text-end">
-        <button
-          onClick={async () => await push("/layanan/penugasan")}
-          type="button"
-          className="btn btn-sm btn-dark ms-3"
-        >
-          Buat SPD Baru
-        </button>
-      </div>
-
-      {filteredList && searchQuery.length > 0
-        ? filteredList.map((v) => {
+      <div className="col">
+        <Table
+          columns={columns}
+          data={data}
+          search={({ setGlobalFilter }) => {
             return (
-              <div key={v.item.suratTugasId} className="col-4 my-2">
-                <MessageCard
-                  key={v.item.nomorSurat}
-                  title={v.item.tujuanDinas}
-                  number={v.item.nomorSurat}
-                  messageId={v.item.suratTugasId}
-                />
+              <div className="d-flex w-100 justify-content-between mb-3">
+                <div className="input-group w-25">
+                  <span className="input-group-text" id="durasi-hari">
+                    <Search />
+                  </span>
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Telusuri surat..."
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                  />
+                </div>
+
+                <button
+                  onClick={async () => await push("/layanan/penugasan")}
+                  type="button"
+                  className="btn btn-sm btn-dark"
+                >
+                  Buat SPD Baru
+                </button>
               </div>
             );
-          })
-        : null}
+          }}
+        />
+      </div>
+    </div>
+  );
+};
 
-      {filteredList.length <= 0 && searchQuery.length > 0 ? (
-        <div className="my-5">
-          <div className="my-5 text-center">
-            <FileEarmarkExcel size={50} />
-            <h5 className="mt-3">
-              Surat <strong>"{searchQuery}"</strong> Tidak ditemukan! Mohon
-              gunakan kata kunci dengan benar.
-            </h5>
+const DeleteAction = ({ messageId }) => {
+  const [open, setOpen] = React.useState(false);
+  const { mutateAsync } = useDeleteSPDMutation();
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      border: "0px",
+    },
+  };
+
+  return (
+    <>
+      <div
+        style={{ marginLeft: 24, cursor: "pointer" }}
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        <a href="#">Delete</a>
+      </div>
+      <Modal
+        isOpen={open}
+        onRequestClose={() => setOpen(false)}
+        contentLabel="Example Modal"
+        style={customStyles}
+      >
+        <div
+          className="modal-dialog"
+          role="document"
+          style={{ width: "100vw" }}
+        >
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Hapus SPPD?</h5>
+            </div>
+            <div className="modal-body">
+              <p>
+                Kamu tidak akan bisa mengembalikan surat yang telah dihapus.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={async () => {
+                  await mutateAsync(messageId);
+                  setOpen(false);
+                }}
+              >
+                Hapus
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-dismiss="modal"
+                onClick={() => setOpen(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
-      ) : null}
-
-      {searchQuery.length > 0
-        ? null
-        : listSuratTugas?.map?.((v) => {
-            return (
-              <div key={v.suratTugasId} className="col-4 my-2">
-                <MessageCard
-                  key={v.nomorSurat}
-                  title={v.tujuanDinas}
-                  number={v.nomorSurat}
-                  messageId={v.suratTugasId}
-                />
-              </div>
-            );
-          })}
-    </div>
+      </Modal>
+    </>
   );
 };
 

@@ -3,10 +3,10 @@ import { NextPage } from "next";
 import { useFormik } from "formik";
 import { object } from "yup";
 import createSchema from "../../../utils/validation/schema";
-import useQueryArsip from "../../../hooks/query/useQueryArsip";
 import dayjs from "dayjs";
 import { NextSeo } from "next-seo";
 import { UncontrolledDropzone } from "../../../components/CustomField";
+import { SelectArsip } from "../../../components/Select";
 import useCreateSuratKeluarMutation from "../../../hooks/mutation/useCreateSuratKeluarMutation";
 import { toast } from "react-hot-toast";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
@@ -27,7 +27,6 @@ const SuratKeluar: NextPage = () => {
     arsipId: "",
   };
 
-  const { data: listArsip } = useQueryArsip();
   const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation();
   const { data: listSuratKeluar } = useQuerySuratKeluar();
   const { data: listJenisSurat } = useQueryJenisSurat();
@@ -131,6 +130,7 @@ const SuratKeluar: NextPage = () => {
               name="jenisSurat"
               value={values.jenisSurat}
               onChange={handleChange}
+              style={{ height: 66 }}
             >
               <option value="">Pilih Jenis Surat</option>
               {listJenisSurat?.map((v) => {
@@ -148,25 +148,15 @@ const SuratKeluar: NextPage = () => {
 
           <div className="col-3">
             <label className="form-label">Arsip</label>
-            <select
-              disabled={disabled}
-              className="form-select"
-              aria-label="Default select example"
-              name="arsipId"
+
+            <SelectArsip
+              placeholder="Pilih Arsip"
+              onChange={(v) => {
+                setFieldValue("arsipId", v);
+              }}
               value={values.arsipId}
-              onChange={handleChange}
-            >
-              <option value="">Pilih Arsip</option>
-              {listArsip
-                ?.sort((a, b) => a.jenisArsip - b.jenisArsip)
-                .map((v) => {
-                  return (
-                    <option key={v.jenisArsip} value={v.acronym}>
-                      {v.acronym}
-                    </option>
-                  );
-                })}
-            </select>
+              isDisabled={disabled}
+            />
             {errors.arsipId && touched.arsipId && (
               <small className="text-danger">{errors.arsipId}</small>
             )}
@@ -175,7 +165,7 @@ const SuratKeluar: NextPage = () => {
           <div className="col">
             <label className="form-label">Nomor Surat</label>
 
-            <div className="input-group">
+            <div className="input-group" style={{ height: 66 }}>
               <input
                 className="form-control"
                 name="nomorSurat"

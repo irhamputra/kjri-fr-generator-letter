@@ -4,16 +4,33 @@ import { toast } from "react-hot-toast";
 import useValidation from "./useValidation";
 import useAuthMutation from "./mutation/useAuthMutation";
 
-const useAuthForm = <T>(initialValues: T, type: "login" | "register") => {
-  const { replace } = useRouter();
-  const validationSchema = useValidation<T>(initialValues);
-  const { mutateAsync } = useAuthMutation<T>(type);
+interface UseAuthFormValues {
+  displayName?: string;
+  email?: string;
+  golongan?: string;
+  jabatan?: string;
+  nip?: string;
+  role?: string;
+  password?: string;
+}
 
-  return useFormik<T>({
+const useAuthForm = (
+  initialValues: UseAuthFormValues,
+  type: "login" | "register"
+) => {
+  const { replace } = useRouter();
+  const validationSchema = useValidation<UseAuthFormValues>(initialValues);
+  const { mutateAsync } = useAuthMutation<UseAuthFormValues>(type);
+
+  return useFormik<UseAuthFormValues>({
     initialValues,
     validationSchema,
-    onSubmit: async (values, { setSubmitting, resetForm }) => {
+    onSubmit: async (value, { setSubmitting, resetForm }) => {
       setSubmitting(true);
+      const { nip: nipVal, ...restValues } = value;
+      const nip = nipVal === "" ? "-" : nipVal;
+
+      const values = type === "register" ? { nip, ...restValues } : restValues;
 
       try {
         await mutateAsync(values);

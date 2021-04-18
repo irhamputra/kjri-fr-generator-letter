@@ -30,10 +30,7 @@ const schema = (type: string) => {
         );
 
     case "nip":
-      return string()
-        .trim()
-        .matches(/[^\D]/g, "NIP wajib berupa nomor")
-        .required("NIP wajib diisi");
+      return string().matches(/^[0-9]*$/g, "NIP wajib berupa nomor");
 
     // Login & Register schema
     case "email":
