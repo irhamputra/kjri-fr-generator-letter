@@ -23,18 +23,15 @@ const Admin: NextPage = () => {
 
   const [checked, setChecked] = React.useState(data);
 
-  const { mutateAsync } = useMutation(
-    ["toggleRegisterForm"],
-    async (toggle: boolean) => {
-      try {
-        await axios.post("/api/v1/admin", {
-          toggle,
-        });
-      } catch (e) {
-        throw new Error(e.response.data.message);
-      }
+  const { mutateAsync } = useMutation(["toggleRegisterForm"], async (toggle: boolean) => {
+    try {
+      await axios.post("/api/v1/admin", {
+        toggle,
+      });
+    } catch (e) {
+      throw new Error(e.response.data.message);
     }
-  );
+  });
 
   const { setValues, handleSubmit, isSubmitting } = useFormik({
     initialValues: {

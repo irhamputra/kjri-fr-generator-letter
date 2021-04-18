@@ -1,10 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import styles from "../styles/Card.module.css";
-import {
-  FileEarmark,
-  ThreeDotsVertical as MoreVertIcon,
-} from "react-bootstrap-icons";
+import { FileEarmark, ThreeDotsVertical as MoreVertIcon } from "react-bootstrap-icons";
 
 import Popup from "./Popup";
 import useDeleteSPDMutation from "../hooks/mutation/useDeleteSPDMutation";
@@ -39,10 +36,7 @@ const Card: React.FC<CardProps> = ({ title, link, icon }) => {
             padding: 8,
           }}
         >
-          <div
-            className="card-img-top d-flex p-3"
-            style={{ justifyContent: "center" }}
-          >
+          <div className="card-img-top d-flex p-3" style={{ justifyContent: "center" }}>
             {icon}
           </div>
           <p className="card-title text-center fw-bold">{title}</p>
@@ -52,20 +46,14 @@ const Card: React.FC<CardProps> = ({ title, link, icon }) => {
   );
 };
 
-const MessageCard: React.FC<CardMessageProps> = ({
-  title,
-  number,
-  messageId,
-  type = "SPD",
-}) => {
+const MessageCard: React.FC<CardMessageProps> = ({ title, number, messageId, type = "SPD" }) => {
   const [showOption, setShowOption] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState(null);
   const [showMenu, setShowMenu] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const { mutateAsync } = useDeleteSPDMutation();
 
-  const baseLink =
-    type === "SPD" ? "/layanan/penugasan/" : "/layanan/surat-keluar/";
+  const baseLink = type === "SPD" ? "/layanan/penugasan/" : "/layanan/surat-keluar/";
 
   const customStyles = {
     content: {
@@ -90,11 +78,7 @@ const MessageCard: React.FC<CardMessageProps> = ({
       <Link href={"" + messageId} passHref>
         <a>
           <div className="p-3 d-flex " style={{ background: "#f8f8f8" }}>
-            <FileEarmark
-              height={48}
-              width={48}
-              style={{ color: "rgba(0,0,0,0.5)" }}
-            />
+            <FileEarmark height={48} width={48} style={{ color: "rgba(0,0,0,0.5)" }} />
             <div className="mx-2">
               <small>{number}</small>
               <div style={{ fontWeight: "bold" }}>{title}</div>
@@ -103,22 +87,12 @@ const MessageCard: React.FC<CardMessageProps> = ({
         </a>
       </Link>
 
-      <div
-        className={styles.messageCard}
-        style={{ visibility: showOption || showMenu ? "visible" : "hidden" }}
-      >
+      <div className={styles.messageCard} style={{ visibility: showOption || showMenu ? "visible" : "hidden" }}>
         <div ref={setReferenceElement}>
-          <MoreVertIcon
-            className={styles.iconMC}
-            onClick={() => setShowMenu(true)}
-          />
+          <MoreVertIcon className={styles.iconMC} onClick={() => setShowMenu(true)} />
         </div>
 
-        <Popup
-          open={showMenu}
-          anchorRef={referenceElement}
-          onClickOutside={() => setShowMenu(false)}
-        >
+        <Popup open={showMenu} anchorRef={referenceElement} onClickOutside={() => setShowMenu(false)}>
           <div
             className="p-1"
             style={{
@@ -148,25 +122,14 @@ const MessageCard: React.FC<CardMessageProps> = ({
           </div>
         </Popup>
       </div>
-      <Modal
-        isOpen={open}
-        onRequestClose={() => setOpen(false)}
-        contentLabel="Example Modal"
-        style={customStyles}
-      >
-        <div
-          className="modal-dialog"
-          role="document"
-          style={{ width: "100vw" }}
-        >
+      <Modal isOpen={open} onRequestClose={() => setOpen(false)} contentLabel="Example Modal" style={customStyles}>
+        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">Hapus SPPD?</h5>
             </div>
             <div className="modal-body">
-              <p>
-                Kamu tidak akan bisa mengembalikan surat yang telah dihapus.
-              </p>
+              <p>Kamu tidak akan bisa mengembalikan surat yang telah dihapus.</p>
             </div>
             <div className="modal-footer">
               <button
@@ -179,12 +142,7 @@ const MessageCard: React.FC<CardMessageProps> = ({
               >
                 Hapus
               </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-                onClick={() => setOpen(false)}
-              >
+              <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setOpen(false)}>
                 Close
               </button>
             </div>

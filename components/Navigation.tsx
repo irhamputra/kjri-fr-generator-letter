@@ -67,19 +67,11 @@ const Navigation: React.FC<{ displayName: string }> = ({ displayName }) => {
               }}
             >
               <div className="dropdown-menu-left">
-                <button
-                  className="dropdown-item"
-                  type="button"
-                  onClick={() => push("/profile/me")}
-                >
+                <button className="dropdown-item" type="button" onClick={() => push("/profile/me")}>
                   Edit Profile
                 </button>
                 <li className="dropdown-divider"></li>
-                <button
-                  className="dropdown-item"
-                  type="button"
-                  onClick={handleLogout}
-                >
+                <button className="dropdown-item" type="button" onClick={handleLogout}>
                   Logout
                 </button>
               </div>
@@ -95,10 +87,7 @@ const Navigation: React.FC<{ displayName: string }> = ({ displayName }) => {
       </nav>
       {is(["xs", "sm"]) && isOpen && (
         <div className="mb-5">
-          <div
-            className="dropdown-menu-left"
-            style={{ borderBottom: "1px solid #e2e2e2" }}
-          >
+          <div className="dropdown-menu-left" style={{ borderBottom: "1px solid #e2e2e2" }}>
             <Link href="/dashboard">
               <a className="d-flex align-items-center p-3">
                 <House size={25} />

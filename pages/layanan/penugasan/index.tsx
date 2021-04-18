@@ -2,12 +2,7 @@ import * as React from "react";
 import { NextPage } from "next";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
-import {
-  DropzoneComponent,
-  InputComponent,
-  SelectComponent,
-  SelectStaff,
-} from "../../../components/CustomField";
+import { DropzoneComponent, InputComponent, SelectComponent, SelectStaff } from "../../../components/CustomField";
 import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { object, string, array } from "yup";
@@ -25,10 +20,7 @@ const { format } = new Intl.NumberFormat("en-US", {
   currency: "EUR",
 });
 
-const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
-  isAdmin,
-  editId,
-}) => {
+const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({ isAdmin, editId }) => {
   const { push } = useRouter();
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
 
@@ -44,10 +36,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
     }
   );
 
-  const {
-    data: listSuratTugas,
-    isLoading: suratTugasLoading,
-  } = useQuerySuratTugas();
+  const { data: listSuratTugas, isLoading: suratTugasLoading } = useQuerySuratTugas();
 
   const { data: listUsers, isLoading: usersLoading } = useQueryUsers();
   const initialValues = {
@@ -100,8 +89,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
     return days + halfDay || 0;
   };
 
-  if (suratTugasLoading && jalDirLoading && usersLoading)
-    return <h4>Loading...</h4>;
+  if (suratTugasLoading && jalDirLoading && usersLoading) return <h4>Loading...</h4>;
 
   if (!isAdmin) throw new Error("Invalid permission");
 
@@ -117,10 +105,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
           initialValues={initialValues}
           validationSchema={validationSchema}
           enableReinitialize
-          onSubmit={async (
-            { namaPegawai, fullDayKurs, ...values },
-            { setSubmitting, resetForm }
-          ) => {
+          onSubmit={async ({ namaPegawai, fullDayKurs, ...values }, { setSubmitting, resetForm }) => {
             setSubmitting(true);
 
             let response: AxiosResponse;
@@ -154,9 +139,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
                 <div className="mb-3">
                   <label className="form-label">Nomor Surat</label>
                   {editedData?.nomorSurat && editedData?.tujuanDinas ? (
-                    <h5>
-                      {editedData.nomorSurat + " - " + editedData.tujuanDinas}
-                    </h5>
+                    <h5>{editedData.nomorSurat + " - " + editedData.tujuanDinas}</h5>
                   ) : (
                     <>
                       <Field
@@ -168,9 +151,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
                         placeholder="Pilih Surat"
                       />
                       {errors.nomorSurat && touched.nomorSurat && (
-                        <small className="text-danger">
-                          {errors.nomorSurat}
-                        </small>
+                        <small className="text-danger">{errors.nomorSurat}</small>
                       )}
                     </>
                   )}
@@ -217,15 +198,10 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
                             const error = errors.namaPegawai?.[index] || {};
                             const touch = touched.namaPegawai?.[index] || {};
                             return (
-                              <div
-                                key={index}
-                                className={`mb-3 container-fluid p-0`}
-                              >
+                              <div key={index} className={`mb-3 container-fluid p-0`}>
                                 <div className="row">
                                   <div className="col-4">
-                                    <label className="form-label">
-                                      Nama Staff
-                                    </label>
+                                    <label className="form-label">Nama Staff</label>
                                     <Field
                                       className="form-control"
                                       name={`namaPegawai.${index}.pegawai`}
@@ -244,9 +220,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
                                   </div>
 
                                   <div className="col-3">
-                                    <label className="form-label">
-                                      Golongan Jalan Dinas
-                                    </label>
+                                    <label className="form-label">Golongan Jalan Dinas</label>
                                     <Field
                                       className="form-control"
                                       name={`namaPegawai.${index}.jaldis`}
@@ -271,9 +245,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
                                   </div>
 
                                   <div className="col-2">
-                                    <label className="form-label">
-                                      Lama Perjalanan
-                                    </label>
+                                    <label className="form-label">Lama Perjalanan</label>
                                     <Field
                                       className="form-control"
                                       name={`namaPegawai.${index}.durasi`}
@@ -293,19 +265,9 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
                                     )}
                                   </div>
                                   <div className="col">
-                                    <label className="form-label">
-                                      Uang Harian
-                                    </label>
+                                    <label className="form-label">Uang Harian</label>
                                     <div className="d-flex align-items-center h-75">
-                                      <h6>
-                                        {format(
-                                          countDailyCost(
-                                            _.jaldis,
-                                            _.durasi,
-                                            values.fullDayKurs
-                                          )
-                                        )}
-                                      </h6>
+                                      <h6>{format(countDailyCost(_.jaldis, _.durasi, values.fullDayKurs))}</h6>
                                     </div>
                                   </div>
 
@@ -351,9 +313,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({
                     options={optionsSuratTugas}
                     placeholder="Pilih Surat"
                   />
-                  {errors.surat && touched.surat && (
-                    <small className="text-danger">{errors.surat}</small>
-                  )}
+                  {errors.surat && touched.surat && <small className="text-danger">{errors.surat}</small>}
                 </div>
 
                 <div className="mt-3">

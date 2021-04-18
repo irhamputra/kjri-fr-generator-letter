@@ -16,14 +16,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     const { email, password } = req.body;
     try {
-      const { data } = await authInstance.post<AuthResponse>(
-        "/accounts:signInWithPassword",
-        {
-          email,
-          password,
-          returnSecureToken: true,
-        }
-      );
+      const { data } = await authInstance.post<AuthResponse>("/accounts:signInWithPassword", {
+        email,
+        password,
+        returnSecureToken: true,
+      });
       res.status(200).json(data);
       res.end();
     } catch (e) {

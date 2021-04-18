@@ -39,20 +39,12 @@ const LupaPassword: NextPage = () => {
         <div className="col-12 mt-5">
           <h1 style={{ fontSize: 50 }}>Lupa Password</h1>
           <p className="w-100 small text-secondary">
-            Masukan Email anda, selanjutnya kami akan kirimkan link untuk reset
-            ulang password anda
+            Masukan Email anda, selanjutnya kami akan kirimkan link untuk reset ulang password anda
           </p>
 
           <label className="form-label">Email</label>
-          <input
-            className="form-control"
-            onChange={handleChange}
-            name="email"
-            value={values.email}
-          />
-          {errors.email && touched.email && (
-            <p className="text-danger m-0">{errors.email}</p>
-          )}
+          <input className="form-control" onChange={handleChange} name="email" value={values.email} />
+          {errors.email && touched.email && <p className="text-danger m-0">{errors.email}</p>}
 
           <div className="mt-3">
             <button className="btn btn-dark w-100" type="submit">

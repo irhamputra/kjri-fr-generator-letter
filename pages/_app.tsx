@@ -13,16 +13,10 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps, displayName, isAdmin }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <DefaultSeo
-        title="Sistem Aplikasi KJRI Frankfurt"
-        description="Sistem Aplikasi KJRI Frankfurt"
-      />
+      <DefaultSeo title="Sistem Aplikasi KJRI Frankfurt" description="Sistem Aplikasi KJRI Frankfurt" />
       <MainLayout displayName={displayName} isAdmin={isAdmin}>
         <Component {...pageProps} />
-        <Toaster
-          position="bottom-right"
-          toastOptions={{ success: { duration: 2000 } }}
-        />
+        <Toaster position="bottom-right" toastOptions={{ success: { duration: 2000 } }} />
       </MainLayout>
     </QueryClientProvider>
   );

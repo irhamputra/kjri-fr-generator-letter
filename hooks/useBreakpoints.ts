@@ -20,8 +20,7 @@ const useBreakpoint = () => {
   }, []);
 
   useEffect(() => {
-    const calcInnerWidth = () =>
-      setBrkPnt(getDeviceConfig(window.innerWidth as number));
+    const calcInnerWidth = () => setBrkPnt(getDeviceConfig(window.innerWidth as number));
 
     window.addEventListener("resize", calcInnerWidth);
     return () => window.removeEventListener("resize", calcInnerWidth);

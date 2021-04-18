@@ -2,36 +2,20 @@ import * as React from "react";
 import Select, { components, SelectComponentsConfig } from "react-select";
 import { Props } from "react-select/src/Select";
 import styles from "./Dropzone.module.css";
-import {
-  useDropzone,
-  FileWithPath,
-  FileRejection,
-  DropEvent,
-} from "react-dropzone";
+import { useDropzone, FileWithPath, FileRejection, DropEvent } from "react-dropzone";
 import { FileEarmark as DocIcon } from "react-bootstrap-icons";
 
 interface IUDropzone {
-  onDrop: <T extends File>(
-    acceptedFiles: T[],
-    fileRejections: FileRejection[],
-    event: DropEvent
-  ) => void;
+  onDrop: <T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => void;
   values: File[];
   onClickReset: (event: unknown) => void;
 }
 
-interface InputProps
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+interface InputProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   endText: string;
 }
 
-const DropzoneComponent: React.FC<any> = ({
-  field,
-  form: { setFieldValue, setFieldTouched, ...restForm },
-}) => {
+const DropzoneComponent: React.FC<any> = ({ field, form: { setFieldValue, setFieldTouched, ...restForm } }) => {
   const onDrop = (acceptedFiles) => {
     setFieldValue(field.name, acceptedFiles);
   };
@@ -44,20 +28,10 @@ const DropzoneComponent: React.FC<any> = ({
     setFieldValue(field.name, []);
   };
 
-  return (
-    <UncontrolledDropzone
-      values={field.value as Array<File>}
-      onDrop={onDrop}
-      onClickReset={() => removeAll()}
-    />
-  );
+  return <UncontrolledDropzone values={field.value as Array<File>} onDrop={onDrop} onClickReset={() => removeAll()} />;
 };
 
-const UncontrolledDropzone: React.FC<IUDropzone> = ({
-  onDrop,
-  values = [],
-  onClickReset,
-}) => {
+const UncontrolledDropzone: React.FC<IUDropzone> = ({ onDrop, values = [], onClickReset }) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: ["image/jpeg", "image/png", "application/pdf"],
@@ -80,24 +54,12 @@ const UncontrolledDropzone: React.FC<IUDropzone> = ({
             flexDirection: "column",
           }}
         >
-          <DocIcon
-            height={48}
-            width={48}
-            className="mb-3"
-            style={{ color: "rgba(0,0,0,0.5)" }}
-          />
-          <p>
-            {files?.length > 0
-              ? files[0]
-              : "File surat harus berekstensikan jpg, png atau pdf"}
-          </p>
+          <DocIcon height={48} width={48} className="mb-3" style={{ color: "rgba(0,0,0,0.5)" }} />
+          <p>{files?.length > 0 ? files[0] : "File surat harus berekstensikan jpg, png atau pdf"}</p>
         </div>
       </div>
       {files?.length > 0 && (
-        <div
-          className="w-100 d-flex mt-1"
-          style={{ justifyContent: "center", alignItems: "center" }}
-        >
+        <div className="w-100 d-flex mt-1" style={{ justifyContent: "center", alignItems: "center" }}>
           <small
             onClick={onClickReset}
             style={{
@@ -113,10 +75,7 @@ const UncontrolledDropzone: React.FC<IUDropzone> = ({
   );
 };
 
-const InputComponent: React.FC<InputProps> = ({
-  endText = "hari",
-  ...props
-}) => {
+const InputComponent: React.FC<InputProps> = ({ endText = "hari", ...props }) => {
   return (
     <div className="input-group">
       <input className="form-control" type="text" {...props} />
@@ -140,9 +99,7 @@ const SelectComponent: React.FC<Props> = ({
   matcher,
 }) => {
   // reconstruct option from value
-  const index = matcher
-    ? matcher(options)
-    : options?.findIndex((valueProp) => valueProp.value === value);
+  const index = matcher ? matcher(options) : options?.findIndex((valueProp) => valueProp.value === value);
 
   const _value = index !== -1 ? options?.[index] : null;
 
@@ -192,9 +149,7 @@ const SelectStaff = ({ placeholder, form, field, value, options }) => {
       <components.SingleValue {...props}>
         <div>
           <div>{props.children}</div>
-          <div style={{ fontSize: 10, color: "rgba(0, 0, 0, 0.6)" }}>
-            {`${nip} | Gol ${golongan} | ${jabatan}`}
-          </div>
+          <div style={{ fontSize: 10, color: "rgba(0, 0, 0, 0.6)" }}>{`${nip} | Gol ${golongan} | ${jabatan}`}</div>
         </div>
       </components.SingleValue>
     );
@@ -218,10 +173,4 @@ const SelectStaff = ({ placeholder, form, field, value, options }) => {
   );
 };
 
-export {
-  InputComponent,
-  SelectComponent,
-  SelectStaff,
-  DropzoneComponent,
-  UncontrolledDropzone,
-};
+export { InputComponent, SelectComponent, SelectStaff, DropzoneComponent, UncontrolledDropzone };

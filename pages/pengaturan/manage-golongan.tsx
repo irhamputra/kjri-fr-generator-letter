@@ -51,12 +51,7 @@ const ManageGolongan: NextPage = () => {
         <div className="row">
           <div className="col">
             <label className="form-label">Jenis Golongan</label>
-            <input
-              name="jenisGolongan"
-              value={values.jenisGolongan}
-              onChange={handleChange}
-              className="form-control"
-            />
+            <input name="jenisGolongan" value={values.jenisGolongan} onChange={handleChange} className="form-control" />
             {errors.jenisGolongan && touched.jenisGolongan && (
               <small className="text-danger">{errors.jenisGolongan}</small>
             )}
@@ -64,12 +59,7 @@ const ManageGolongan: NextPage = () => {
 
           <div className="col">
             <label className="form-label">Harga</label>
-            <input
-              name="hargaGolongan"
-              value={values.hargaGolongan}
-              onChange={handleChange}
-              className="form-control"
-            />
+            <input name="hargaGolongan" value={values.hargaGolongan} onChange={handleChange} className="form-control" />
             {errors.hargaGolongan && touched.hargaGolongan && (
               <small className="text-danger">{errors.hargaGolongan}</small>
             )}
@@ -95,10 +85,7 @@ const ManageGolongan: NextPage = () => {
               <td scope="row">{v.golongan}</td>
               <td>$ {v.harga}</td>
               <td>
-                <button
-                  className="btn btn-danger mx-3"
-                  onClick={async () => await deleteGolongan(v.golId)}
-                >
+                <button className="btn btn-danger mx-3" onClick={async () => await deleteGolongan(v.golId)}>
                   Delete
                 </button>
               </td>

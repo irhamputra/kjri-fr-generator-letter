@@ -9,9 +9,7 @@ const useQuerySuratTugas = () => {
   return useQuery(
     "fetchSuratTugas",
     async () => {
-      const { data } = await axios.get(
-        `/api/v1/penugasan${!isList ? "/create" : ""}`
-      );
+      const { data } = await axios.get(`/api/v1/penugasan${!isList ? "/create" : ""}`);
 
       return data;
     },

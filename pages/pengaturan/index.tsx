@@ -11,10 +11,7 @@ import { NextSeo } from "next-seo";
 import parseCookies from "../../utils/parseCookies";
 import apiInstance from "../../utils/firebase/apiInstance";
 
-const Index: NextPage<{ isAdmin: boolean; role: string }> = ({
-  isAdmin,
-  role,
-}) => {
+const Index: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, role }) => {
   const iconProps = { height: 32, width: 32 };
 
   if (!isAdmin) throw Error("Invalid permission");
@@ -31,19 +28,11 @@ const Index: NextPage<{ isAdmin: boolean; role: string }> = ({
         <div className="row">
           {role !== "tu" && (
             <div className="col-md-4 col-sm-6 col-lg-3">
-              <Card
-                icon={<UserIcon {...iconProps} />}
-                title="Manage User"
-                link="/pengaturan/manage-user"
-              />
+              <Card icon={<UserIcon {...iconProps} />} title="Manage User" link="/pengaturan/manage-user" />
             </div>
           )}
           <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<ArsipIcon {...iconProps} />}
-              title="Manage Arsip"
-              link="/pengaturan/manage-arsip"
-            />
+            <Card icon={<ArsipIcon {...iconProps} />} title="Manage Arsip" link="/pengaturan/manage-arsip" />
           </div>
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card
@@ -53,11 +42,7 @@ const Index: NextPage<{ isAdmin: boolean; role: string }> = ({
             />
           </div>
           <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<GolonganIcon {...iconProps} />}
-              title="Manage Golongan"
-              link="/pengaturan/manage-golongan"
-            />
+            <Card icon={<GolonganIcon {...iconProps} />} title="Manage Golongan" link="/pengaturan/manage-golongan" />
           </div>
         </div>
       </section>

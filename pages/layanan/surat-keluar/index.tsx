@@ -13,6 +13,8 @@ import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
 import { useRouter } from "next/router";
 import capitalizeFirstLetter from "../../../utils/capitalize";
 import useQueryJenisSurat from "../../../hooks/query/useQueryJenisSurat";
+import { v4 } from "uuid";
+import useUpdateSuratKeluarMutation from "../../../hooks/mutation/useUpdateSuratKeluarMutation";
 
 const SuratKeluar: NextPage = () => {
   const [disabled, setDisabled] = React.useState(false);
@@ -25,29 +27,22 @@ const SuratKeluar: NextPage = () => {
     jenisSurat: "",
     nomorSurat: "",
     arsipId: "",
+    id: "",
   };
 
   const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation();
+  const { mutateAsync: updateSuratKeluar } = useUpdateSuratKeluarMutation();
   const { data: listSuratKeluar } = useQuerySuratKeluar();
   const { data: listJenisSurat } = useQueryJenisSurat();
 
-  const {
-    values,
-    handleSubmit,
-    handleChange,
-    errors,
-    touched,
-    setFieldValue,
-    isSubmitting,
-    resetForm,
-  } = useFormik({
+  const { values, handleSubmit, handleChange, errors, touched, setFieldValue, isSubmitting, resetForm } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       setSubmitting(true);
 
       try {
-        await createSuratKeluar(values);
+        await updateSuratKeluar(values);
       } catch (e) {
         toast.error("Gagal membuat surat keluar!");
         throw new Error(e.message);
@@ -64,17 +59,14 @@ const SuratKeluar: NextPage = () => {
   };
 
   const handleNomorSurat = async () => {
-    if (!values.arsipId || !values.jenisSurat)
-      return await setFieldValue("nomorSurat", "");
+    if (!values.arsipId || !values.jenisSurat) return await setFieldValue("nomorSurat", "");
 
     try {
       const incrementNumber = `00${listSuratKeluar?.total + 1}`;
       const thisMonth = dayjs().month() + 1;
       const thisYear = dayjs().year();
 
-      const labelJenisSurat = listJenisSurat?.find(
-        (v) => v.label === values.jenisSurat
-      ).label;
+      const labelJenisSurat = listJenisSurat?.find((v) => v.label === values.jenisSurat).label;
 
       let jenisSurat = "";
       let suffixFRA = false;
@@ -88,11 +80,7 @@ const SuratKeluar: NextPage = () => {
         jenisSurat = "SUKET";
       }
 
-      if (
-        !["Nota Dinas", "Surat Edaran", "Surat Keputusan"].includes(
-          labelJenisSurat
-        )
-      ) {
+      if (!["Nota Dinas", "Surat Edaran", "Surat Keputusan"].includes(labelJenisSurat)) {
         suffixFRA = true;
       }
 
@@ -100,12 +88,17 @@ const SuratKeluar: NextPage = () => {
         suratKeputusan = "SK-FRA";
       }
 
-      await setFieldValue(
-        "nomorSurat",
-        `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
-          jenisSurat ? `${jenisSurat}/` : ""
-        }${values.arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`
-      );
+      const id = v4();
+
+      const nomorSurat = `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
+        jenisSurat ? `${jenisSurat}/` : ""
+      }${values.arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`;
+
+      await setFieldValue("id", id);
+      await setFieldValue("nomorSurat", nomorSurat);
+
+      await createSuratKeluar({ id, nomorSurat });
+
       setDisabled(true);
     } catch (e) {
       throw new Error(e.message);
@@ -141,9 +134,7 @@ const SuratKeluar: NextPage = () => {
                 );
               })}
             </select>
-            {errors.jenisSurat && touched.jenisSurat && (
-              <small className="text-danger">{errors.jenisSurat}</small>
-            )}
+            {errors.jenisSurat && touched.jenisSurat && <small className="text-danger">{errors.jenisSurat}</small>}
           </div>
 
           <div className="col-3">
@@ -157,9 +148,7 @@ const SuratKeluar: NextPage = () => {
               value={values.arsipId}
               isDisabled={disabled}
             />
-            {errors.arsipId && touched.arsipId && (
-              <small className="text-danger">{errors.arsipId}</small>
-            )}
+            {errors.arsipId && touched.arsipId && <small className="text-danger">{errors.arsipId}</small>}
           </div>
 
           <div className="col">
@@ -196,9 +185,7 @@ const SuratKeluar: NextPage = () => {
               name="recipient"
               onChange={handleChange}
             />
-            {errors.recipient && touched.recipient && (
-              <small className="text-danger">{errors.recipient}</small>
-            )}
+            {errors.recipient && touched.recipient && <small className="text-danger">{errors.recipient}</small>}
           </div>
 
           <div className="col">
@@ -209,9 +196,7 @@ const SuratKeluar: NextPage = () => {
               name="content"
               onChange={handleChange}
             />
-            {errors.content && touched.content && (
-              <small className="text-danger">{errors.content}</small>
-            )}
+            {errors.content && touched.content && <small className="text-danger">{errors.content}</small>}
           </div>
         </div>
 
@@ -223,9 +208,7 @@ const SuratKeluar: NextPage = () => {
               onDrop={onDrop}
               onClickReset={() => setFieldValue("surat", [])}
             />
-            {errors.surat && touched.surat && (
-              <small className="text-danger">{errors.surat}</small>
-            )}
+            {errors.surat && touched.surat && <small className="text-danger">{errors.surat}</small>}
           </div>
         </div>
 

@@ -23,10 +23,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  if (req.method === "POST") {
+  if (req.method === "POST" || req.method === "PUT") {
     try {
       const { surat, id, ...restBody } = req.body;
-      // TODO: get link from storage
 
       await db
         .collection("SuratKeluar")

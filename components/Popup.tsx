@@ -10,26 +10,16 @@ interface PopupProps {
   placement?: Placement;
 }
 
-const Popup: React.FC<PopupProps> = ({
-  anchorRef,
-  onClickOutside,
-  open,
-  children,
-  placement = "left-start",
-}) => {
+const Popup: React.FC<PopupProps> = ({ anchorRef, onClickOutside, open, children, placement = "left-start" }) => {
   const [popperElement, setPopperElement] = React.useState(null);
   const [arrowElement, setArrowElement] = React.useState(null);
   const closeRef = React.useRef(null);
   useOnClickOutside(closeRef, onClickOutside);
 
-  const { styles: stylesPopper, attributes } = usePopper(
-    anchorRef,
-    popperElement,
-    {
-      modifiers: [{ name: "arrow", options: { element: arrowElement } }],
-      placement,
-    }
-  );
+  const { styles: stylesPopper, attributes } = usePopper(anchorRef, popperElement, {
+    modifiers: [{ name: "arrow", options: { element: arrowElement } }],
+    placement,
+  });
   return (
     <>
       {open && (

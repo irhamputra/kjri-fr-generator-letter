@@ -19,11 +19,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const [user] = data.users;
 
-    const snapshot = await db
-      .collection("Users")
-      .limit(1)
-      .where("email", "==", user.email)
-      .get();
+    const snapshot = await db.collection("Users").limit(1).where("email", "==", user.email).get();
     const dataSnapshot = snapshot.docs[0].data();
     res.status(200).json({
       isAdmin: adminRole.includes(dataSnapshot.role),
@@ -44,11 +40,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const [user] = data.users;
 
-    const snapshot = await db
-      .collection("Users")
-      .limit(1)
-      .where("email", "==", user.email)
-      .get();
+    const snapshot = await db.collection("Users").limit(1).where("email", "==", user.email).get();
 
     snapshot.forEach((doc) => {
       id = doc.id;

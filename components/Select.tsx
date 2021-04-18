@@ -36,17 +36,13 @@ const SelectArsip: React.FC<SelectComponentsProps> = ({
       <components.SingleValue {...props}>
         <div>
           <div>{props.children}</div>
-          <div style={{ fontSize: 10, color: "rgba(0, 0, 0, 0.6)" }}>
-            {`${jenisArsip}`}
-          </div>
+          <div style={{ fontSize: 10, color: "rgba(0, 0, 0, 0.6)" }}>{`${jenisArsip}`}</div>
         </div>
       </components.SingleValue>
     );
   };
 
-  const usedValue = options.filter(
-    ({ value: { acronym } }) => acronym === value
-  )[0];
+  const usedValue = options.filter(({ value: { acronym } }) => acronym === value)[0];
 
   return (
     <Select

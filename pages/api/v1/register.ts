@@ -19,24 +19,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { email, password, ...restBody } = req.body;
 
     try {
-      const isAvailable = await db
-        .collection("Users")
-        .where("email", "==", email)
-        .limit(1)
-        .get();
+      const isAvailable = await db.collection("Users").where("email", "==", email).limit(1).get();
 
       if (!isAvailable.empty) {
         return res.status(400).json({ message: "Email ini telah terdaftar" });
       } else {
         try {
-          const { data } = await authInstance.post<AuthResponse>(
-            "/accounts:signUp",
-            {
-              email,
-              password,
-              returnSecureToken: true,
-            }
-          );
+          const { data } = await authInstance.post<AuthResponse>("/accounts:signUp", {
+            email,
+            password,
+            returnSecureToken: true,
+          });
 
           await authInstance.post("/accounts:sendOobCode", {
             requestType: "VERIFY_EMAIL",

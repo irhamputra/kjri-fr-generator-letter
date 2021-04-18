@@ -6,10 +6,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "GET") {
-    const snapshot = await db
-      .collection("Arsip")
-      .orderBy("jenisArsip", "asc")
-      .get();
+    const snapshot = await db.collection("Arsip").orderBy("jenisArsip", "asc").get();
     let result = [];
 
     snapshot.forEach((doc) => {

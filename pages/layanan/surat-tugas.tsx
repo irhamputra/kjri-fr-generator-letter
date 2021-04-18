@@ -33,16 +33,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
 
   const { replace } = useRouter();
 
-  const {
-    handleChange,
-    handleSubmit,
-    values,
-    setFieldValue,
-    errors,
-    touched,
-    resetForm,
-    isSubmitting,
-  } = useFormik({
+  const { handleChange, handleSubmit, values, setFieldValue, errors, touched, resetForm, isSubmitting } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting }) => {
@@ -73,10 +64,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     const thisMonth = dayjs().month() + 1;
     const thisYear = dayjs().year();
 
-    await setFieldValue(
-      "nomorSurat",
-      `${incrementCount}/SPPD/${thisMonth}/${thisYear}/FRA`
-    );
+    await setFieldValue("nomorSurat", `${incrementCount}/SPPD/${thisMonth}/${thisYear}/FRA`);
   };
 
   return (
@@ -97,18 +85,12 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
               value={values.nomorSurat}
               disabled
             />
-            {errors.nomorSurat && touched.nomorSurat && (
-              <small className="text-danger">{errors.nomorSurat}</small>
-            )}
+            {errors.nomorSurat && touched.nomorSurat && <small className="text-danger">{errors.nomorSurat}</small>}
           </div>
 
           {values.nomorSurat ? null : (
             <div className="col-3">
-              <button
-                type="button"
-                onClick={onCounterId}
-                className="btn btn-dark"
-              >
+              <button type="button" onClick={onCounterId} className="btn btn-dark">
                 Generate Nomor Surat
               </button>
             </div>
@@ -124,25 +106,15 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
             onChange={handleChange}
             value={values.tujuanDinas}
           />
-          {errors.tujuanDinas && touched.tujuanDinas && (
-            <small className="text-danger">{errors.tujuanDinas}</small>
-          )}
+          {errors.tujuanDinas && touched.tujuanDinas && <small className="text-danger">{errors.tujuanDinas}</small>}
         </div>
 
         <div className="mt-3">
-          <button
-            disabled={isSubmitting}
-            className="btn btn-dark "
-            type="submit"
-          >
+          <button disabled={isSubmitting} className="btn btn-dark " type="submit">
             Simpan Surat
           </button>
 
-          <button
-            className="btn btn-outline-danger mx-3"
-            onClick={() => resetForm()}
-            type="reset"
-          >
+          <button className="btn btn-outline-danger mx-3" onClick={() => resetForm()} type="reset">
             Ulangi
           </button>
         </div>

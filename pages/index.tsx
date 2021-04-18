@@ -4,14 +4,10 @@ import Link from "next/link";
 import useAuthForm from "../hooks/useAuthForm";
 
 const Home: NextPage = () => {
-  const {
-    handleSubmit,
-    values,
-    handleChange,
-    errors,
-    touched,
-    isSubmitting,
-  } = useAuthForm({ email: "", password: "" }, "login");
+  const { handleSubmit, values, handleChange, errors, touched, isSubmitting } = useAuthForm(
+    { email: "", password: "" },
+    "login"
+  );
 
   return (
     <div className="d-flex mt-5 justify-content-center align-items-center">
@@ -24,9 +20,7 @@ const Home: NextPage = () => {
 
         <div className="mb-3">
           <input
-            className={`form-control ${
-              errors.email && touched.email ? "border-danger" : ""
-            }`}
+            className={`form-control ${errors.email && touched.email ? "border-danger" : ""}`}
             id="email"
             name="email"
             type="email"
@@ -36,16 +30,12 @@ const Home: NextPage = () => {
             disabled={isSubmitting}
             autoComplete="username"
           />
-          <small className="text-danger">
-            {errors.email && touched.email ? errors.email : " "}
-          </small>
+          <small className="text-danger">{errors.email && touched.email ? errors.email : " "}</small>
         </div>
 
         <div className="mb-3">
           <input
-            className={`form-control ${
-              errors.password && touched.password ? "border-danger" : ""
-            }`}
+            className={`form-control ${errors.password && touched.password ? "border-danger" : ""}`}
             id="password"
             name="password"
             type="password"
@@ -55,9 +45,7 @@ const Home: NextPage = () => {
             disabled={isSubmitting}
             onChange={handleChange}
           />
-          <small className="text-danger">
-            {errors.password && touched.password ? errors.password : " "}
-          </small>
+          <small className="text-danger">{errors.password && touched.password ? errors.password : " "}</small>
         </div>
 
         <div className="mb-3">
@@ -66,11 +54,7 @@ const Home: NextPage = () => {
           </small>
         </div>
 
-        <button
-          className="btn btn-dark w-100 mb-2"
-          disabled={isSubmitting}
-          type="submit"
-        >
+        <button className="btn btn-dark w-100 mb-2" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Mohon tunggu..." : "Login"}
         </button>
       </form>

@@ -14,10 +14,7 @@ interface UseAuthFormValues {
   password?: string;
 }
 
-const useAuthForm = (
-  initialValues: UseAuthFormValues,
-  type: "login" | "register"
-) => {
+const useAuthForm = (initialValues: UseAuthFormValues, type: "login" | "register") => {
   const { replace } = useRouter();
   const validationSchema = useValidation<UseAuthFormValues>(initialValues);
   const { mutateAsync } = useAuthMutation<UseAuthFormValues>(type);

@@ -26,25 +26,17 @@ const Dashboard: NextPage<{ isAdmin: boolean }> = ({ isAdmin }) => {
         <h4 className="mx-3">Layanan Sistem Aplikasi Surat</h4>
         <div className="row mt-3">
           <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<SuratKeluarIcon {...iconProps} />}
-              title="Surat Keluar"
-              link="/layanan/surat-keluar/list"
-            />
+            <Card icon={<SuratKeluarIcon {...iconProps} />} title="Surat Keluar" link="/layanan/surat-keluar/list" />
           </div>
           {isAdmin && (
             <>
               <div className="col-md-4 col-sm-6 col-lg-3">
-                <Card
-                  icon={<SuratTugasIcon {...iconProps} />}
-                  title="Surat Tugas (SPPD)"
-                  link="/layanan/surat-tugas"
-                />
+                <Card icon={<SuratTugasIcon {...iconProps} />} title="Surat Tugas (ST)" link="/layanan/surat-tugas" />
               </div>
               <div className="col-md-4 col-sm-6 col-lg-3">
                 <Card
                   icon={<SuratPenugasanIcon {...iconProps} />}
-                  title="Surat Penugasan(SPD)"
+                  title="Surat Penugasan (SPD)"
                   link="/layanan/penugasan/list"
                 />
               </div>
@@ -71,14 +63,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   const {
     data: { email, isAdmin },
-  } = await axios.get<{}, { data: { email: string; isAdmin: boolean } }>(
-    `${BASE_URL}/api/v1/user`,
-    {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
-    }
-  );
+  } = await axios.get<{}, { data: { email: string; isAdmin: boolean } }>(`${BASE_URL}/api/v1/user`, {
+    headers: {
+      authorization: `Bearer ${idToken}`,
+    },
+  });
 
   return {
     props: {

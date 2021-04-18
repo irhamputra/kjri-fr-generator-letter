@@ -25,9 +25,7 @@ const MainLayout: React.FC<{
       {!isAuthPage && (
         <footer className="footer text-center mt-auto py-1 bg-light fixed-bottom">
           <div className="container-fluid d-flex justify-content-between">
-            <span className="text-muted small">
-              Built with ❤️ &nbsp; for KJRI Frankfurt 🇮🇩
-            </span>
+            <span className="text-muted small">Built with ❤️ &nbsp; for KJRI Frankfurt 🇮🇩</span>
             <span className="text-muted small">
               <a href="mailto:irhamputraprasetyo@gmail.com">Contact me</a>
             </span>

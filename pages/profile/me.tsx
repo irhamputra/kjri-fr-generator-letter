@@ -8,9 +8,7 @@ import apiInstance from "../../utils/firebase/apiInstance";
 import parseCookies from "../../utils/parseCookies";
 import createSchema from "../../utils/validation/schema";
 
-const MyProfile: React.FC<{ userData }> = ({
-  userData: { displayName, nip },
-}) => {
+const MyProfile: React.FC<{ userData }> = ({ userData: { displayName, nip } }) => {
   const { back } = useRouter();
   const initialValues = {
     displayName: displayName,
@@ -43,29 +41,15 @@ const MyProfile: React.FC<{ userData }> = ({
         <div className="row">
           <div className="col">
             <label className="form-label">Nama Tampilan</label>
-            <input
-              name="displayName"
-              value={values.displayName}
-              onChange={handleChange}
-              className="form-control"
-            />
-            {errors.displayName && touched.displayName && (
-              <small className="text-danger">{errors.displayName}</small>
-            )}
+            <input name="displayName" value={values.displayName} onChange={handleChange} className="form-control" />
+            {errors.displayName && touched.displayName && <small className="text-danger">{errors.displayName}</small>}
           </div>
         </div>
         <div className="row mt-2">
           <div className="col">
             <label className="form-label">NIP</label>
-            <input
-              name="nip"
-              value={values.nip}
-              onChange={handleChange}
-              className="form-control"
-            />
-            {errors.nip && touched.nip && (
-              <small className="text-danger">{errors.nip}</small>
-            )}
+            <input name="nip" value={values.nip} onChange={handleChange} className="form-control" />
+            {errors.nip && touched.nip && <small className="text-danger">{errors.nip}</small>}
           </div>
         </div>
         <div className="row mt-3">
@@ -74,11 +58,7 @@ const MyProfile: React.FC<{ userData }> = ({
               Edit Profile
             </button>
 
-            <button
-              onClick={() => back()}
-              className="btn btn-outline-dark ms-2 btn"
-              type="button"
-            >
+            <button onClick={() => back()} className="btn btn-outline-dark ms-2 btn" type="button">
               Kembali
             </button>
           </div>

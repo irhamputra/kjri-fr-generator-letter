@@ -10,10 +10,7 @@ const parseCookies = (req?: IncomingMessage): ParsedCookie => {
   return cookie.parse(req ? req.headers.cookie || "" : document.cookie);
 };
 
-export const setCookie = (
-  key: string,
-  value: string | Record<string, unknown>
-): void => {
+export const setCookie = (key: string, value: string | Record<string, unknown>): void => {
   if (process.browser) {
     jscookie.set(key, value, {
       expires: 7,
@@ -30,13 +27,8 @@ export const removeCookie = (key: string): void => {
   }
 };
 
-export const getCookie = (
-  key: string,
-  req?: NextRequest
-): string | { [k: string]: string } => {
-  return process.browser
-    ? getCookieFromBrowser(key)
-    : getCookieFromServer(key, req);
+export const getCookie = (key: string, req?: NextRequest): string | { [k: string]: string } => {
+  return process.browser ? getCookieFromBrowser(key) : getCookieFromServer(key, req);
 };
 
 const getCookieFromBrowser = (key: string) => {

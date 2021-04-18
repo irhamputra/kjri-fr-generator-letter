@@ -10,10 +10,7 @@ import Modal from "react-modal";
 
 const ListSurat: NextPage = () => {
   const { push } = useRouter();
-  const {
-    data: listSuratTugas,
-    isLoading: suratTugasLoading,
-  } = useQuerySuratTugas();
+  const { data: listSuratTugas, isLoading: suratTugasLoading } = useQuerySuratTugas();
 
   const columns = React.useMemo(
     () => [
@@ -45,14 +42,12 @@ const ListSurat: NextPage = () => {
     []
   );
 
-  const data = listSuratTugas?.map?.(
-    ({ nomorSurat, tujuanDinas, suratTugasId }, index) => ({
-      col1: index + 1,
-      col2: nomorSurat,
-      col3: tujuanDinas,
-      col4: suratTugasId,
-    })
-  );
+  const data = listSuratTugas?.map?.(({ nomorSurat, tujuanDinas, suratTugasId }, index) => ({
+    col1: index + 1,
+    col2: nomorSurat,
+    col3: tujuanDinas,
+    col4: suratTugasId,
+  }));
 
   if (suratTugasLoading) return <p>Loading...</p>;
 
@@ -125,25 +120,14 @@ const DeleteAction = ({ messageId }) => {
       >
         <a href="#">Delete</a>
       </div>
-      <Modal
-        isOpen={open}
-        onRequestClose={() => setOpen(false)}
-        contentLabel="Example Modal"
-        style={customStyles}
-      >
-        <div
-          className="modal-dialog"
-          role="document"
-          style={{ width: "100vw" }}
-        >
+      <Modal isOpen={open} onRequestClose={() => setOpen(false)} contentLabel="Example Modal" style={customStyles}>
+        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">Hapus SPPD?</h5>
             </div>
             <div className="modal-body">
-              <p>
-                Kamu tidak akan bisa mengembalikan surat yang telah dihapus.
-              </p>
+              <p>Kamu tidak akan bisa mengembalikan surat yang telah dihapus.</p>
             </div>
             <div className="modal-footer">
               <button
@@ -156,12 +140,7 @@ const DeleteAction = ({ messageId }) => {
               >
                 Hapus
               </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-                onClick={() => setOpen(false)}
-              >
+              <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setOpen(false)}>
                 Close
               </button>
             </div>

@@ -8,10 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
       let result = [];
-      const snapshot = await db
-        .collection("Users")
-        .where("role", "==", "default")
-        .get();
+      const snapshot = await db.collection("Users").where("role", "==", "default").get();
 
       snapshot.forEach((doc) => {
         result.push(doc.data());

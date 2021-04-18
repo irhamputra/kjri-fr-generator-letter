@@ -20,14 +20,7 @@ const ManageArsip: NextPage = () => {
   const { mutateAsync: createArsip } = useCreateArsipMutation();
   const { mutateAsync: deleteArsip } = useDeleteArsipMutatition();
 
-  const {
-    handleChange,
-    values,
-    touched,
-    errors,
-    handleSubmit,
-    isSubmitting,
-  } = useFormik({
+  const { handleChange, values, touched, errors, handleSubmit, isSubmitting } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -65,9 +58,7 @@ const ManageArsip: NextPage = () => {
               value={values.jenisArsip}
               onChange={handleChange}
             />
-            {errors.jenisArsip && touched.jenisArsip && (
-              <small className="text-danger">{errors.jenisArsip}</small>
-            )}
+            {errors.jenisArsip && touched.jenisArsip && <small className="text-danger">{errors.jenisArsip}</small>}
           </div>
 
           <div className="col">
@@ -80,17 +71,11 @@ const ManageArsip: NextPage = () => {
               onChange={handleChange}
             />
 
-            {errors.acronym && touched.acronym && (
-              <small className="text-danger">{errors.acronym}</small>
-            )}
+            {errors.acronym && touched.acronym && <small className="text-danger">{errors.acronym}</small>}
           </div>
         </div>
 
-        <button
-          className="btn-dark btn mt-3"
-          disabled={isSubmitting}
-          type="submit"
-        >
+        <button className="btn-dark btn mt-3" disabled={isSubmitting} type="submit">
           Simpan Arsip
         </button>
       </form>

@@ -37,10 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     let id = "";
 
     try {
-      const snapshot = await db
-        .collection("Admin")
-        .where("showRegisterForm", "!=", toggle)
-        .get();
+      const snapshot = await db.collection("Admin").where("showRegisterForm", "!=", toggle).get();
 
       if (snapshot.empty) {
         res.status(400).json({ message: "Pengaturan tidak berubah" });

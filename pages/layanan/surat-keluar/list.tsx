@@ -42,14 +42,12 @@ const ListSuratKeluar: NextPage = () => {
     []
   );
 
-  const data = listSuratKeluar?.listSurat.map?.(
-    ({ nomorSurat, content, id }, index) => ({
-      col1: index + 1,
-      col2: nomorSurat,
-      col3: content,
-      col4: id,
-    })
-  );
+  const data = listSuratKeluar?.listSurat.map?.(({ nomorSurat, content, id }, index) => ({
+    col1: index + 1,
+    col2: nomorSurat,
+    col3: content,
+    col4: id,
+  }));
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -120,24 +118,14 @@ const DeleteAction = ({ messageId }) => {
       >
         <a href="#">Delete</a>
       </div>
-      <ReactModal
-        isOpen={open}
-        onRequestClose={() => setOpen(false)}
-        style={customStyles}
-      >
-        <div
-          className="modal-dialog"
-          role="document"
-          style={{ width: "100vw" }}
-        >
+      <ReactModal isOpen={open} onRequestClose={() => setOpen(false)} style={customStyles}>
+        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">Hapus SPPD?</h5>
             </div>
             <div className="modal-body">
-              <p>
-                Kamu tidak akan bisa mengembalikan surat yang telah dihapus.
-              </p>
+              <p>Kamu tidak akan bisa mengembalikan surat yang telah dihapus.</p>
             </div>
             <div className="modal-footer">
               <button
@@ -150,12 +138,7 @@ const DeleteAction = ({ messageId }) => {
               >
                 Hapus
               </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-dismiss="modal"
-                onClick={() => setOpen(false)}
-              >
+              <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setOpen(false)}>
                 Close
               </button>
             </div>

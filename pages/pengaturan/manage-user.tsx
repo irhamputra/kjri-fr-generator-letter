@@ -10,21 +10,10 @@ import capitalizeFirstLetter from "../../utils/capitalize";
 import apiInstance from "../../utils/firebase/apiInstance";
 import parseCookies from "../../utils/parseCookies";
 
-const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
-  isAdmin,
-  role,
-}) => {
+const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, role }) => {
   const queryClient = useQueryClient();
 
-  const {
-    values,
-    handleChange,
-    handleSubmit,
-    errors,
-    touched,
-    isSubmitting,
-    resetForm,
-  } = useAuthForm(
+  const { values, handleChange, handleSubmit, errors, touched, isSubmitting, resetForm } = useAuthForm(
     {
       displayName: "",
       email: "",
@@ -79,9 +68,7 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
               value={capitalizeFirstLetter(values.displayName)}
               onChange={handleChange}
             />
-            {errors.displayName && touched.displayName && (
-              <small className="text-danger">{errors.displayName}</small>
-            )}
+            {errors.displayName && touched.displayName && <small className="text-danger">{errors.displayName}</small>}
           </div>
 
           <div className="col-3 mt-3">
@@ -94,9 +81,7 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
               value={values.email}
               onChange={handleChange}
             />
-            {errors.email && touched.email && (
-              <small className="text-danger">{errors.email}</small>
-            )}
+            {errors.email && touched.email && <small className="text-danger">{errors.email}</small>}
           </div>
 
           <div className="col-3 mt-3">
@@ -109,9 +94,7 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
               value={values.password}
               onChange={handleChange}
             />
-            {errors.password && touched.password && (
-              <small className="text-danger">{errors.password}</small>
-            )}
+            {errors.password && touched.password && <small className="text-danger">{errors.password}</small>}
           </div>
 
           <div className="col-3 mt-3">
@@ -124,9 +107,7 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
               value={values.nip}
               onChange={handleChange}
             />
-            {errors.nip && touched.nip && (
-              <small className="text-danger">{errors.nip}</small>
-            )}
+            {errors.nip && touched.nip && <small className="text-danger">{errors.nip}</small>}
           </div>
 
           <div className="col-3 mt-3">
@@ -139,9 +120,7 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
               value={values.golongan}
               onChange={handleChange}
             />
-            {errors.golongan && touched.golongan && (
-              <small className="text-danger">{errors.golongan}</small>
-            )}
+            {errors.golongan && touched.golongan && <small className="text-danger">{errors.golongan}</small>}
           </div>
 
           <div className="col-3 mt-3">
@@ -154,40 +133,25 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({
               value={capitalizeFirstLetter(values.jabatan)}
               onChange={handleChange}
             />
-            {errors.jabatan && touched.jabatan && (
-              <small className="text-danger">{errors.jabatan}</small>
-            )}
+            {errors.jabatan && touched.jabatan && <small className="text-danger">{errors.jabatan}</small>}
           </div>
 
           <div className="col mt-3">
             <label className="form-label">Role</label>
-            <select
-              className="form-select"
-              aria-label="Role"
-              name="role"
-              onChange={handleChange}
-            >
+            <select className="form-select" aria-label="Role" name="role" onChange={handleChange}>
               <option value="">Pilih Role</option>
               <option value="default">Staff</option>
               <option value="TU">Tata Usaha</option>
             </select>
 
-            {errors.role && touched.role && (
-              <small className="text-danger">{errors.role}</small>
-            )}
+            {errors.role && touched.role && <small className="text-danger">{errors.role}</small>}
             {values.role === "TU" && (
-              <small className="text-info">
-                Role "Tata Usaha" tidak akan muncul di list Staff
-              </small>
+              <small className="text-info">Role "Tata Usaha" tidak akan muncul di list Staff</small>
             )}
           </div>
 
           <div className="mt-3">
-            <button
-              disabled={isSubmitting}
-              className="btn btn-dark"
-              type="submit"
-            >
+            <button disabled={isSubmitting} className="btn btn-dark" type="submit">
               Register User
             </button>
             <button

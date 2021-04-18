@@ -7,10 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      const snapshot = await db
-        .collection("SuratTugas")
-        .orderBy("nomorSurat", "asc")
-        .get();
+      const snapshot = await db.collection("SuratTugas").orderBy("nomorSurat", "asc").get();
 
       let result = [];
 
@@ -39,11 +36,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       let id = "";
 
-      const snapshot = await db
-        .collection("SuratTugas")
-        .where("nomorSurat", "==", nomorSurat)
-        .limit(1)
-        .get();
+      const snapshot = await db.collection("SuratTugas").where("nomorSurat", "==", nomorSurat).limit(1).get();
 
       snapshot.forEach((doc) => {
         id = doc.id;

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "vercel deploy --prod"
+    "deploy": "vercel deploy --prod",
+    "format": "prettier --write \"./**/*.+(js|ts|tsx|vue)\" --ignore-path ./.gitignore"
   },
   "dependencies": {
     "@popperjs/core": "^2.9.2",
@@ -53,5 +54,8 @@
     "@types/yup": "^0.29.11",
     "prettier": "^2.2.1",
     "typescript": "^4.2.3"
+  },
+  "prettier": {
+    "printWidth": 120
   }
 }

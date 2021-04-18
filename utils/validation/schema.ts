@@ -21,22 +21,14 @@ const schema = (type: string) => {
     case "roles":
       return string()
         .trim()
-        .required(
-          `${
-            type === "displayName"
-              ? "Nama Pegawai"
-              : capitalizeFirstLetter(type)
-          } wajib diisi!`
-        );
+        .required(`${type === "displayName" ? "Nama Pegawai" : capitalizeFirstLetter(type)} wajib diisi!`);
 
     case "nip":
       return string().matches(/^[0-9]*$/g, "NIP wajib berupa nomor");
 
     // Login & Register schema
     case "email":
-      return string()
-        .email("Email tidak sesuai format, mohon cek kembali")
-        .required("Email wajib diisi");
+      return string().email("Email tidak sesuai format, mohon cek kembali").required("Email wajib diisi");
 
     case "password":
       return string()
@@ -53,9 +45,7 @@ const schema = (type: string) => {
       return string().trim().required("Value tidak valid");
 
     case "surat":
-      return array()
-        .min(1, "wajib menyertakan surat")
-        .required("Silahkan upload surat");
+      return array().min(1, "wajib menyertakan surat").required("Silahkan upload surat");
 
     case "durasi":
       return string().matches(/^[0-9]?,[5]$/, "Value bukan angka dan koma");

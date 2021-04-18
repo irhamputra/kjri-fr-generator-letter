@@ -13,11 +13,7 @@ import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
 type PropsColumn = HeaderGroup<any> & UseSortByColumnProps<any>;
 type PropsReturn = TableInstance<any> & UseGlobalFiltersInstanceProps<any>;
 
-function Table<T extends UseGlobalFiltersInstanceProps<T>>({
-  columns,
-  data,
-  search,
-}) {
+function Table<T extends UseGlobalFiltersInstanceProps<T>>({ columns, data, search }) {
   const {
     getTableProps,
     getTableBodyProps,
@@ -27,17 +23,11 @@ function Table<T extends UseGlobalFiltersInstanceProps<T>>({
     state,
     preGlobalFilteredRows,
     setGlobalFilter,
-  } = useTable<UseGlobalFiltersInstanceProps<any>>(
-    { columns, data },
-    useGlobalFilter,
-    useSortBy
-  ) as PropsReturn;
+  } = useTable<UseGlobalFiltersInstanceProps<any>>({ columns, data }, useGlobalFilter, useSortBy) as PropsReturn;
 
   return (
     <>
-      <div className="w-100">
-        {search({ state, preGlobalFilteredRows, setGlobalFilter })}
-      </div>
+      <div className="w-100">{search({ state, preGlobalFilteredRows, setGlobalFilter })}</div>
       <table className="table table-striped" {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -46,15 +36,7 @@ function Table<T extends UseGlobalFiltersInstanceProps<T>>({
                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render("Header")}
                   <span style={{ marginLeft: 8 }}>
-                    {column.isSorted ? (
-                      column.isSortedDesc ? (
-                        <ChevronDown />
-                      ) : (
-                        <ChevronUp />
-                      )
-                    ) : (
-                      ""
-                    )}
+                    {column.isSorted ? column.isSortedDesc ? <ChevronDown /> : <ChevronUp /> : ""}
                   </span>
                 </th>
               ))}
@@ -67,9 +49,7 @@ function Table<T extends UseGlobalFiltersInstanceProps<T>>({
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
+                  return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
                 })}
               </tr>
             );
