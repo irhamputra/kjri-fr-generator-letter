@@ -1,10 +1,8 @@
 import * as React from "react";
 import { NextPage } from "next";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
-import { MessageCard } from "../../../components/Card";
 import { useRouter } from "next/router";
-import { FileEarmarkExcel, Search } from "react-bootstrap-icons";
-import useFuse from "../../../hooks/useFuse";
+import { Search } from "react-bootstrap-icons";
 import Table from "../../../components/Table";
 import useDeleteSuratKeluar from "../../../hooks/mutation/useDeleteSuratKeluar";
 import ReactModal from "react-modal";
@@ -33,7 +31,7 @@ const ListSuratKeluar: NextPage = () => {
         accessor: "col4",
         Cell: ({ value }) => (
           <div style={{ display: "flex" }}>
-            <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
+            <Link href={`/layanan/surat-keluar/${value}?edit=true`} passHref>
               <a>Edit</a>
             </Link>
             <DeleteAction messageId={value} />
@@ -43,8 +41,6 @@ const ListSuratKeluar: NextPage = () => {
     ],
     []
   );
-
-  console.log(listSuratKeluar);
 
   const data = listSuratKeluar?.listSurat.map?.(
     ({ nomorSurat, content, id }, index) => ({
