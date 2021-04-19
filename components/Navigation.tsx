@@ -10,7 +10,7 @@ import { useQueryClient } from "react-query";
 import useBreakpoint from "../hooks/useBreakpoints";
 import { Auth } from "../typings/AuthQueryClient";
 
-const Navigation: React.FC = () => {
+const Navigation = (): JSX.Element => {
   const { replace, reload, push } = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState(null);

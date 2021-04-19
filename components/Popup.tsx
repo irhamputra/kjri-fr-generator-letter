@@ -1,5 +1,5 @@
 import { Placement } from "@popperjs/core";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { usePopper } from "react-popper";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 
@@ -10,7 +10,13 @@ interface PopupProps {
   placement?: Placement;
 }
 
-const Popup: React.FC<PopupProps> = ({ anchorRef, onClickOutside, open, children, placement = "left-start" }) => {
+const Popup = ({
+  anchorRef,
+  onClickOutside,
+  open,
+  children,
+  placement = "left-start",
+}: PropsWithChildren<PopupProps>): JSX.Element => {
   const [popperElement, setPopperElement] = React.useState(null);
   const [arrowElement, setArrowElement] = React.useState(null);
   const closeRef = React.useRef(null);

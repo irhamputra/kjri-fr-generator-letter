@@ -3,13 +3,13 @@ import Select from "react-select";
 import useQueryArsip from "../hooks/query/useQueryArsip";
 import { SelectComponentsProps } from "react-select/src/Select";
 
-const SelectArsip: React.FC<SelectComponentsProps> = ({
+const SelectArsip = ({
   placeholder,
   onChange = () => {},
   value,
   isDisabled,
   ...rest
-}) => {
+}: SelectComponentsProps): JSX.Element => {
   // reconstruct option from value
   const { data: listArsip, isLoading: isLoadingArsip } = useQueryArsip();
 

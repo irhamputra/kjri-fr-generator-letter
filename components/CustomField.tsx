@@ -15,7 +15,7 @@ interface InputProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<H
   endText: string;
 }
 
-const DropzoneComponent: React.FC<any> = ({ field, form: { setFieldValue, setFieldTouched, ...restForm } }) => {
+const DropzoneComponent = ({ field, form: { setFieldValue, setFieldTouched, ...restForm } }) => {
   const onDrop = (acceptedFiles) => {
     setFieldValue(field.name, acceptedFiles);
   };
@@ -31,7 +31,7 @@ const DropzoneComponent: React.FC<any> = ({ field, form: { setFieldValue, setFie
   return <UncontrolledDropzone values={field.value as Array<File>} onDrop={onDrop} onClickReset={() => removeAll()} />;
 };
 
-const UncontrolledDropzone: React.FC<IUDropzone> = ({ onDrop, values = [], onClickReset }) => {
+const UncontrolledDropzone = ({ onDrop, values = [], onClickReset }: IUDropzone): JSX.Element => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: ["image/jpeg", "image/png", "application/pdf"],
@@ -75,7 +75,7 @@ const UncontrolledDropzone: React.FC<IUDropzone> = ({ onDrop, values = [], onCli
   );
 };
 
-const InputComponent: React.FC<InputProps> = ({ endText = "hari", ...props }) => {
+const InputComponent = ({ endText = "hari", ...props }: InputProps): JSX.Element => {
   return (
     <div className="input-group">
       <input className="form-control" type="text" {...props} />
@@ -88,7 +88,7 @@ const InputComponent: React.FC<InputProps> = ({ endText = "hari", ...props }) =>
   );
 };
 
-const SelectComponent: React.FC<Props> = ({
+const SelectComponent = ({
   placeholder,
   field,
   form: { setFieldValue, setFieldTouched },
@@ -97,7 +97,7 @@ const SelectComponent: React.FC<Props> = ({
   value,
   styles,
   matcher,
-}) => {
+}: Props): JSX.Element => {
   // reconstruct option from value
   const index = matcher ? matcher(options) : options?.findIndex((valueProp) => valueProp.value === value);
 
@@ -118,20 +118,18 @@ const SelectComponent: React.FC<Props> = ({
   };
 
   return (
-    <div>
-      <Select
-        id={field.name}
-        value={_value}
-        instanceId={field.name}
-        isClearable
-        placeholder={placeholder}
-        components={components}
-        onChange={handleOnChange}
-        options={options}
-        onFocus={handleOnFocus}
-        styles={styles}
-      />
-    </div>
+    <Select
+      id={field.name}
+      value={_value}
+      instanceId={field.name}
+      isClearable
+      placeholder={placeholder}
+      components={components}
+      onChange={handleOnChange}
+      options={options}
+      onFocus={handleOnFocus}
+      styles={styles}
+    />
   );
 };
 

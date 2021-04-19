@@ -13,7 +13,7 @@ import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
 type PropsColumn = HeaderGroup<any> & UseSortByColumnProps<any>;
 type PropsReturn = TableInstance<any> & UseGlobalFiltersInstanceProps<any>;
 
-function Table<T extends UseGlobalFiltersInstanceProps<T>>({ columns, data, search }) {
+function Table<T extends UseGlobalFiltersInstanceProps<T>>({ columns, data, search }): JSX.Element {
   const {
     getTableProps,
     getTableBodyProps,
@@ -23,7 +23,7 @@ function Table<T extends UseGlobalFiltersInstanceProps<T>>({ columns, data, sear
     state,
     preGlobalFilteredRows,
     setGlobalFilter,
-  } = useTable<UseGlobalFiltersInstanceProps<any>>({ columns, data }, useGlobalFilter, useSortBy) as PropsReturn;
+  } = useTable<UseGlobalFiltersInstanceProps<T>>({ columns, data }, useGlobalFilter, useSortBy) as PropsReturn;
 
   return (
     <>

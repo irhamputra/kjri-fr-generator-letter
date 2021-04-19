@@ -6,7 +6,7 @@ import styles from "../styles/Sidebar.module.css";
 import { useQueryClient } from "react-query";
 import type { Auth } from "../typings/AuthQueryClient";
 
-const Sidebar: React.FC = () => {
+const Sidebar = (): JSX.Element => {
   const { pathname } = useRouter();
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
