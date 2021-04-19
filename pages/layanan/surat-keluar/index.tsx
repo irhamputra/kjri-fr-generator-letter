@@ -2,27 +2,27 @@ import * as React from "react";
 import { NextPage } from "next";
 import { useFormik } from "formik";
 import { object } from "yup";
-import createSchema from "../../../utils/validation/schema";
+import { useQueryClient } from "react-query";
 import dayjs from "dayjs";
 import { NextSeo } from "next-seo";
+import { v4 } from "uuid";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 import { UncontrolledDropzone } from "../../../components/CustomField";
 import { SelectArsip } from "../../../components/Select";
-import useCreateSuratKeluarMutation from "../../../hooks/mutation/useCreateSuratKeluarMutation";
-import { toast } from "react-hot-toast";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
-import { useRouter } from "next/router";
+import useCreateSuratKeluarMutation from "../../../hooks/mutation/useCreateSuratKeluarMutation";
 import capitalizeFirstLetter from "../../../utils/capitalize";
 import useQueryJenisSurat from "../../../hooks/query/useQueryJenisSurat";
-import { v4 } from "uuid";
+import createSchema from "../../../utils/validation/schema";
 import useUpdateSuratKeluarMutation from "../../../hooks/mutation/useUpdateSuratKeluarMutation";
-import { useAuthContext } from "../../../context/AuthContext";
+import { Auth } from "../../../typings/AuthQueryClient";
 
 const SuratKeluar: NextPage = () => {
   const [disabled, setDisabled] = React.useState(false);
   const { push } = useRouter();
-  const {
-    data: { email },
-  } = useAuthContext();
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
 
   const initialValues = {
     recipient: "",
@@ -101,9 +101,9 @@ const SuratKeluar: NextPage = () => {
 
       await setFieldValue("id", id);
       await setFieldValue("nomorSurat", nomorSurat);
-      await setFieldValue("author", email);
+      await setFieldValue("author", query.email);
 
-      await createSuratKeluar({ id, author: email, nomorSurat });
+      await createSuratKeluar({ id, author: query.email, nomorSurat });
 
       setDisabled(true);
     } catch (e) {

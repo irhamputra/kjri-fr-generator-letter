@@ -4,5 +4,5 @@ export type Auth = {
   golongan: string;
   role: string;
   nip: string;
-  uid: string;
+  email: string;
 };
