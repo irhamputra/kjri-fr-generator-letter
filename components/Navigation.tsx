@@ -7,12 +7,15 @@ import { ChevronDown, Gear, House, List } from "react-bootstrap-icons";
 import Popup from "./Popup";
 import Link from "next/link";
 import useBreakpoint from "../hooks/useBreakpoints";
+import { useAuthContext } from "../context/AuthContext";
 
-const Navigation: React.FC<{ displayName: string }> = ({ displayName }) => {
+const Navigation: React.FC = () => {
   const { replace, reload, push } = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
+  const { data } = useAuthContext();
+
   const handleLogout = async () => {
     try {
       const idToken = cookie.get("KJRIFR-U");
@@ -50,7 +53,7 @@ const Navigation: React.FC<{ displayName: string }> = ({ displayName }) => {
             ref={setReferenceElement}
           >
             <p className="ms-auto my-0 mx-2">
-              Hello, <strong>{displayName}</strong>
+              Hello, <strong>{data?.displayName}</strong>
             </p>
             <ChevronDown />
           </div>

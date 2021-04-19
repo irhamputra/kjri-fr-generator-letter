@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import React from "react";
 import { object } from "yup";
 import useEditUser from "../../hooks/mutation/useUserMutation";
-import useQueryUser from "../../hooks/query/useQueryUser";
 import apiInstance from "../../utils/firebase/apiInstance";
 import parseCookies from "../../utils/parseCookies";
 import createSchema from "../../utils/validation/schema";

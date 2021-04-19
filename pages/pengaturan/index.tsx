@@ -1,11 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
-import {
-  People as UserIcon,
-  FileEarmarkWord as ArsipIcon,
-  Collection as DepartemenIcon,
-  Tag as GolonganIcon,
-} from "react-bootstrap-icons";
+import { People as UserIcon, FileEarmarkWord as ArsipIcon, Tag as GolonganIcon } from "react-bootstrap-icons";
 import Card from "../../components/Card";
 import { NextSeo } from "next-seo";
 import parseCookies from "../../utils/parseCookies";
@@ -33,13 +28,6 @@ const Index: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, role }) 
           )}
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card icon={<ArsipIcon {...iconProps} />} title="Manage Arsip" link="/pengaturan/manage-arsip" />
-          </div>
-          <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<DepartemenIcon {...iconProps} />}
-              title="Manage Departemen"
-              link="/pengaturan/manage-departemen"
-            />
           </div>
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card icon={<GolonganIcon {...iconProps} />} title="Manage Golongan" link="/pengaturan/manage-golongan" />

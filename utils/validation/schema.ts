@@ -23,9 +23,6 @@ const schema = (type: string) => {
         .trim()
         .required(`${type === "displayName" ? "Nama Pegawai" : capitalizeFirstLetter(type)} wajib diisi!`);
 
-    case "nip":
-      return string().matches(/^[0-9]*$/g, "NIP wajib berupa nomor");
-
     // Login & Register schema
     case "email":
       return string().email("Email tidak sesuai format, mohon cek kembali").required("Email wajib diisi");

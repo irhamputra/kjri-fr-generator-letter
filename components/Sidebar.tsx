@@ -7,9 +7,7 @@ import { useAuthContext } from "../context/AuthContext";
 
 const Sidebar: React.FC = () => {
   const { pathname } = useRouter();
-  const {
-    data: { isAdmin },
-  } = useAuthContext();
+  const { data } = useAuthContext();
 
   const isActive = pathname === "/pengaturan";
 
@@ -34,7 +32,7 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
 
-          {isAdmin && (
+          {data?.isAdmin && (
             <li
               className={`${
                 isActive
