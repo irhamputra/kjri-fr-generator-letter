@@ -6,15 +6,17 @@ import { toast } from "react-hot-toast";
 import { ChevronDown, Gear, House, List } from "react-bootstrap-icons";
 import Popup from "./Popup";
 import Link from "next/link";
+import { useQueryClient } from "react-query";
 import useBreakpoint from "../hooks/useBreakpoints";
-import { useAuthContext } from "../context/AuthContext";
+import { Auth } from "../typings/AuthQueryClient";
 
 const Navigation: React.FC = () => {
   const { replace, reload, push } = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
-  const { data } = useAuthContext();
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
 
   const handleLogout = async () => {
     try {
@@ -53,7 +55,7 @@ const Navigation: React.FC = () => {
             ref={setReferenceElement}
           >
             <p className="ms-auto my-0 mx-2">
-              Hello, <strong>{data?.displayName}</strong>
+              Hello, <strong>{query?.displayName}</strong>
             </p>
             <ChevronDown />
           </div>
@@ -73,19 +75,13 @@ const Navigation: React.FC = () => {
                 <button className="dropdown-item" type="button" onClick={() => push("/profile/me")}>
                   Edit Profile
                 </button>
-                <li className="dropdown-divider"></li>
+                <li className="dropdown-divider" />
                 <button className="dropdown-item" type="button" onClick={handleLogout}>
                   Logout
                 </button>
               </div>
             </div>
           </Popup>
-          {/* <button
-          className="btn btn-link fw-bold text-dark"
-          onClick={handleLogout}
-        >
-          Keluar
-        </button> */}
         </div>
       </nav>
       {is(["xs", "sm"]) && isOpen && (

@@ -3,11 +3,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { House, Gear } from "react-bootstrap-icons";
 import styles from "../styles/Sidebar.module.css";
-import { useAuthContext } from "../context/AuthContext";
+import { useQueryClient } from "react-query";
+import type { Auth } from "../typings/AuthQueryClient";
 
 const Sidebar: React.FC = () => {
   const { pathname } = useRouter();
-  const { data } = useAuthContext();
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
 
   const isActive = pathname === "/pengaturan";
 
@@ -32,7 +34,7 @@ const Sidebar: React.FC = () => {
             </Link>
           </li>
 
-          {data?.isAdmin && (
+          {query?.isAdmin && (
             <li
               className={`${
                 isActive

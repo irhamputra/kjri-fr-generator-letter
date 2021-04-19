@@ -1,32 +1,39 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/globals.css";
+import React from "react";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { dehydrate, Hydrate } from "react-query/hydration";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { Toaster } from "react-hot-toast";
+import axios from "axios";
+import { DefaultSeo } from "next-seo";
 import MainLayout from "../components/layout/MainLayout";
 import parseCookies from "../utils/parseCookies";
-import axios from "axios";
 
-import { DefaultSeo } from "next-seo";
-import AuthProvider from "../context/AuthContext";
+function MyApp({ Component, pageProps, dehydrateState }) {
+  const queryClientRef = React.useRef<null | QueryClient>(null);
 
-const queryClient = new QueryClient();
+  if (!queryClientRef.current) {
+    queryClientRef.current = new QueryClient();
+  }
 
-function MyApp({ Component, pageProps, data }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <DefaultSeo title="Sistem Aplikasi KJRI Frankfurt" description="Sistem Aplikasi KJRI Frankfurt" />
-      <AuthProvider value={{ data }}>
+    <QueryClientProvider client={queryClientRef.current}>
+      <Hydrate state={pageProps?.dehydrateState ?? dehydrateState}>
+        <DefaultSeo title="Sistem Aplikasi KJRI Frankfurt" description="Sistem Aplikasi KJRI Frankfurt" />
         <MainLayout>
           <Component {...pageProps} />
           <Toaster position="bottom-right" toastOptions={{ success: { duration: 2000 } }} />
         </MainLayout>
-      </AuthProvider>
+      </Hydrate>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
 
 MyApp.getInitialProps = async ({ ctx }) => {
   const cookie = parseCookies(ctx.req);
+  const queryClient = new QueryClient();
 
   const whitelistedPage = ["/", "/forget-password", "/_error"];
 
@@ -42,22 +49,26 @@ MyApp.getInitialProps = async ({ ctx }) => {
 
   if (!cookie["KJRIFR-U"]) return {};
 
-  const BASE_URL =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : "https://sistem-nomor-surat-kjri-frankfurt.vercel.app";
-
   try {
+    const BASE_URL =
+      process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : "https://sistem-nomor-surat-kjri-frankfurt.vercel.app";
+
     const idToken = cookie["KJRIFR-U"];
 
-    const { data } = await axios.get(`${BASE_URL}/api/v1/user`, {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
+    await queryClient.prefetchQuery("auth", async () => {
+      const { data } = await axios.get(`${BASE_URL}/api/v1/user`, {
+        headers: {
+          authorization: `Bearer ${idToken}`,
+        },
+      });
+
+      return data;
     });
 
     return {
-      data,
+      dehydrateState: dehydrate(queryClient),
     };
   } catch (e) {
     throw new Error(e.message);
