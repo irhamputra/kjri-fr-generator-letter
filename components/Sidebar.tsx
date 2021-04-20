@@ -37,7 +37,7 @@ const Sidebar = (): JSX.Element => {
             <Link href="/created-surat">
               <a className="d-flex align-items-center p-2">
                 <FileEarmarkCheck size={25} style={{ color: "white" }} />
-                <p className="my-0 mx-2 ">Surat Telat Dibuat</p>
+                <p className="my-0 mx-2 ">Surat Telah Dibuat</p>
               </a>
             </Link>
           </li>
