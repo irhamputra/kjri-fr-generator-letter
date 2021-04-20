@@ -1,16 +1,12 @@
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { House, Gear, FileEarmarkCheck, FileEarmarkPerson } from "react-bootstrap-icons";
 import { useQueryClient } from "react-query";
 import type { Auth } from "../typings/AuthQueryClient";
 
 const Sidebar = (): JSX.Element => {
-  const { pathname } = useRouter();
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
-
-  const isActive = pathname === "/pengaturan";
 
   return (
     <div className={`col-2 bg-dark`} style={{ height: "100vh" }}>
@@ -55,11 +51,7 @@ const Sidebar = (): JSX.Element => {
           </li>
 
           {query?.isAdmin && (
-            <li
-              className={`${
-                isActive ? `list-group-item text-primary bg-transparent` : `list-group-item text-white bg-transparent`
-              }`}
-            >
+            <li className="list-group-item text-white bg-transparent">
               <Link href="/pengaturan">
                 <a className="d-flex align-items-center p-2">
                   <Gear size={25} />
