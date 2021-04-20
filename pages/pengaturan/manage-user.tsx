@@ -7,11 +7,12 @@ import { Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
 import useQueryUsers from "../../hooks/query/useQueryUsers";
 import capitalizeFirstLetter from "../../utils/capitalize";
-import apiInstance from "../../utils/firebase/apiInstance";
-import parseCookies from "../../utils/parseCookies";
+import useQueryJalDir from "../../hooks/query/useQueryJalDir";
+import { Auth } from "../../typings/AuthQueryClient";
 
-const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, role }) => {
+const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
 
   const { values, handleChange, handleSubmit, errors, touched, isSubmitting, resetForm } = useAuthForm(
     {
@@ -26,7 +27,8 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, rol
     "register"
   );
 
-  const { data, isLoading } = useQueryUsers();
+  const { data: listUsers, isLoading: loadingUser } = useQueryUsers();
+  const { data: listGolongan, isLoading: loadingGolongan } = useQueryJalDir();
 
   const { mutateAsync } = useMutation(
     "deleteUser",
@@ -49,9 +51,9 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, rol
     }
   );
 
-  if (!isAdmin && role !== "tu") throw Error("Invalid permission");
+  if (!query.isAdmin && query.role !== "tu") throw Error("Invalid permission");
 
-  if (isLoading) return <h4>Loading...</h4>;
+  if (loadingUser && loadingGolongan) return <h4>Loading...</h4>;
 
   return (
     <section className="mt-3">
@@ -112,14 +114,16 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, rol
 
           <div className="col-3 mt-3">
             <label className="form-label">Golongan</label>
-            <input
-              className="form-control"
-              name="golongan"
-              type="text"
-              disabled={isSubmitting}
-              value={values.golongan}
-              onChange={handleChange}
-            />
+            <select className="form-select" aria-label="golongan" name="golongan" onChange={handleChange}>
+              <option value="">Pilih Golongan</option>
+              {listGolongan?.map?.((v) => {
+                return (
+                  <option value={v.golongan} key={v.golId}>
+                    {v.golongan}
+                  </option>
+                );
+              })}
+            </select>
             {errors.golongan && touched.golongan && <small className="text-danger">{errors.golongan}</small>}
           </div>
 
@@ -179,7 +183,7 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, rol
           </tr>
         </thead>
         <tbody>
-          {data?.map?.((v) => (
+          {listUsers?.map?.((v) => (
             <tr key={v.uid}>
               <td scope="row">{v.nip}</td>
               <td>{v.displayName}</td>
@@ -203,29 +207,5 @@ const ManageUser: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, rol
     </section>
   );
 };
-
-export async function getServerSideProps({ req }) {
-  const cookie = parseCookies(req);
-  const idToken = cookie["KJRIFR-U"];
-  try {
-    const {
-      data: { email, isAdmin, role },
-    } = await apiInstance.get("/api/v1/user", {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    return {
-      props: {
-        isAdmin,
-        email,
-        role,
-      },
-    };
-  } catch (e) {
-    console.error(e);
-  }
-}
 
 export default ManageUser;
