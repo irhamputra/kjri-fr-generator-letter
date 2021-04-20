@@ -6,10 +6,14 @@ const useQuerySuratPerjalanan = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
 
-  return useQuery("fetchSuratPerjalanan", async () => {
-    const { data } = await axios.get(`/api/v1/surat-perjalanan/${query.email}`);
+  return useQuery("fetchSuratPerjalananCount", async () => {
+    try {
+      const { data } = await axios.get(`/api/v1/surat-perjalanan/${query.email}`);
 
-    return data;
+      return data;
+    } catch (e) {
+      throw new Error(e.message);
+    }
   });
 };
 

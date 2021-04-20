@@ -3,10 +3,14 @@ import Link from "next/link";
 import { House, Gear, FileEarmarkCheck, FileEarmarkPerson } from "react-bootstrap-icons";
 import { useQueryClient } from "react-query";
 import type { Auth } from "../typings/AuthQueryClient";
+import useQueryTotalSuratPerjalanan from "../hooks/query/useQueryTotalSuratPerjalanan";
 
 const Sidebar = (): JSX.Element => {
+  const { data, isLoading } = useQueryTotalSuratPerjalanan();
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
+
+  if (isLoading) return null;
 
   return (
     <div className={`col-2 bg-dark`} style={{ height: "100vh" }}>
@@ -43,9 +47,11 @@ const Sidebar = (): JSX.Element => {
               <a className="d-flex align-items-center p-2">
                 <FileEarmarkPerson size={25} style={{ color: "white" }} />
                 <p className="my-0 mx-2 ">Surat Perjalanan</p>
-                <span className="badge badge-danger" style={{ background: "#dc3545" }}>
-                  1
-                </span>
+                {data > 0 && (
+                  <span className="badge badge-danger" style={{ background: "#dc3545" }}>
+                    {data}
+                  </span>
+                )}
               </a>
             </Link>
           </li>
