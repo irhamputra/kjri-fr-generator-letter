@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
 import { DropzoneComponent, InputComponent, SelectComponent, SelectStaff } from "../../../components/CustomField";
@@ -11,10 +11,7 @@ import { Trash as TrashIcon, Plus as PlusIcon } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
 import useQueryUsers from "../../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
-import parseCookies from "../../../utils/parseCookies";
-import apiInstance from "../../../utils/firebase/apiInstance";
-import { QueryClient, useQuery, useQueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
+import { useQuery, useQueryClient } from "react-query";
 import { Auth } from "../../../typings/AuthQueryClient";
 
 const { format } = new Intl.NumberFormat("en-US", {
@@ -340,31 +337,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
       </div>
     </section>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const cookie = parseCookies(req);
-  const queryClient = new QueryClient();
-
-  if (!cookie["KJRIFR-U"]) return { props: {} };
-
-  const idToken = cookie["KJRIFR-U"];
-
-  await queryClient.prefetchQuery("auth", async () => {
-    const { data } = await apiInstance.get("/api/v1/user", {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    return data;
-  });
-
-  return {
-    props: {
-      dehydrateState: dehydrate(queryClient),
-    },
-  };
 };
 
 export default Penugasan;

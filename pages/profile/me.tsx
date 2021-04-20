@@ -3,15 +3,18 @@ import { useRouter } from "next/router";
 import React from "react";
 import { object } from "yup";
 import useEditUser from "../../hooks/mutation/useUserMutation";
-import apiInstance from "../../utils/firebase/apiInstance";
-import parseCookies from "../../utils/parseCookies";
 import createSchema from "../../utils/validation/schema";
+import { useQueryClient } from "react-query";
+import { Auth } from "../../typings/AuthQueryClient";
 
-const MyProfile: React.FC<{ userData }> = ({ userData: { displayName, nip } }) => {
+const MyProfile = () => {
   const { back } = useRouter();
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
+
   const initialValues = {
-    displayName: displayName,
-    nip: nip,
+    displayName: query.displayName,
+    nip: query.nip,
   };
 
   const { mutateAsync, isLoading } = useEditUser();
@@ -32,6 +35,7 @@ const MyProfile: React.FC<{ userData }> = ({ userData: { displayName, nip } }) =
   });
 
   if (isLoading) return <div>Updating...</div>;
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="container-sm" style={{ maxWidth: "576px" }}>
@@ -62,35 +66,9 @@ const MyProfile: React.FC<{ userData }> = ({ userData: { displayName, nip } }) =
             </button>
           </div>
         </div>
-        {/* <InputComponent endText="" placeholder="username" /> */}
       </div>
     </form>
   );
 };
-
-export async function getServerSideProps({ req }) {
-  const cookie = parseCookies(req);
-  const idToken = cookie["KJRIFR-U"];
-  try {
-    const {
-      data: { nip, displayName },
-    } = await apiInstance.get("/api/v1/user", {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    return {
-      props: {
-        userData: {
-          displayName,
-          nip,
-        },
-      },
-    };
-  } catch (e) {
-    throw new Error(e.message);
-  }
-}
 
 export default MyProfile;
