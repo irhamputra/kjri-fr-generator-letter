@@ -5,7 +5,6 @@ import { QueryClientProvider, QueryClient } from "react-query";
 import { dehydrate, Hydrate } from "react-query/hydration";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Toaster } from "react-hot-toast";
-import axios from "axios";
 import { DefaultSeo } from "next-seo";
 import MainLayout from "../components/layout/MainLayout";
 import parseCookies from "../utils/parseCookies";
