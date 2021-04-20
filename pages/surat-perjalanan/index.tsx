@@ -3,16 +3,17 @@ import useQuerySuratPerjalanan from "../../hooks/query/useQuerySuratPerjalanan";
 import { NextSeo } from "next-seo";
 import * as React from "react";
 import { Printer } from "react-bootstrap-icons";
-import usePrintFile from "../../hooks/usePrintFile";
+// import usePrintFile from "../../hooks/usePrintFile";
 
 const SuratPerjalanan: NextPage = () => {
   const { data, isLoading } = useQuerySuratPerjalanan();
-  const { mutateAsync } = usePrintFile();
+  // const { mutateAsync } = usePrintFile();
 
   if (isLoading) return <p>Loading...</p>;
 
   const handlePrint = async (id) => {
-    await mutateAsync(id);
+    console.log({ id });
+    // await mutateAsync(id);
   };
 
   // TODO: tambahin table surat perjalanan

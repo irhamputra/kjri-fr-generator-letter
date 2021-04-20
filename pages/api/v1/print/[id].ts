@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PDFDocument, StandardFonts } from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
 import axios from "axios";
