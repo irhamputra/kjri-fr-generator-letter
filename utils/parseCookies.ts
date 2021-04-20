@@ -35,12 +35,12 @@ const getCookieFromBrowser = (key: string) => {
   return jscookie.get(key);
 };
 
-const getCookieFromServer = (key: string, req: NextRequest) => {
-  if (!req.headers.cookie) {
+const getCookieFromServer = (key: string, req: NextRequest | undefined) => {
+  if (!req?.headers.cookie) {
     return undefined;
   }
 
-  const rawCookie = parse(req.headers.cookie);
+  const rawCookie = parse(req?.headers.cookie ?? "");
   const value = rawCookie[key];
 
   if (!value) return null;

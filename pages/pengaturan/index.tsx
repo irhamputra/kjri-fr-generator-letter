@@ -5,11 +5,15 @@ import Card from "../../components/Card";
 import { NextSeo } from "next-seo";
 import parseCookies from "../../utils/parseCookies";
 import apiInstance from "../../utils/firebase/apiInstance";
+import { useQueryClient } from "react-query";
+import { Auth } from "../../typings/AuthQueryClient";
 
-const Index: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, role }) => {
+const Index: NextPage = () => {
   const iconProps = { height: 32, width: 32 };
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
 
-  if (!isAdmin) throw Error("Invalid permission");
+  if (!query?.isAdmin) throw Error("Invalid permission");
 
   return (
     <>
@@ -21,7 +25,7 @@ const Index: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, role }) 
         <h3 className="mx-3">Pengaturan</h3>
 
         <div className="row">
-          {role !== "tu" && (
+          {query?.role !== "tu" && (
             <div className="col-md-4 col-sm-6 col-lg-3">
               <Card icon={<UserIcon {...iconProps} />} title="Manage User" link="/pengaturan/manage-user" />
             </div>
@@ -37,29 +41,5 @@ const Index: NextPage<{ isAdmin: boolean; role: string }> = ({ isAdmin, role }) 
     </>
   );
 };
-
-export async function getServerSideProps({ req }) {
-  const cookie = parseCookies(req);
-  const idToken = cookie["KJRIFR-U"];
-  try {
-    const {
-      data: { email, isAdmin, role },
-    } = await apiInstance.get("/api/v1/user", {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    return {
-      props: {
-        isAdmin,
-        email,
-        role,
-      },
-    };
-  } catch (e) {
-    console.error(e);
-  }
-}
 
 export default Index;

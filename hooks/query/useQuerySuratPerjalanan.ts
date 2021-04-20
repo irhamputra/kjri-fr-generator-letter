@@ -8,7 +8,7 @@ const useQuerySuratPerjalanan = () => {
 
   return useQuery("fetchSuratPerjalananCount", async () => {
     try {
-      const { data } = await axios.get(`/api/v1/surat-perjalanan/${query.email}`);
+      const { data } = await axios.get(`/api/v1/surat-perjalanan/${query?.email}`);
 
       return data;
     } catch (e) {

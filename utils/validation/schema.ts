@@ -55,7 +55,7 @@ const schema = (type: string) => {
 const createSchema = <T>(initialValues: T) => {
   const fieldNames = Object.keys(initialValues);
   return !Array.isArray(fieldNames) || fieldNames.length === 0
-    ? undefined
+    ? {}
     : fieldNames.reduce((acc, type) => {
         return {
           ...acc,

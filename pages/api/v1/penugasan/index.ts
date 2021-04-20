@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const snapshot = await db.collection("SuratTugas").orderBy("nomorSurat", "asc").get();
 
-      let result = [];
+      const result: FirebaseFirestore.DocumentData = [];
 
       snapshot.forEach((docs) => {
         if (docs.get("listPegawai")) {

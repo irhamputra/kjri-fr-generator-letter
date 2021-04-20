@@ -10,7 +10,7 @@ const Sidebar = (): JSX.Element => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
 
-  if (isLoading) return null;
+  if (isLoading) return <div />;
 
   return (
     <div className={`col-2 bg-dark`} style={{ height: "100vh" }}>

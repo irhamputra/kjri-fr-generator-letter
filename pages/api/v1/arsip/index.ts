@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     const snapshot = await db.collection("Arsip").orderBy("jenisArsip", "asc").get();
-    let result = [];
+    const result: FirebaseFirestore.DocumentData = [];
 
     snapshot.forEach((doc) => {
       result.push(doc.data());

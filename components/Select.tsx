@@ -1,7 +1,13 @@
-import { components } from "react-select";
+import { ActionMeta, components, SingleValueProps } from "react-select";
 import Select from "react-select";
 import useQueryArsip from "../hooks/query/useQueryArsip";
 import { SelectComponentsProps } from "react-select/src/Select";
+
+type OptionsValue = {
+  value: {
+    acronym: string;
+  };
+};
 
 const SelectArsip = ({
   placeholder,
@@ -15,12 +21,12 @@ const SelectArsip = ({
 
   const options = isLoadingArsip
     ? []
-    : listArsip.map(({ acronym, ...rest }) => ({
+    : listArsip.map(({ acronym, ...rest }: { acronym: string }) => ({
         label: acronym,
         value: ({ acronym, ...rest } as unknown) as string,
       }));
 
-  const handleOnChange = (option, { action }) => {
+  const handleOnChange = (option: { value: { acronym: string } }, { action }: ActionMeta<any>) => {
     if (action === "select-option") {
       onChange(option?.value?.acronym);
     }
@@ -30,8 +36,9 @@ const SelectArsip = ({
     }
   };
 
-  const SingleValue = (props) => {
+  const SingleValue = (props: SingleValueProps<any>) => {
     const { jenisArsip } = props?.data?.value;
+
     return (
       <components.SingleValue {...props}>
         <div>
@@ -42,7 +49,7 @@ const SelectArsip = ({
     );
   };
 
-  const usedValue = options.filter(({ value: { acronym } }) => acronym === value)[0];
+  const [usedValue] = options.filter((opt: OptionsValue) => opt.value.acronym === value);
 
   return (
     <Select

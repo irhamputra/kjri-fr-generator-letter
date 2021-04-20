@@ -7,7 +7,7 @@ const useQueryTotalSuratPerjalanan = () => {
   const query = queryClient.getQueryData<Auth>("auth");
 
   return useQuery("fetchSuratPerjalanan", async () => {
-    const { data } = await axios.get(`/api/v1/surat-perjalanan/${query.email}`);
+    const { data } = await axios.get(`/api/v1/surat-perjalanan/${query?.email}`);
 
     return data.length;
   });

@@ -29,7 +29,7 @@ const ListSuratKeluar: NextPage = () => {
       {
         Header: "Opsi",
         accessor: "col4",
-        Cell: ({ value }) => (
+        Cell: ({ value }: { value: string }) => (
           <div style={{ display: "flex" }}>
             <Link href={`/layanan/surat-keluar/${value}?edit=true`} passHref>
               <a>Edit</a>
@@ -42,12 +42,14 @@ const ListSuratKeluar: NextPage = () => {
     []
   );
 
-  const data = listSuratKeluar?.listSurat.map?.(({ nomorSurat, content, id }, index) => ({
-    col1: index + 1,
-    col2: nomorSurat,
-    col3: content,
-    col4: id,
-  }));
+  const data = listSuratKeluar?.listSurat.map?.(
+    ({ nomorSurat, content, id }: { nomorSurat: string; content: string; id: string }, index: number) => ({
+      col1: index + 1,
+      col2: nomorSurat,
+      col3: content,
+      col4: id,
+    })
+  );
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -61,7 +63,7 @@ const ListSuratKeluar: NextPage = () => {
         <Table
           columns={columns}
           data={data}
-          search={({ setGlobalFilter }) => {
+          search={({ setGlobalFilter }: { setGlobalFilter: Function }) => {
             return (
               <div className="d-flex w-100 justify-content-between mb-3">
                 <div className="input-group w-25">
@@ -92,7 +94,7 @@ const ListSuratKeluar: NextPage = () => {
   );
 };
 
-const DeleteAction = ({ messageId }) => {
+const DeleteAction = ({ messageId }: { messageId: string }): JSX.Element => {
   const [open, setOpen] = React.useState(false);
   const { mutateAsync } = useDeleteSuratKeluar();
 

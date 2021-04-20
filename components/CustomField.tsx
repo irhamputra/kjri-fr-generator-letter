@@ -1,9 +1,9 @@
-import * as React from "react";
-import Select, { components, SelectComponentsConfig } from "react-select";
-import { Props } from "react-select/src/Select";
+import { PropsWithChildren } from "react";
+import Select, { ActionMeta, components, SingleValueProps } from "react-select";
 import styles from "./Dropzone.module.css";
-import { useDropzone, FileWithPath, FileRejection, DropEvent } from "react-dropzone";
+import { useDropzone, FileWithPath, FileRejection, DropEvent, DropzoneProps } from "react-dropzone";
 import { FileEarmark as DocIcon } from "react-bootstrap-icons";
+import { FieldAttributes, FieldConfig, FieldProps } from "formik";
 
 interface IUDropzone {
   onDrop: <T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => void;
@@ -15,8 +15,11 @@ interface InputProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<H
   endText: string;
 }
 
-const DropzoneComponent = ({ field, form: { setFieldValue, setFieldTouched, ...restForm } }) => {
-  const onDrop = (acceptedFiles) => {
+const DropzoneComponent = ({
+  field,
+  form: { setFieldValue, setFieldTouched, ...restForm },
+}: PropsWithChildren<any>) => {
+  const onDrop = (acceptedFiles: File[]): void => {
     setFieldValue(field.name, acceptedFiles);
   };
 
@@ -75,7 +78,7 @@ const UncontrolledDropzone = ({ onDrop, values = [], onClickReset }: IUDropzone)
   );
 };
 
-const InputComponent = ({ endText = "hari", ...props }: InputProps): JSX.Element => {
+const InputComponent = ({ endText = "hari", ...props }: PropsWithChildren<InputProps>): JSX.Element => {
   return (
     <div className="input-group">
       <input className="form-control" type="text" {...props} />
@@ -91,30 +94,32 @@ const InputComponent = ({ endText = "hari", ...props }: InputProps): JSX.Element
 const SelectComponent = ({
   placeholder,
   field,
-  form: { setFieldValue, setFieldTouched },
+  form,
   options,
   components,
   value,
   styles,
   matcher,
-}: Props): JSX.Element => {
+}: PropsWithChildren<FieldAttributes<any>>): JSX.Element => {
   // reconstruct option from value
-  const index = matcher ? matcher(options) : options?.findIndex((valueProp) => valueProp.value === value);
+  const index = matcher
+    ? matcher(options)
+    : options?.findIndex((valueProp: { value: string }) => valueProp.value === value);
 
   const _value = index !== -1 ? options?.[index] : null;
 
-  const handleOnChange = (option, { action }) => {
+  const handleOnChange = (option: any, { action }: ActionMeta<any>) => {
     if (action === "select-option") {
-      setFieldValue(field.name, option?.value);
+      form.setFieldValue(field.name, option?.value);
     }
 
     if (action === "clear") {
-      setFieldValue(field.name, "");
+      form.setFieldValue(field.name, "");
     }
   };
 
   const handleOnFocus = () => {
-    setFieldTouched(field.name, true);
+    form.setFieldTouched(field.name, true);
   };
 
   return (
@@ -133,14 +138,14 @@ const SelectComponent = ({
   );
 };
 
-const SelectStaff = ({ placeholder, form, field, value, options }) => {
+const SelectStaff = ({ placeholder, form, field, value, options }: PropsWithChildren<FieldAttributes<any>>) => {
   // reconstruct option from value
-  const optionStaff = options.map(({ displayName, ...rest }) => ({
+  const optionStaff = options.map(({ displayName, ...rest }: { displayName: string }) => ({
     label: displayName,
     value: ({ displayName, ...rest } as unknown) as string,
   }));
 
-  const SingleValue = (props) => {
+  const SingleValue = (props: SingleValueProps<any>) => {
     const { nip, golongan, jabatan } = value;
 
     return (
@@ -160,12 +165,12 @@ const SelectStaff = ({ placeholder, form, field, value, options }) => {
       form={form}
       value={value}
       field={field}
-      matcher={(opt) =>
+      matcher={(opt: Record<string, { uid: string }>[]) =>
         opt.findIndex((v) => {
-          return v.value?.uid === value.uid;
+          return v?.value?.uid === value.uid;
         })
       }
-      styles={{ control: (provided) => ({ ...provided, height: 66 }) }}
+      styles={{ control: (provided: Record<string, string>) => ({ ...provided, height: 66 }) }}
       options={optionStaff}
     />
   );

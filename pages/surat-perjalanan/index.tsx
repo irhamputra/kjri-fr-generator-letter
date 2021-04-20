@@ -5,13 +5,17 @@ import * as React from "react";
 import { Printer } from "react-bootstrap-icons";
 // import usePrintFile from "../../hooks/usePrintFile";
 
+type SuratPerjalanan = {
+  suratTugasId: string;
+};
+
 const SuratPerjalanan: NextPage = () => {
   const { data, isLoading } = useQuerySuratPerjalanan();
   // const { mutateAsync } = usePrintFile();
 
   if (isLoading) return <p>Loading...</p>;
 
-  const handlePrint = async (id) => {
+  const handlePrint = async (id: string) => {
     console.log({ id });
     // await mutateAsync(id);
   };
@@ -26,7 +30,7 @@ const SuratPerjalanan: NextPage = () => {
       <section className="mt-3">
         <h3>List Surat Perjalanan</h3>
         <ul>
-          {data?.map?.((v) => {
+          {data?.map?.((v: SuratPerjalanan) => {
             return (
               <li key={v.suratTugasId}>
                 {v.suratTugasId}

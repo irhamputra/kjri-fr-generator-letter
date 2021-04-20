@@ -7,14 +7,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      const result = [];
+      const result: FirebaseFirestore.DocumentData = [];
       const snapshot = await db.collection("SuratTugas").get();
 
       snapshot.forEach((docs) => {
         result.push(docs.data());
       });
 
-      const data = result.filter((v) => {
+      const data = result.filter((v: { listPegawai: Array<{ pegawai: { email: string } }> }) => {
         return v?.listPegawai?.find?.((d) => {
           return d.pegawai.email === req.query.email;
         });

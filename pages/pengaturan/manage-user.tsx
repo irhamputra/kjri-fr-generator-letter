@@ -9,6 +9,7 @@ import useQueryUsers from "../../hooks/query/useQueryUsers";
 import capitalizeFirstLetter from "../../utils/capitalize";
 import useQueryJalDir from "../../hooks/query/useQueryJalDir";
 import { Auth } from "../../typings/AuthQueryClient";
+import type { Golongan } from "../../typings/Golongan";
 
 const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
@@ -51,7 +52,7 @@ const ManageUser: NextPage = () => {
     }
   );
 
-  if (!query.isAdmin && query.role !== "tu") throw Error("Invalid permission");
+  if (!query?.isAdmin && query?.role !== "tu") throw Error("Invalid permission");
 
   if (loadingUser && loadingGolongan) return <h4>Loading...</h4>;
 
@@ -67,7 +68,7 @@ const ManageUser: NextPage = () => {
               className="form-control"
               type="text"
               name="displayName"
-              value={capitalizeFirstLetter(values.displayName)}
+              value={capitalizeFirstLetter(values.displayName ?? "")}
               onChange={handleChange}
             />
             {errors.displayName && touched.displayName && <small className="text-danger">{errors.displayName}</small>}
@@ -116,7 +117,7 @@ const ManageUser: NextPage = () => {
             <label className="form-label">Golongan</label>
             <select className="form-select" aria-label="golongan" name="golongan" onChange={handleChange}>
               <option value="">Pilih Golongan</option>
-              {listGolongan?.map?.((v) => {
+              {listGolongan?.map?.((v: Golongan) => {
                 return (
                   <option value={v.golongan} key={v.golId}>
                     {v.golongan}
@@ -134,7 +135,7 @@ const ManageUser: NextPage = () => {
               name="jabatan"
               type="text"
               disabled={isSubmitting}
-              value={capitalizeFirstLetter(values.jabatan)}
+              value={capitalizeFirstLetter(values.jabatan ?? "")}
               onChange={handleChange}
             />
             {errors.jabatan && touched.jabatan && <small className="text-danger">{errors.jabatan}</small>}
@@ -183,25 +184,34 @@ const ManageUser: NextPage = () => {
           </tr>
         </thead>
         <tbody>
-          {listUsers?.map?.((v) => (
-            <tr key={v.uid}>
-              <td scope="row">{v.nip}</td>
-              <td>{v.displayName}</td>
-              <td>{v.golongan}</td>
-              <td>{v.jabatan}</td>
-              <td>{v.email}</td>
-              <td>
-                <button
-                  onClick={async () => {
-                    await mutateAsync(v.uid);
-                  }}
-                  className="btn-danger btn"
-                >
-                  <Trash size={20} />
-                </button>
-              </td>
-            </tr>
-          ))}
+          {listUsers?.map?.(
+            (v: {
+              displayName: string;
+              golongan: string;
+              nip: string;
+              uid: string;
+              jabatan: string;
+              email: string;
+            }) => (
+              <tr key={v.uid}>
+                <td scope="row">{v.nip}</td>
+                <td>{v.displayName}</td>
+                <td>{v.golongan}</td>
+                <td>{v.jabatan}</td>
+                <td>{v.email}</td>
+                <td>
+                  <button
+                    onClick={async () => {
+                      await mutateAsync(v.uid);
+                    }}
+                    className="btn-danger btn"
+                  >
+                    <Trash size={20} />
+                  </button>
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </table>
     </section>

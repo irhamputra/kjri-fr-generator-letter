@@ -59,7 +59,7 @@ const SuratKeluar: NextPage = () => {
     },
   });
 
-  const onDrop = (acceptedFiles) => {
+  const onDrop = (acceptedFiles: File[]) => {
     setFieldValue("surat", acceptedFiles);
   };
 
@@ -71,7 +71,7 @@ const SuratKeluar: NextPage = () => {
       const thisMonth = dayjs().month() + 1;
       const thisYear = dayjs().year();
 
-      const labelJenisSurat = listJenisSurat?.find((v) => v.label === values.jenisSurat).label;
+      const labelJenisSurat = listJenisSurat?.find((v: { label: string }) => v.label === values.jenisSurat).label;
 
       let jenisSurat = "";
       let suffixFRA = false;
@@ -101,9 +101,9 @@ const SuratKeluar: NextPage = () => {
 
       await setFieldValue("id", id);
       await setFieldValue("nomorSurat", nomorSurat);
-      await setFieldValue("author", query.email);
+      await setFieldValue("author", query?.email);
 
-      await createSuratKeluar({ id, author: query.email, nomorSurat });
+      await createSuratKeluar({ id, author: query?.email, nomorSurat });
 
       setDisabled(true);
     } catch (e) {
@@ -132,7 +132,7 @@ const SuratKeluar: NextPage = () => {
               style={{ height: 66 }}
             >
               <option value="">Pilih Jenis Surat</option>
-              {listJenisSurat?.map((v) => {
+              {listJenisSurat?.map((v: { id: string; label: string }) => {
                 return (
                   <option key={v.id} value={v.label}>
                     {v.label}
@@ -148,7 +148,7 @@ const SuratKeluar: NextPage = () => {
 
             <SelectArsip
               placeholder="Pilih Arsip"
-              onChange={(v) => {
+              onChange={(v: string) => {
                 setFieldValue("arsipId", v);
               }}
               value={values.arsipId}

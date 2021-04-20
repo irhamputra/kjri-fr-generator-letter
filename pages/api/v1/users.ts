@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      let result = [];
+      const result: FirebaseFirestore.DocumentData = [];
       const snapshot = await db.collection("Users").where("role", "==", "default").get();
 
       snapshot.forEach((doc) => {

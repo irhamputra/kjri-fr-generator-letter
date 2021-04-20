@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      let listSurat = [];
+      const listSurat: FirebaseFirestore.DocumentData = [];
 
       const allSuratKeluar = await db.collection("SuratKeluar").get();
 

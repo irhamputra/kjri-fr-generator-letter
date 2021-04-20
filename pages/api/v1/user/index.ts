@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "GET") {
-    const token = req.headers.authorization.replace("Bearer ", "");
+    const token = req.headers.authorization?.replace("Bearer ", "") ?? "";
 
     const adminRole = ["admin", "tu"];
 
@@ -30,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const token = req.headers.authorization.replace("Bearer ", "");
+    const token = req.headers.authorization?.replace("Bearer ", "") ?? "";
     const { displayName, nip } = req.body;
 
     let id = "";

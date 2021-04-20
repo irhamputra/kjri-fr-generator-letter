@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      let result = [];
+      const result: FirebaseFirestore.DocumentData = [];
 
       snapshot.forEach((doc) => {
         result.push(doc.data());

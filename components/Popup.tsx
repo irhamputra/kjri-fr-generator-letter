@@ -1,10 +1,10 @@
 import { Placement } from "@popperjs/core";
-import React, { PropsWithChildren } from "react";
+import React, { LegacyRef, PropsWithChildren } from "react";
 import { usePopper } from "react-popper";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 
 interface PopupProps {
-  anchorRef: Element;
+  anchorRef: Element | null;
   onClickOutside: () => void;
   open: boolean;
   placement?: Placement;
@@ -30,7 +30,7 @@ const Popup = ({
     <>
       {open && (
         <div
-          ref={setPopperElement}
+          ref={setPopperElement as LegacyRef<HTMLDivElement> | undefined}
           style={{
             ...stylesPopper.popper,
             boxShadow: "0px 2px 20px rgba(0, 0, 0, 0.1)",
@@ -40,7 +40,7 @@ const Popup = ({
         >
           <div ref={closeRef}>{children}</div>
 
-          <div ref={setArrowElement} style={stylesPopper.arrow} />
+          <div ref={setArrowElement as LegacyRef<HTMLDivElement> | undefined} style={stylesPopper.arrow} />
         </div>
       )}
     </>

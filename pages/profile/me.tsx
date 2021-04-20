@@ -13,8 +13,8 @@ const MyProfile = () => {
   const query = queryClient.getQueryData<Auth>("auth");
 
   const initialValues = {
-    displayName: query.displayName,
-    nip: query.nip,
+    displayName: query?.displayName ?? "",
+    nip: query?.nip ?? "",
   };
 
   const { mutateAsync, isLoading } = useEditUser();
@@ -22,7 +22,7 @@ const MyProfile = () => {
   const { handleChange, handleSubmit, values, errors, touched } = useFormik({
     enableReinitialize: true,
     initialValues,
-    validationSchema: object().shape(createSchema(initialValues)),
+    validationSchema: object().shape(createSchema(initialValues) ?? {}),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       const { nip: nipVal, ...rest } = values;
       const nip = nipVal === "" ? "-" : nipVal;

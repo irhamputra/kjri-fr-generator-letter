@@ -89,7 +89,7 @@ const ManageArsip: NextPage = () => {
           </tr>
         </thead>
         <tbody>
-          {data?.map((v) => {
+          {data?.map((v: typeof initialValues & { arsipId: string }) => {
             return (
               <tr key={v.jenisArsip}>
                 <th scope="row">{v.jenisArsip}</th>

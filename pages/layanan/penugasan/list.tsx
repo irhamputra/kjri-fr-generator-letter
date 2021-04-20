@@ -7,6 +7,7 @@ import Table from "../../../components/Table";
 import Link from "next/link";
 import useDeleteSPDMutation from "../../../hooks/mutation/useDeleteSPDMutation";
 import Modal from "react-modal";
+import { PropsWithChildren } from "react";
 
 const ListSurat: NextPage = () => {
   const { push } = useRouter();
@@ -29,7 +30,7 @@ const ListSurat: NextPage = () => {
       {
         Header: "Opsi",
         accessor: "col4",
-        Cell: ({ value }) => (
+        Cell: ({ value }: { value: string }) => (
           <div style={{ display: "flex" }}>
             <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
               <a>Edit</a>
@@ -42,12 +43,17 @@ const ListSurat: NextPage = () => {
     []
   );
 
-  const data = listSuratTugas?.map?.(({ nomorSurat, tujuanDinas, suratTugasId }, index) => ({
-    col1: index + 1,
-    col2: nomorSurat,
-    col3: tujuanDinas,
-    col4: suratTugasId,
-  }));
+  const data = listSuratTugas?.map?.(
+    (
+      { nomorSurat, tujuanDinas, suratTugasId }: { nomorSurat: string; tujuanDinas: string; suratTugasId: string },
+      index: number
+    ) => ({
+      col1: index + 1,
+      col2: nomorSurat,
+      col3: tujuanDinas,
+      col4: suratTugasId,
+    })
+  );
 
   if (suratTugasLoading) return <p>Loading...</p>;
 
@@ -63,7 +69,7 @@ const ListSurat: NextPage = () => {
         <Table
           columns={columns}
           data={data}
-          search={({ setGlobalFilter }) => {
+          search={({ setGlobalFilter }: { setGlobalFilter: Function }) => {
             return (
               <div className="d-flex w-100 justify-content-between mb-3">
                 <div className="input-group w-25">
@@ -94,7 +100,7 @@ const ListSurat: NextPage = () => {
   );
 };
 
-const DeleteAction = ({ messageId }) => {
+const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string }>): JSX.Element => {
   const [open, setOpen] = React.useState(false);
   const { mutateAsync } = useDeleteSPDMutation();
 

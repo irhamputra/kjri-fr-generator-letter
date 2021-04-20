@@ -1,9 +1,12 @@
 import * as React from "react";
 import Fuse from "fuse.js";
 
-const useFuse = (data, options) => {
+const useFuse = <TData extends readonly unknown[], TOptions extends { loading: boolean }>(
+  data: TData,
+  options: TOptions
+) => {
   const [searchQuery, setSearch] = React.useState("");
-  const [filteredList, setFilteredList] = React.useState([]);
+  const [filteredList, setFilteredList] = React.useState<Array<Record<string, string>> | unknown>([]);
   const { loading, ...rest } = options;
 
   const search = (query: string) => {

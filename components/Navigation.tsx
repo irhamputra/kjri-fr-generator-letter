@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useQueryClient } from "react-query";
 import useBreakpoint from "../hooks/useBreakpoints";
 import { Auth } from "../typings/AuthQueryClient";
+import { LegacyRef } from "react";
 
 const Navigation = (): JSX.Element => {
   const { replace, reload, push } = useRouter();
@@ -52,7 +53,7 @@ const Navigation = (): JSX.Element => {
             className="d-flex p-2 align-items-center px-3"
             style={{ borderRadius: 20, cursor: "pointer" }}
             onClick={() => setShowMenu(true)}
-            ref={setReferenceElement}
+            ref={setReferenceElement as LegacyRef<HTMLDivElement> | undefined}
           >
             <p className="ms-auto my-0 mx-2">
               Hello, <strong>{query?.displayName}</strong>

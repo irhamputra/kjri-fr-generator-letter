@@ -1,19 +1,21 @@
 import {
-  HeaderGroup,
   useGlobalFilter,
   UseGlobalFiltersInstanceProps,
   useSortBy,
-  UseSortByColumnProps,
   useTable,
   TableInstance,
+  TableOptions,
 } from "react-table";
 import React from "react";
 import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
 
-type PropsColumn = HeaderGroup<any> & UseSortByColumnProps<any>;
 type PropsReturn = TableInstance<any> & UseGlobalFiltersInstanceProps<any>;
 
-function Table<T extends UseGlobalFiltersInstanceProps<T>>({ columns, data, search }): JSX.Element {
+function Table<T extends UseGlobalFiltersInstanceProps<T>>({
+  columns,
+  data,
+  search,
+}: TableOptions<any> & { search: Function }): JSX.Element {
   const {
     getTableProps,
     getTableBodyProps,
@@ -23,7 +25,7 @@ function Table<T extends UseGlobalFiltersInstanceProps<T>>({ columns, data, sear
     state,
     preGlobalFilteredRows,
     setGlobalFilter,
-  } = useTable<UseGlobalFiltersInstanceProps<T>>({ columns, data }, useGlobalFilter, useSortBy) as PropsReturn;
+  } = useTable({ columns, data }, useGlobalFilter, useSortBy) as PropsReturn;
 
   return (
     <>
@@ -32,7 +34,7 @@ function Table<T extends UseGlobalFiltersInstanceProps<T>>({ columns, data, sear
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column: PropsColumn) => (
+              {headerGroup.headers.map((column: any) => (
                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render("Header")}
                   <span style={{ marginLeft: 8 }}>

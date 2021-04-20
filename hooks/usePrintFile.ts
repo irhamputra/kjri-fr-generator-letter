@@ -19,7 +19,7 @@ const usePrintFile = () => {
     {
       onSuccess: async (data) => {
         const blob = new Blob([data], { type: "application/pdf;charset=utf-8" });
-        saveAs(blob, `surat-perjalanan-${query.displayName}.pdf`);
+        saveAs(blob, `surat-perjalanan-${query?.displayName}.pdf`);
       },
     }
   );

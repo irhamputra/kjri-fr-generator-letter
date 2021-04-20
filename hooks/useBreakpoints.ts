@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import * as stream from "stream";
 
 const getDeviceConfig = (width: number) => {
   if (width < 576) {
@@ -16,17 +17,17 @@ const useBreakpoint = () => {
   const [breakpoint, setBrkPnt] = useState("");
 
   useEffect(() => {
-    setBrkPnt(getDeviceConfig(window.innerWidth as number));
+    setBrkPnt(getDeviceConfig(window.innerWidth as number) ?? "");
   }, []);
 
   useEffect(() => {
-    const calcInnerWidth = () => setBrkPnt(getDeviceConfig(window.innerWidth as number));
+    const calcInnerWidth = () => setBrkPnt(getDeviceConfig(window.innerWidth as number) ?? "");
 
     window.addEventListener("resize", calcInnerWidth);
     return () => window.removeEventListener("resize", calcInnerWidth);
   }, []);
 
-  const is = (arrayOfBreakpoint = []) => {
+  const is = (arrayOfBreakpoint: Array<string>) => {
     return arrayOfBreakpoint.includes(breakpoint);
   };
 

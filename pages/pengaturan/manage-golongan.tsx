@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { NextSeo } from "next-seo";
 import useDeleteGolonganMutation from "../../hooks/mutation/useDeleteGolonganMutation";
 import useCreateGolonganMutation from "../../hooks/mutation/useCreateGolonganMutation";
+import type { Golongan } from "../../typings/Golongan";
 
 const ManageGolongan: NextPage = () => {
   const initialValues = {
@@ -80,7 +81,7 @@ const ManageGolongan: NextPage = () => {
           </tr>
         </thead>
         <tbody>
-          {data?.map?.((v) => (
+          {data?.map?.((v: Golongan) => (
             <tr key={v.golId}>
               <td scope="row">{v.golongan}</td>
               <td>$ {v.harga}</td>

@@ -8,7 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      let result = [];
+      const result: FirebaseFirestore.DocumentData = [];
       const snapshot = await db.collection("JalDis").orderBy("golongan", "asc").get();
 
       snapshot.forEach((doc) => {

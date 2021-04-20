@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { useFormik } from "formik";
 import { object } from "yup";
 import axios from "axios";
@@ -7,13 +7,17 @@ import dayjs from "dayjs";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { NextSeo } from "next-seo";
 import { v4 } from "uuid";
 import apiInstance from "../../utils/firebase/apiInstance";
 import parseCookies from "../../utils/parseCookies";
+import { Auth } from "../../typings/AuthQueryClient";
 
-const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
+const SuratTugas: NextPage = () => {
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
+
   const { data, isLoading } = useQuery(
     "fetchSuratTugas",
     async () => {
@@ -57,7 +61,7 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
 
   if (isLoading) return <h4>Loading...</h4>;
 
-  if (!isAdmin) throw new Error("Invalid permission");
+  if (!query?.isAdmin) throw new Error("Invalid permission");
 
   const onCounterId = async (): Promise<void> => {
     const incrementCount = data.total + 1;
@@ -122,28 +126,5 @@ const SuratTugas: NextPage<{ isAdmin: string }> = ({ isAdmin }) => {
     </section>
   );
 };
-
-export async function getServerSideProps({ req }) {
-  const cookie = parseCookies(req);
-  const idToken = cookie["KJRIFR-U"];
-  try {
-    const {
-      data: { email, isAdmin },
-    } = await apiInstance.get("/api/v1/user", {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    return {
-      props: {
-        isAdmin,
-        email,
-      },
-    };
-  } catch (e) {
-    throw new Error(e.message);
-  }
-}
 
 export default SuratTugas;

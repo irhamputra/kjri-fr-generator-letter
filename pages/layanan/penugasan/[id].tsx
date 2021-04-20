@@ -65,16 +65,28 @@ const SuratPenugasanId: NextPage = () => {
         </thead>
         <tbody>
           {data?.listPegawai
-            ? data.listPegawai.map((v) => (
-                <tr key={v.pegawai.uid}>
-                  <td scope="row">{v.pegawai.nip}</td>
-                  <td>{v.pegawai.displayName}</td>
-                  <td>{v.pegawai.golongan}</td>
-                  <td>{v.pegawai.jabatan}</td>
-                  <td>{v.durasi} hari</td>
-                  <td>{v.uangHarian}</td>
-                </tr>
-              ))
+            ? data.listPegawai.map(
+                (v: {
+                  pegawai: {
+                    uid: string;
+                    nip: string;
+                    displayName: string;
+                    golongan: string;
+                    jabatan: string;
+                  };
+                  durasi: string;
+                  uangHarian: string;
+                }) => (
+                  <tr key={v.pegawai.uid}>
+                    <td scope="row">{v.pegawai.nip}</td>
+                    <td>{v.pegawai.displayName}</td>
+                    <td>{v.pegawai.golongan}</td>
+                    <td>{v.pegawai.jabatan}</td>
+                    <td>{v.durasi} hari</td>
+                    <td>{v.uangHarian}</td>
+                  </tr>
+                )
+              )
             : null}
         </tbody>
       </table>

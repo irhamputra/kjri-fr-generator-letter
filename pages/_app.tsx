@@ -9,8 +9,10 @@ import { DefaultSeo } from "next-seo";
 import MainLayout from "../components/layout/MainLayout";
 import parseCookies from "../utils/parseCookies";
 import apiInstance from "../utils/firebase/apiInstance";
+import { AppProps } from "next/app";
+import { AppContextType } from "next/dist/next-server/lib/utils";
 
-function MyApp({ Component, pageProps, dehydrateState }) {
+function MyApp({ Component, pageProps }: AppProps) {
   const queryClientRef = React.useRef<null | QueryClient>(null);
 
   if (!queryClientRef.current) {
@@ -19,7 +21,7 @@ function MyApp({ Component, pageProps, dehydrateState }) {
 
   return (
     <QueryClientProvider client={queryClientRef.current}>
-      <Hydrate state={pageProps?.dehydrateState ?? dehydrateState}>
+      <Hydrate state={pageProps?.dehydrateState ?? {}}>
         <DefaultSeo title="Sistem Aplikasi KJRI Frankfurt" description="Sistem Aplikasi KJRI Frankfurt" />
         <MainLayout>
           <Component {...pageProps} />
@@ -31,19 +33,19 @@ function MyApp({ Component, pageProps, dehydrateState }) {
   );
 }
 
-MyApp.getInitialProps = async ({ ctx }) => {
+MyApp.getInitialProps = async ({ ctx }: AppContextType) => {
   const cookie = parseCookies(ctx.req);
   const queryClient = new QueryClient();
 
   const whitelistedPage = ["/", "/forget-password", "/_error"];
 
   if (!cookie["KJRIFR-U"] && !whitelistedPage.includes(ctx.pathname)) {
-    ctx.res.writeHead(302, { Location: "/" });
-    ctx.res.end();
+    ctx.res?.writeHead(302, { Location: "/" });
+    ctx.res?.end();
     return {};
   } else if (cookie["KJRIFR-U"] && ctx.pathname === "/") {
-    ctx.res.writeHead(302, { Location: "/dashboard" });
-    ctx.res.end();
+    ctx.res?.writeHead(302, { Location: "/dashboard" });
+    ctx.res?.end();
     return {};
   }
 

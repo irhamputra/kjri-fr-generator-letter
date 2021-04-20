@@ -6,6 +6,7 @@ import { FileEarmark, ThreeDotsVertical as MoreVertIcon } from "react-bootstrap-
 import Popup from "./Popup";
 import useDeleteSPDMutation from "../hooks/mutation/useDeleteSPDMutation";
 import Modal from "react-modal";
+import { LegacyRef } from "react";
 
 interface CardProps {
   title: string;
@@ -88,7 +89,7 @@ const MessageCard: React.FC<CardMessageProps> = ({ title, number, messageId, typ
       </Link>
 
       <div className={styles.messageCard} style={{ visibility: showOption || showMenu ? "visible" : "hidden" }}>
-        <div ref={setReferenceElement}>
+        <div ref={setReferenceElement as LegacyRef<HTMLDivElement> | undefined}>
           <MoreVertIcon className={styles.iconMC} onClick={() => setShowMenu(true)} />
         </div>
 
