@@ -23,8 +23,9 @@ const SuratPenugasanId: NextPage = () => {
   if (isLoading) return <h4>Loading...</h4>;
 
   if (query.edit) {
-    return <Penugasan isAdmin={true} editId={query.id as string} />;
+    return <Penugasan editId={query.id as string} />;
   }
+
   return (
     <>
       <button

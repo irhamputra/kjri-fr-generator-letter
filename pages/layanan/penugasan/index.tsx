@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { Form, FieldArray, Field, Formik } from "formik";
 import axios, { AxiosResponse } from "axios";
 import { DropzoneComponent, InputComponent, SelectComponent, SelectStaff } from "../../../components/CustomField";
@@ -13,18 +13,22 @@ import useQueryUsers from "../../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
 import parseCookies from "../../../utils/parseCookies";
 import apiInstance from "../../../utils/firebase/apiInstance";
-import { useQuery } from "react-query";
+import { QueryClient, useQuery, useQueryClient } from "react-query";
+import { dehydrate } from "react-query/hydration";
+import { Auth } from "../../../typings/AuthQueryClient";
 
 const { format } = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "EUR",
 });
 
-const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({ isAdmin, editId }) => {
+const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
   const { push } = useRouter();
   const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
 
-  const { data: editedData, isLoading: editedDataLoading } = useQuery(
+  const { data: editedData } = useQuery(
     ["fetchSingleSurat", editId],
     async () => {
       const { data } = await axios.get(`/api/v1/surat-tugas/${editId}`);
@@ -91,7 +95,7 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({ isAdmin, ed
 
   if (suratTugasLoading && jalDirLoading && usersLoading) return <h4>Loading...</h4>;
 
-  if (!isAdmin) throw new Error("Invalid permission");
+  if (!query.isAdmin) throw new Error("Invalid permission");
 
   return (
     <section className="mt-3">
@@ -338,27 +342,29 @@ const Penugasan: NextPage<{ isAdmin: boolean; editId: string }> = ({ isAdmin, ed
   );
 };
 
-export async function getServerSideProps({ req }) {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const cookie = parseCookies(req);
+  const queryClient = new QueryClient();
+
+  if (!cookie["KJRIFR-U"]) return { props: {} };
+
   const idToken = cookie["KJRIFR-U"];
-  try {
-    const {
-      data: { email, isAdmin },
-    } = await apiInstance.get("/api/v1/user", {
+
+  await queryClient.prefetchQuery("auth", async () => {
+    const { data } = await apiInstance.get("/api/v1/user", {
       headers: {
         authorization: `Bearer ${idToken}`,
       },
     });
 
-    return {
-      props: {
-        isAdmin,
-        email,
-      },
-    };
-  } catch (e) {
-    throw new Error(e.message);
-  }
-}
+    return data;
+  });
+
+  return {
+    props: {
+      dehydrateState: dehydrate(queryClient),
+    },
+  };
+};
 
 export default Penugasan;

@@ -9,6 +9,7 @@ import axios from "axios";
 import { DefaultSeo } from "next-seo";
 import MainLayout from "../components/layout/MainLayout";
 import parseCookies from "../utils/parseCookies";
+import apiInstance from "../utils/firebase/apiInstance";
 
 function MyApp({ Component, pageProps, dehydrateState }) {
   const queryClientRef = React.useRef<null | QueryClient>(null);
@@ -50,15 +51,10 @@ MyApp.getInitialProps = async ({ ctx }) => {
   if (!cookie["KJRIFR-U"]) return {};
 
   try {
-    const BASE_URL =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
-        : "https://sistem-nomor-surat-kjri-frankfurt.vercel.app";
-
     const idToken = cookie["KJRIFR-U"];
 
     await queryClient.prefetchQuery("auth", async () => {
-      const { data } = await axios.get(`${BASE_URL}/api/v1/user`, {
+      const { data } = await apiInstance.get("/api/v1/user", {
         headers: {
           authorization: `Bearer ${idToken}`,
         },
@@ -71,7 +67,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
       dehydrateState: dehydrate(queryClient),
     };
   } catch (e) {
-    throw new Error(e.message);
+    return {};
   }
 };
 

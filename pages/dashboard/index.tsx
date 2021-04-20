@@ -8,11 +8,11 @@ import {
 } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
 import useRefetchToken from "../../hooks/useRefetchToken";
-import axios from "axios";
 import parseCookies from "../../utils/parseCookies";
 import { dehydrate } from "react-query/hydration";
 import { QueryClient, useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
+import apiInstance from "../../utils/firebase/apiInstance";
 
 const iconProps = { height: 32, width: 32 };
 
@@ -59,15 +59,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   if (!cookie["KJRIFR-U"]) return { props: {} };
 
-  const BASE_URL =
-    process.env.NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : "https://sistem-nomor-surat-kjri-frankfurt.vercel.app";
-
   const idToken = cookie["KJRIFR-U"];
 
   await queryClient.prefetchQuery("auth", async () => {
-    const { data } = await axios.get(`${BASE_URL}/api/v1/user`, {
+    const { data } = await apiInstance.get("/api/v1/user", {
       headers: {
         authorization: `Bearer ${idToken}`,
       },
