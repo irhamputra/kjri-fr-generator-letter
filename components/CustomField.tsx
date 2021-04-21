@@ -3,7 +3,7 @@ import Select, { ActionMeta, components, SingleValueProps } from "react-select";
 import styles from "./Dropzone.module.css";
 import { useDropzone, FileWithPath, FileRejection, DropEvent, DropzoneProps } from "react-dropzone";
 import { FileEarmark as DocIcon } from "react-bootstrap-icons";
-import { FieldAttributes, FieldConfig, FieldProps } from "formik";
+import { FieldAttributes } from "formik";
 
 interface IUDropzone {
   onDrop: <T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => void;
