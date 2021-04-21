@@ -9,7 +9,7 @@ const DashboardLayout: React.FC = ({ children }) => {
   return (
     <>
       {!is(["sm", "xs"]) && <Sidebar />}
-      <div className="col p-0 mb-5">
+      <div className="col p-0 mb-5" style={{ marginLeft: "16.6666666667%" }}>
         <Navigation />
         <div className="container-fluid">{children}</div>
       </div>
