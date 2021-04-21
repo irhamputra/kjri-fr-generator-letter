@@ -10,8 +10,6 @@ const Sidebar = (): JSX.Element => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
 
-  if (isLoading) return <div />;
-
   return (
     <div className={`col-2 bg-dark`} style={{ height: "100vh" }}>
       <nav className="p-1">
@@ -47,7 +45,7 @@ const Sidebar = (): JSX.Element => {
               <a className="d-flex align-items-center p-2">
                 <FileEarmarkPerson size={25} style={{ color: "white" }} />
                 <p className="my-0 mx-2 ">Surat Perjalanan</p>
-                {data > 0 && (
+                {!isLoading && data > 0 && (
                   <span className="badge badge-danger" style={{ background: "#dc3545" }}>
                     {data}
                   </span>
