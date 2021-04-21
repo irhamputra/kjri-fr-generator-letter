@@ -5,6 +5,8 @@ import {
   useTable,
   TableInstance,
   TableOptions,
+  HeaderGroup,
+  UseSortByColumnProps,
 } from "react-table";
 import React from "react";
 import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
@@ -34,14 +36,18 @@ function Table<T extends UseGlobalFiltersInstanceProps<T>>({
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column: any) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render("Header")}
-                  <span style={{ marginLeft: 8 }}>
-                    {column.isSorted ? column.isSortedDesc ? <ChevronDown /> : <ChevronUp /> : ""}
-                  </span>
-                </th>
-              ))}
+              {headerGroup.headers.map(
+                (column: HeaderGroup<any> & Partial<UseSortByColumnProps<any>>): JSX.Element => {
+                  return (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps?.())}>
+                      {column.render("Header")}
+                      <span style={{ marginLeft: 8 }}>
+                        {column.isSorted ? column.isSortedDesc ? <ChevronDown /> : <ChevronUp /> : ""}
+                      </span>
+                    </th>
+                  );
+                }
+              )}
             </tr>
           ))}
         </thead>
