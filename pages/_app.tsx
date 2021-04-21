@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/globals.css";
 import React from "react";
 import { QueryClientProvider, QueryClient } from "react-query";
-import { dehydrate, Hydrate } from "react-query/hydration";
+import { dehydrate, DehydratedState, Hydrate } from "react-query/hydration";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Toaster } from "react-hot-toast";
 import { DefaultSeo } from "next-seo";
@@ -12,7 +12,9 @@ import apiInstance from "../utils/firebase/apiInstance";
 import { AppProps } from "next/app";
 import { AppContextType } from "next/dist/next-server/lib/utils";
 
-function MyApp({ Component, pageProps }: AppProps) {
+type MyAppProps = AppProps & { dehydrateState: DehydratedState };
+
+function MyApp({ Component, pageProps, dehydrateState }: MyAppProps) {
   const queryClientRef = React.useRef<null | QueryClient>(null);
 
   if (!queryClientRef.current) {
@@ -21,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClientRef.current}>
-      <Hydrate state={pageProps?.dehydrateState ?? {}}>
+      <Hydrate state={pageProps?.dehydrateState ?? dehydrateState}>
         <DefaultSeo title="Sistem Aplikasi KJRI Frankfurt" description="Sistem Aplikasi KJRI Frankfurt" />
         <MainLayout>
           <Component {...pageProps} />

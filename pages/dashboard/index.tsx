@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import Card from "../../components/Card";
 import {
   FileEarmarkArrowUp as SuratKeluarIcon,
@@ -8,11 +8,8 @@ import {
 } from "react-bootstrap-icons";
 import { NextSeo } from "next-seo";
 import useRefetchToken from "../../hooks/useRefetchToken";
-import parseCookies from "../../utils/parseCookies";
-import { dehydrate } from "react-query/hydration";
-import { QueryClient, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
-import apiInstance from "../../utils/firebase/apiInstance";
 
 const iconProps = { height: 32, width: 32 };
 
@@ -51,31 +48,6 @@ const Dashboard: NextPage = () => {
       </section>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const cookie = parseCookies(req);
-  const queryClient = new QueryClient();
-
-  if (!cookie["KJRIFR-U"]) return { props: {} };
-
-  const idToken = cookie["KJRIFR-U"];
-
-  await queryClient.prefetchQuery("auth", async () => {
-    const { data } = await apiInstance.get("/api/v1/user", {
-      headers: {
-        authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    return data;
-  });
-
-  return {
-    props: {
-      dehydrateState: dehydrate(queryClient),
-    },
-  };
 };
 
 export default Dashboard;
