@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps, dehydrateState }: MyAppProps) {
 
   return (
     <QueryClientProvider client={queryClientRef.current}>
-      <Hydrate state={pageProps?.dehydrateState ?? dehydrateState}>
+      <Hydrate state={dehydrateState}>
         <DefaultSeo title="Sistem Aplikasi KJRI Frankfurt" description="Sistem Aplikasi KJRI Frankfurt" />
         <MainLayout>
           <Component {...pageProps} />
