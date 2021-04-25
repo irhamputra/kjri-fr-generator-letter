@@ -1,8 +1,8 @@
-import { useQuery } from "react-query";
 import axios from "axios";
+import { useMyQuery } from "../useMyQuery";
 
 const useQueryUsers = () =>
-  useQuery("fetchUser", async () => {
+  useMyQuery("fetchUser", async () => {
     const { data } = await axios.get("/api/v1/users");
 
     return data;
