@@ -1,13 +1,15 @@
 import * as React from "react";
 import { NextPage } from "next";
 import { Search } from "react-bootstrap-icons";
-import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { useRouter } from "next/router";
-import Table from "../../../components/Table";
 import Link from "next/link";
-import useDeleteSPDMutation from "../../../hooks/mutation/useDeleteSPDMutation";
 import Modal from "react-modal";
 import { PropsWithChildren } from "react";
+import Table from "../../../components/Table";
+import useDeleteSPDMutation from "../../../hooks/mutation/useDeleteSPDMutation";
+import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
+
+type SuratTugas = { nomorSurat: string; tujuanDinas: string; suratTugasId: string };
 
 const ListSurat: NextPage = () => {
   const { push } = useRouter();
@@ -43,17 +45,12 @@ const ListSurat: NextPage = () => {
     []
   );
 
-  const data = listSuratTugas?.map?.(
-    (
-      { nomorSurat, tujuanDinas, suratTugasId }: { nomorSurat: string; tujuanDinas: string; suratTugasId: string },
-      index: number
-    ) => ({
-      col1: index + 1,
-      col2: nomorSurat,
-      col3: tujuanDinas,
-      col4: suratTugasId,
-    })
-  );
+  const data = listSuratTugas?.map?.(({ nomorSurat, tujuanDinas, suratTugasId }: SuratTugas, index: number) => ({
+    col1: index + 1,
+    col2: nomorSurat,
+    col3: tujuanDinas,
+    col4: suratTugasId,
+  }));
 
   if (suratTugasLoading) return <p>Loading...</p>;
 
