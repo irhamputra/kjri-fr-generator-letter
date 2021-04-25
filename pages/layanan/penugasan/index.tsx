@@ -2,7 +2,7 @@ import * as React from "react";
 import { NextPage } from "next";
 import { Form, FieldArray, Field, Formik, FormikTouched } from "formik";
 import axios, { AxiosResponse } from "axios";
-import { DropzoneComponent, InputComponent, SelectComponent, SelectStaff } from "../../../components/CustomField";
+import { InputComponent, SelectComponent, SelectStaff } from "../../../components/CustomField";
 import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { object, string, array } from "yup";

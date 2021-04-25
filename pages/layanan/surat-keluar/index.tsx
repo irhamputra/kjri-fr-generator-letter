@@ -8,7 +8,6 @@ import { NextSeo } from "next-seo";
 import { v4 } from "uuid";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { UncontrolledDropzone } from "../../../components/CustomField";
 import { SelectArsip } from "../../../components/Select";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
 import useCreateSuratKeluarMutation from "../../../hooks/mutation/useCreateSuratKeluarMutation";
