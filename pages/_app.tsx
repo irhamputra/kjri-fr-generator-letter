@@ -56,15 +56,22 @@ MyApp.getInitialProps = async ({ ctx }: AppContextType) => {
   try {
     const idToken = cookie["KJRIFR-U"];
 
-    await queryClient.prefetchQuery("auth", async () => {
-      const { data } = await apiInstance.get("/api/v1/user", {
-        headers: {
-          authorization: `Bearer ${idToken}`,
-        },
-      });
+    await queryClient.prefetchQuery(
+      "auth",
+      async () => {
+        const { data } = await apiInstance.get("/api/v1/user", {
+          headers: {
+            authorization: `Bearer ${idToken}`,
+          },
+        });
 
-      return data;
-    });
+        return data;
+      },
+      {
+        staleTime: 60 * 60 * 10,
+        cacheTime: Infinity,
+      }
+    );
 
     return {
       dehydrateState: dehydrate(queryClient),
