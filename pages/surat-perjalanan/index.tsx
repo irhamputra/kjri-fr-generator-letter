@@ -2,7 +2,9 @@ import { NextPage } from "next";
 import useQuerySuratPerjalanan from "../../hooks/query/useQuerySuratPerjalanan";
 import { NextSeo } from "next-seo";
 import * as React from "react";
-import { Printer } from "react-bootstrap-icons";
+import { Printer, Search } from "react-bootstrap-icons";
+import Link from "next/link";
+import Table from "../../components/Table";
 // import usePrintFile from "../../hooks/usePrintFile";
 
 type SuratPerjalanan = {
@@ -10,15 +12,57 @@ type SuratPerjalanan = {
 };
 
 const SuratPerjalanan: NextPage = () => {
-  const { data, isLoading } = useQuerySuratPerjalanan();
+  const { data: listSuratPerjalanan, isLoading } = useQuerySuratPerjalanan();
   // const { mutateAsync } = usePrintFile();
-
-  if (isLoading) return <p>Loading...</p>;
 
   const handlePrint = async (id: string) => {
     console.log({ id });
     // await mutateAsync(id);
   };
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "#",
+        accessor: "col1", // accessor is the "key" in the data
+      },
+      {
+        Header: "Nomor Surat",
+        accessor: "col2", // accessor is the "key" in the data
+      },
+      {
+        Header: "Tujuan Dinas",
+        accessor: "col3",
+      },
+      {
+        Header: "Opsi",
+        accessor: "col4",
+        Cell: ({ value }: { value: string }) => (
+          <div style={{ display: "flex" }}>
+            <Link href={`/layanan/penugasan/${value}`} passHref>
+              <a>Lihat</a>
+            </Link>
+            {/* <DeleteAction messageId={value} /> */}
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const data = listSuratPerjalanan?.map?.(
+    (
+      { nomorSurat, tujuanDinas, suratTugasId }: { nomorSurat: string; tujuanDinas: string; suratTugasId: string },
+      index: number
+    ) => ({
+      col1: index + 1,
+      col2: nomorSurat,
+      col3: tujuanDinas,
+      col4: suratTugasId,
+    })
+  );
+
+  if (isLoading) return <p>Loading...</p>;
 
   // TODO: tambahin table surat perjalanan
   return (
@@ -28,8 +72,31 @@ const SuratPerjalanan: NextPage = () => {
         description="Dashboard Arsip Sistem Aplikasi KJRI Frankfurt"
       />
       <section className="mt-3">
-        <h3>List Surat Perjalanan</h3>
-        <ul>
+        <div className="mb-3">
+          <h3>List Surat Perjalanan</h3>
+        </div>
+        <Table
+          columns={columns}
+          data={data}
+          search={({ setGlobalFilter }: { setGlobalFilter: Function }) => {
+            return (
+              <div className="d-flex w-100 justify-content-between mb-3">
+                <div className="input-group w-25">
+                  <span className="input-group-text" id="durasi-hari">
+                    <Search />
+                  </span>
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder="Telusuri surat..."
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                  />
+                </div>
+              </div>
+            );
+          }}
+        />
+        {/* <ul>
           {data?.map?.((v: SuratPerjalanan) => {
             return (
               <li key={v.suratTugasId}>
@@ -40,7 +107,7 @@ const SuratPerjalanan: NextPage = () => {
               </li>
             );
           })}
-        </ul>
+        </ul> */}
       </section>
     </>
   );

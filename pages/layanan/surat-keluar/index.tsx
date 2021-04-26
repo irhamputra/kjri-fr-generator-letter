@@ -8,7 +8,6 @@ import { NextSeo } from "next-seo";
 import { v4 } from "uuid";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { UncontrolledDropzone } from "../../../components/CustomField";
 import { SelectArsip } from "../../../components/Select";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
 import useCreateSuratKeluarMutation from "../../../hooks/mutation/useCreateSuratKeluarMutation";
@@ -26,7 +25,6 @@ const SuratKeluar: NextPage = () => {
 
   const initialValues = {
     recipient: "",
-    surat: [],
     content: "",
     jenisSurat: "",
     nomorSurat: "",
@@ -58,10 +56,6 @@ const SuratKeluar: NextPage = () => {
       setSubmitting(false);
     },
   });
-
-  const onDrop = (acceptedFiles: File[]) => {
-    setFieldValue("surat", acceptedFiles);
-  };
 
   const handleNomorSurat = async () => {
     if (!values.arsipId || !values.jenisSurat) return await setFieldValue("nomorSurat", "");
@@ -194,7 +188,7 @@ const SuratKeluar: NextPage = () => {
             {errors.recipient && touched.recipient && <small className="text-danger">{errors.recipient}</small>}
           </div>
 
-          <div className="col">
+          <div className="col mb-3">
             <label className="form-label">Isi Surat</label>
             <input
               className="form-control"
@@ -203,18 +197,6 @@ const SuratKeluar: NextPage = () => {
               onChange={handleChange}
             />
             {errors.content && touched.content && <small className="text-danger">{errors.content}</small>}
-          </div>
-        </div>
-
-        <div className="row mt-3">
-          <div className="col">
-            <label className="form-label">Upload Surat</label>
-            <UncontrolledDropzone
-              values={(values.surat as unknown) as File[]}
-              onDrop={onDrop}
-              onClickReset={() => setFieldValue("surat", [])}
-            />
-            {errors.surat && touched.surat && <small className="text-danger">{errors.surat}</small>}
           </div>
         </div>
 

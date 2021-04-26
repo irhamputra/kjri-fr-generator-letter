@@ -2,7 +2,7 @@ import * as React from "react";
 import { NextPage } from "next";
 import { Form, FieldArray, Field, Formik, FormikTouched } from "formik";
 import axios, { AxiosResponse } from "axios";
-import { DropzoneComponent, InputComponent, SelectComponent, SelectStaff } from "../../../components/CustomField";
+import { InputComponent, SelectComponent, SelectStaff } from "../../../components/CustomField";
 import useQueryJalDir from "../../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { object, string, array } from "yup";
@@ -43,7 +43,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
   const initialValues = {
     namaPegawai: editedData?.listPegawai || [],
     nomorSurat: editedData?.nomorSurat || "",
-    surat: [],
     fullDayKurs: 0.84,
   };
 
@@ -61,7 +60,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
 
   const validationSchema = object().shape({
     nomorSurat: string().trim().required("nomor surat wajib diisi!"),
-    surat: array().min(1).required("wajib menyertakan surat"),
     namaPegawai: array()
       .of(
         object().shape({
@@ -175,7 +173,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                           endText="$"
                           value={values.fullDayKurs}
                           as={InputComponent}
-                          options={optionsSuratTugas}
                           placeholder="Pilih Surat"
                         />
                       </div>
@@ -306,17 +303,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                       </>
                     )}
                   />
-                </div>
-                <div className="mt-3">
-                  <label className="form-label">Surat</label>
-                  <Field
-                    className="form-control"
-                    name="surat"
-                    component={DropzoneComponent}
-                    options={optionsSuratTugas}
-                    placeholder="Pilih Surat"
-                  />
-                  {errors.surat && touched.surat && <small className="text-danger">{errors.surat}</small>}
                 </div>
 
                 <div className="mt-3">

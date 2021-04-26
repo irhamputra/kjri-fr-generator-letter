@@ -1,9 +1,9 @@
-import { useQuery } from "react-query";
 import axios from "axios";
 import cookie from "js-cookie";
+import { useMyQuery } from "./useMyQuery";
 
 const useRefetchToken = () =>
-  useQuery(
+  useMyQuery(
     "refetchToken",
     async () => {
       const refreshToken = cookie.get("rtfa");

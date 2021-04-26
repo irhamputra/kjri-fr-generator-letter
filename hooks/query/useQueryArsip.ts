@@ -1,8 +1,8 @@
-import { useQuery } from "react-query";
 import axios from "axios";
+import { useMyQuery } from "../useMyQuery";
 
 const useQueryArsip = () =>
-  useQuery("fetchArsip", async () => {
+  useMyQuery("fetchArsip", async () => {
     try {
       const { data } = await axios.get("/api/v1/arsip");
 

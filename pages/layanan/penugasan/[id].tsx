@@ -1,14 +1,14 @@
 import * as React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useQuery } from "react-query";
 import axios from "axios";
 import Penugasan from ".";
+import { useMyQuery } from "../../../hooks/useMyQuery";
 
 const SuratPenugasanId: NextPage = () => {
   const { query, push } = useRouter();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading } = useMyQuery(
     ["fetchSingleSurat", query.id],
     async () => {
       const { data } = await axios.get(`/api/v1/surat-tugas/${query.id}`);
