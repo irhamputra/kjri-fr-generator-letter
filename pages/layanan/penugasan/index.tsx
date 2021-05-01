@@ -46,11 +46,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
     fullDayKurs: 0.84,
   };
 
-  const optionsGolongan = listJalDir?.map((v: { golongan: string; harga: string }) => ({
-    label: v.golongan,
-    value: v.harga,
-  }));
-
   const optionsSuratTugas =
     listSuratTugas &&
     listSuratTugas?.map?.((v: { nomorSurat: string; tujuanDinas: string }) => ({
@@ -110,7 +105,9 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
 
             const newValues = {
               listPegawai: namaPegawai.map((v: { pegawai: any; durasi: string }) => {
-                const indexGolongan = listJalDir.findIndex(({ golongan }) => golongan === v.pegawai?.golongan);
+                const indexGolongan = listJalDir.findIndex(
+                  ({ golongan }: { golongan: string }) => golongan === v.pegawai?.golongan
+                );
                 const gol = listJalDir[indexGolongan];
                 const total = countDailyCost(gol.harga, v.durasi, fullDayKurs);
 
@@ -198,7 +195,7 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                               const error: string = (errors.namaPegawai as string)?.[index];
                               const touch = (touched.namaPegawai as FormikTouched<any>)?.[index];
                               const indexGolongan = listJalDir.findIndex(
-                                ({ golongan }) => golongan === _.pegawai?.golongan
+                                ({ golongan }: { golongan: string }) => golongan === _.pegawai?.golongan
                               );
                               const gol = listJalDir[indexGolongan];
                               console.log("Gol", gol);

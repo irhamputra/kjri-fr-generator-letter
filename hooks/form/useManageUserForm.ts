@@ -11,6 +11,7 @@ interface UseManageUserFormValues {
   jabatan: string;
   nip: string;
   role: string;
+  password?: string;
 }
 
 const useManageUserForm = (initialValues: UseManageUserFormValues, userId: string) => {
