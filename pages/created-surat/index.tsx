@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import { NextSeo } from "next-seo";
 import * as React from "react";
-import { Eye, Printer, Search } from "react-bootstrap-icons";
+import { Pencil, Printer, Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Table from "../../components/Table";
 import useQuerySuratDibuat from "../../hooks/query/useQuerySuratDibuat";
@@ -39,10 +39,10 @@ const SuratDibuat: NextPage = () => {
         accessor: "col4",
         Cell: ({ value }: { value: string }) => (
           <div style={{ display: "flex" }}>
-            <Link href={`/layanan/penugasan/${value}`} passHref>
+            <Link href={`/layanan/surat-keluar/${value}?edit=true&originUrl=/created-surat`} passHref>
               <a>
                 <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
-                  <Eye size={25} />
+                  <Pencil size={25} />
                 </button>
               </a>
             </Link>
