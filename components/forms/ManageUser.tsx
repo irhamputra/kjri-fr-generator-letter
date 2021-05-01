@@ -3,7 +3,7 @@ import useAuthForm from "../../hooks/useAuthForm";
 import { Golongan } from "../../typings/Golongan";
 import capitalizeFirstLetter from "../../utils/capitalize";
 import useQueryJalDir from "../../hooks/query/useQueryJalDir";
-import useQueryUserById from "../../hooks/query/useQueryUserById";
+import { useQueryUserById } from "../../hooks/query/useQueryUser";
 import Select from "react-select";
 import useManageUserForm from "../../hooks/form/useManageUserForm";
 
