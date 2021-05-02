@@ -6,7 +6,7 @@ import Penugasan from ".";
 import { useMyQuery } from "../../../hooks/useMyQuery";
 
 const SuratPenugasanId: NextPage = () => {
-  const { query, push } = useRouter();
+  const { query, back } = useRouter();
 
   const { data, isLoading } = useMyQuery(
     ["fetchSingleSurat", query.id],
@@ -28,12 +28,7 @@ const SuratPenugasanId: NextPage = () => {
 
   return (
     <>
-      <button
-        onClick={async () => {
-          await push("/layanan/penugasan/list");
-        }}
-        className="btn-dark btn my-3"
-      >
+      <button onClick={() => back()} className="btn-dark btn my-3">
         Kembali ke list
       </button>
 
