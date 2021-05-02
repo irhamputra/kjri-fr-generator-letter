@@ -4,17 +4,16 @@ import { House, Gear, FileEarmarkCheck, FileEarmarkPerson } from "react-bootstra
 import { useQueryClient } from "react-query";
 import type { Auth } from "../typings/AuthQueryClient";
 import useQueryTotalSuratPerjalanan from "../hooks/query/useQueryTotalSuratPerjalanan";
+import useQuerySuratDibuat from "../hooks/query/useQuerySuratDibuat";
 
 const Sidebar = (): JSX.Element => {
   const { data, isLoading } = useQueryTotalSuratPerjalanan();
+  const { data: dataSuratDibuat, isLoading: isLoadingSuratDibuat } = useQuerySuratDibuat();
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
 
   return (
-    <div
-      className={`col-2 bg-dark`}
-      style={{ height: "100vh", position: "fixed" }}
-    >
+    <div className={`col-2 bg-dark`} style={{ height: "100vh", position: "fixed" }}>
       <nav className="p-1">
         <div className="p-3 d-flex" style={{ justifyContent: "center" }}>
           <Link href="/dashboard">
@@ -39,6 +38,11 @@ const Sidebar = (): JSX.Element => {
               <a className="d-flex align-items-center p-2">
                 <FileEarmarkCheck size={25} style={{ color: "white" }} />
                 <p className="my-0 mx-2 ">Surat Telah Dibuat</p>
+                {!isLoadingSuratDibuat && dataSuratDibuat.length > 0 && (
+                  <span className="badge badge-danger" style={{ background: "#dc3545" }}>
+                    {dataSuratDibuat.length}
+                  </span>
+                )}
               </a>
             </Link>
           </li>

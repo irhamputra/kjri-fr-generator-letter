@@ -12,4 +12,16 @@ const useQuerySuratKeluar = () =>
     }
   });
 
+const useQuerySuratKeluarById = (id: string) =>
+  useMyQuery(["fetchSuratKeluarId", id], async () => {
+    try {
+      const { data } = await axios.get(`/api/v1/surat-keluar/${id}`);
+
+      return data;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+
 export default useQuerySuratKeluar;
+export { useQuerySuratKeluarById };

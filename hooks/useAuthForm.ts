@@ -22,6 +22,7 @@ const useAuthForm = (initialValues: UseAuthFormValues, type: "login" | "register
   return useFormik<UseAuthFormValues>({
     initialValues,
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (value, { setSubmitting, resetForm }) => {
       setSubmitting(true);
       const { nip: nipVal, ...restValues } = value;

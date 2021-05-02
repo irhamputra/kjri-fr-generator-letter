@@ -46,11 +46,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
     fullDayKurs: 0.84,
   };
 
-  const optionsGolongan = listJalDir?.map((v: { golongan: string; harga: string }) => ({
-    label: v.golongan,
-    value: v.harga,
-  }));
-
   const optionsSuratTugas =
     listSuratTugas &&
     listSuratTugas?.map?.((v: { nomorSurat: string; tujuanDinas: string }) => ({
@@ -64,7 +59,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
       .of(
         object().shape({
           pegawai: object().required(),
-          jaldis: string().required(),
           durasi: string()
             .matches(/^\d+(,5)?$/, "Masukan kelipatan 0,5. contoh : 7 atau 8,5")
             .required(),
@@ -110,8 +104,12 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
             let response: AxiosResponse<Record<string, string>>;
 
             const newValues = {
-              listPegawai: namaPegawai.map((v: { jaldis: string; durasi: string }) => {
-                const total = countDailyCost(v.jaldis, v.durasi, fullDayKurs);
+              listPegawai: namaPegawai.map((v: { pegawai: any; durasi: string }) => {
+                const indexGolongan = listJalDir.findIndex(
+                  ({ golongan }: { golongan: string }) => golongan === v.pegawai?.golongan
+                );
+                const gol = listJalDir[indexGolongan];
+                const total = countDailyCost(gol.harga, v.durasi, fullDayKurs);
 
                 return { ...v, uangHarian: format(total) };
               }),
@@ -196,10 +194,15 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                             (_: { pegawai: Record<string, string>; jaldis: string; durasi: string }, index: number) => {
                               const error: string = (errors.namaPegawai as string)?.[index];
                               const touch = (touched.namaPegawai as FormikTouched<any>)?.[index];
+                              const indexGolongan = listJalDir.findIndex(
+                                ({ golongan }: { golongan: string }) => golongan === _.pegawai?.golongan
+                              );
+                              const gol = listJalDir[indexGolongan];
+                              console.log("Gol", gol);
                               return (
                                 <div key={index} className={`mb-3 container-fluid p-0`}>
                                   <div className="row">
-                                    <div className="col-4">
+                                    <div className="col-6">
                                       <label className="form-label">Nama Staff</label>
                                       <Field
                                         className="form-control"
@@ -219,31 +222,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                                     </div>
 
                                     <div className="col-3">
-                                      <label className="form-label">Golongan Jalan Dinas</label>
-                                      <Field
-                                        className="form-control"
-                                        name={`namaPegawai.${index}.jaldis`}
-                                        component={SelectComponent}
-                                        styles={{
-                                          control: (provided: Record<string, string>) => ({
-                                            ...provided,
-                                            height: 66,
-                                          }),
-                                        }}
-                                        value={_.jaldis}
-                                        options={optionsGolongan}
-                                        placeholder="Pilih Golongan Jalan Dinas"
-                                      />
-                                      {/* @ts-ignore */}
-                                      {error?.jaldis && touch.jaldis && (
-                                        <small className="text-danger">
-                                          {/* @ts-ignore */}
-                                          {error?.jaldis}
-                                        </small>
-                                      )}
-                                    </div>
-
-                                    <div className="col-2">
                                       <label className="form-label">Lama Perjalanan</label>
                                       <Field
                                         className="form-control"
@@ -256,7 +234,7 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                                         placeholder="(e.g 1 hari atau 2,5 hari)"
                                       />
                                       {/* @ts-ignore */}
-                                      {error?.durasi && touch.durasi && (
+                                      {error?.durasi && touch?.durasi && (
                                         <small className="text-danger">
                                           {/* @ts-ignore */}
                                           {error?.durasi}
@@ -266,7 +244,7 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                                     <div className="col">
                                       <label className="form-label">Uang Harian</label>
                                       <div className="d-flex align-items-center h-75">
-                                        <h6>{format(countDailyCost(_.jaldis, _.durasi, values.fullDayKurs))}</h6>
+                                        <h6>{format(countDailyCost(gol?.harga, _.durasi, values.fullDayKurs))}</h6>
                                       </div>
                                     </div>
 

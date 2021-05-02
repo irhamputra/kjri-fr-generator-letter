@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import useQuerySuratPerjalanan from "../../hooks/query/useQuerySuratPerjalanan";
 import { NextSeo } from "next-seo";
 import * as React from "react";
-import { Printer, Search } from "react-bootstrap-icons";
+import { Eye, Printer, Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Table from "../../components/Table";
 // import usePrintFile from "../../hooks/usePrintFile";
@@ -40,8 +40,17 @@ const SuratPerjalanan: NextPage = () => {
         Cell: ({ value }: { value: string }) => (
           <div style={{ display: "flex" }}>
             <Link href={`/layanan/penugasan/${value}`} passHref>
-              <a>Lihat</a>
+              <a>
+                <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
+                  <Eye size={25} />
+                </button>
+              </a>
             </Link>
+
+            <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
+              <Printer size={25} />
+            </button>
+
             {/* <DeleteAction messageId={value} /> */}
           </div>
         ),
