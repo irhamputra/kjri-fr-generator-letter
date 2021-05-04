@@ -7,10 +7,19 @@ import Table from "../../../components/Table";
 import useDeleteSuratKeluar from "../../../hooks/mutation/useDeleteSuratKeluar";
 import ReactModal from "react-modal";
 import Link from "next/link";
+import { useQueryClient } from "react-query";
+import { Auth } from "../../../typings/AuthQueryClient";
+
+type CellValue = {
+  id: string;
+  author: string | undefined;
+};
 
 const ListSuratKeluar: NextPage = () => {
   const { push } = useRouter();
   const { data: listSuratKeluar, isLoading } = useQuerySuratKeluar();
+  const queryClient = useQueryClient();
+  const query = queryClient.getQueryData<Auth>("auth");
 
   const columns = React.useMemo(
     () => [
@@ -29,25 +38,45 @@ const ListSuratKeluar: NextPage = () => {
       {
         Header: "Opsi",
         accessor: "col4",
-        Cell: ({ value }: { value: string }) => (
-          <div style={{ display: "flex" }}>
-            <Link href={`/layanan/surat-keluar/${value}?edit=true`} passHref>
-              <a>Edit</a>
-            </Link>
-            <DeleteAction messageId={value} />
-          </div>
-        ),
+        Cell: ({ value }: { value: CellValue }) => {
+          if (query?.isAdmin) {
+            return (
+              <div className="d-flex">
+                <Link href={`/layanan/surat-keluar/${value.id}?edit=true`} passHref>
+                  <a>Ubah</a>
+                </Link>
+                <DeleteAction messageId={value.id} />
+              </div>
+            );
+          }
+
+          if (value.author === query?.email) {
+            return (
+              <div className="d-flex">
+                <Link href={`/layanan/surat-keluar/${value.id}?edit=true`} passHref>
+                  <a>Ubah</a>
+                </Link>
+                <DeleteAction messageId={value.id} />
+              </div>
+            );
+          }
+
+          return null;
+        },
       },
     ],
-    []
+    [query]
   );
 
   const data = listSuratKeluar?.listSurat.map?.(
-    ({ nomorSurat, content, id }: { nomorSurat: string; content: string; id: string }, index: number) => ({
+    (
+      { nomorSurat, content, id, author }: { nomorSurat: string; content: string; id: string; author: string },
+      index: number
+    ) => ({
       col1: index + 1,
       col2: nomorSurat,
       col3: content,
-      col4: id,
+      col4: { id, author },
     })
   );
 
