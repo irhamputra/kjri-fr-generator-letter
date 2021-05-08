@@ -7,18 +7,19 @@ import dayjs from "dayjs";
 import createSchema from "../../utils/validation/schema";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { NextSeo } from "next-seo";
 import { v4 } from "uuid";
 import apiInstance from "../../utils/firebase/apiInstance";
 import parseCookies from "../../utils/parseCookies";
 import { Auth } from "../../typings/AuthQueryClient";
+import { useMyQuery } from "../../hooks/useMyQuery";
 
 const SuratTugas: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading } = useMyQuery(
     "fetchSuratTugas",
     async () => {
       const { data } = await axios.get("/api/v1/surat-tugas");
