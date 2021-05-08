@@ -10,14 +10,14 @@ import { useQueryClient } from "react-query";
 import useBreakpoint from "../hooks/useBreakpoints";
 import { Auth } from "../typings/AuthQueryClient";
 import { LegacyRef } from "react";
+import useQueryAuth from "../hooks/query/useQueryAuth";
 
 const Navigation = (): JSX.Element => {
   const { replace, reload, push } = useRouter();
   const [showMenu, setShowMenu] = React.useState(false);
   const [referenceElement, setReferenceElement] = React.useState(null);
   const [isOpen, setIsOpen] = React.useState(false);
-  const queryClient = useQueryClient();
-  const query = queryClient.getQueryData<Auth>("auth");
+  const { data: query = {} } = useQueryAuth();
 
   const handleLogout = async () => {
     try {
