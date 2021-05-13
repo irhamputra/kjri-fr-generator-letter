@@ -87,16 +87,6 @@ const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
 
         <div className="col-3 mt-3">
           <label className="form-label">Golongan</label>
-          {/* <select className="form-select" aria-label="golongan" name="golongan" onChange={handleChange}>
-            <option value={values.golongan}>Pilih Golongan</option>
-            {listGolongan?.map?.((v: Golongan) => {
-              return (
-                <option value={v.golongan} key={v.golId}>
-                  {v.golongan}
-                </option>
-              );
-            })}
-          </select> */}
           <Select
             value={values.golongan ? { label: values.golongan, value: values.golongan as any } : undefined}
             onChange={({ value }) => setFieldValue("golongan", value)}

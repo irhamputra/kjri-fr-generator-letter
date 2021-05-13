@@ -15,7 +15,6 @@ import useQueryJenisSurat from "../../hooks/query/useQueryJenisSurat";
 import createSchema from "../../utils/validation/schema";
 import useUpdateSuratKeluarMutation from "../../hooks/mutation/useUpdateSuratKeluarMutation";
 import { Auth } from "../../typings/AuthQueryClient";
-import { QueryClient } from "react-query";
 
 const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ editId, backUrl }) => {
   const [disabled, setDisabled] = React.useState(false);
