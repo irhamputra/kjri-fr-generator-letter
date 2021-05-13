@@ -39,7 +39,7 @@ const LupaPassword: NextPage = () => {
         <div className="col-12">
           <h1 style={{ fontSize: 50 }}>Lupa Password</h1>
           <p className="w-100 small text-secondary">
-            Masukan Email anda, selanjutnya kami akan kirimkan link untuk reset ulang password anda
+            Masukan Email anda, selanjutnya kami akan kirimkan link untuk <br /> reset ulang password anda
           </p>
 
           <label className="form-label">Email</label>

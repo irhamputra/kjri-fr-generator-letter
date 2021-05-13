@@ -29,7 +29,7 @@ const schema = (type: string) => {
     case "birthday":
       return string()
         .matches(/^\d{2}[./-]\d{2}[./-]\d{4}$/, "Format tanggal lahir salah. Contoh: 01/01/2000")
-        .required();
+        .required("Tanggal lahir wajib diisi!");
 
     // Login & Register schema
     case "email":

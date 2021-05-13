@@ -16,7 +16,7 @@ const Register: NextPage = () => {
     birthday: "",
   };
 
-  const { handleSubmit, handleChange, values, errors, touched, setFieldValue } = useFormik({
+  const { handleSubmit, handleChange, values, errors, touched, setFieldValue, isSubmitting } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting }) => {
@@ -32,7 +32,8 @@ const Register: NextPage = () => {
         <div className="col-12">
           <h1 style={{ fontSize: 50 }}>Registrasi</h1>
           <p className="w-100 small text-secondary">
-            Masukan kode yang telah diberikan Admin, selanjutnya kita akan cek dan proses registrasi anda
+            Masukan tanggal lahir anda kode yang telah diberikan Admin, <br />
+            selanjutnya kita akan cek dan proses registrasi anda.
           </p>
 
           <div>
@@ -50,7 +51,7 @@ const Register: NextPage = () => {
           )}
 
           <div className="mt-3">
-            <label className="form-label">Tanggal lahir</label>
+            <label className="form-label">Tanggal Lahir</label>
             <input
               className="form-control"
               onChange={(e) => {
@@ -67,7 +68,7 @@ const Register: NextPage = () => {
 
           <div className="mt-3">
             <button className="btn btn-dark w-100" type="submit">
-              Registrasi
+              {isSubmitting ? "Mohon tunggu..." : "Cek Akun"}
             </button>
           </div>
 

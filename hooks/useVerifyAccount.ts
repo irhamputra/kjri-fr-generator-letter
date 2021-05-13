@@ -23,7 +23,7 @@ const useVerifyAccount = <T>() => {
         await replace({ pathname: "/create-new-account", query: { codeId: data.identityNumber } });
       },
       onError: () => {
-        toast.error("tidak ada user ditemukan");
+        toast.error("Kode atau Tanggal lahir salah tidak ditemukan");
       },
     }
   );

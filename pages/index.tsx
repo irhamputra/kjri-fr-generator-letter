@@ -15,7 +15,7 @@ const Home: NextPage = () => {
         <div className="text-center">
           <img src="/kjri-frankfurt.jpg" width="50%" alt="logo" />
           <h1>KJRI Frankfurt</h1>
-          <p className="fw-bold">Sistem Aplikasi Penomoran Surat</p>
+          <p className="fw-bold">Sistem Aplikasi Pembuatan Surat</p>
         </div>
 
         <div className="mb-3">
@@ -61,7 +61,7 @@ const Home: NextPage = () => {
 
       <Link href="/register" passHref>
         <a>
-          <small className="text-center">Register/Verifikasi Akun</small>
+          <span className="small">Register/Verifikasi Akun disini</span>
         </a>
       </Link>
     </div>
