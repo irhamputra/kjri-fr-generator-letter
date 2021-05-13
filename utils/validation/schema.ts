@@ -23,6 +23,14 @@ const schema = (type: string) => {
         .trim()
         .required(`${type === "displayName" ? "Nama Pegawai" : capitalizeFirstLetter(type)} wajib diisi!`);
 
+    case "identityNumber":
+      return string().trim().max(5).required("Nomor identifikasi wajib diisi!");
+
+    case "birthday":
+      return string()
+        .matches(/^\d{2}[./-]\d{2}[./-]\d{4}$/, "Format tanggal lahir salah. Contoh: 01/01/2000")
+        .required();
+
     // Login & Register schema
     case "email":
       return string().email("Email tidak sesuai format, mohon cek kembali").required("Email wajib diisi");

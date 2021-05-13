@@ -5,7 +5,7 @@ import DashboardLayout from "./Dashboard";
 const MainLayout: React.FC = ({ children }) => {
   const { pathname } = useRouter();
 
-  const isAuthPage = ["/", "/forget-password", "/_error"].includes(pathname);
+  const isAuthPage = ["/", "/forget-password", "/_error", "/register"].includes(pathname);
 
   return (
     <div className="container-fluid h-100">

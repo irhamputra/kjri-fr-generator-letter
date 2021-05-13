@@ -34,9 +34,9 @@ const LupaPassword: NextPage = () => {
   });
 
   return (
-    <div className="m-auto row px-5 w-50 mt-5">
+    <div style={{ display: "grid", placeItems: "center" }}>
       <form onSubmit={handleSubmit}>
-        <div className="col-12 mt-5">
+        <div className="col-12">
           <h1 style={{ fontSize: 50 }}>Lupa Password</h1>
           <p className="w-100 small text-secondary">
             Masukan Email anda, selanjutnya kami akan kirimkan link untuk reset ulang password anda

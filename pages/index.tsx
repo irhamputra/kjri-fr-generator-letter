@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   );
 
   return (
-    <div className="d-flex mt-5 justify-content-center align-items-center">
+    <div style={{ display: "grid", placeItems: "center" }}>
       <form className="mt-5" onSubmit={handleSubmit}>
         <div className="text-center">
           <img src="/kjri-frankfurt.jpg" width="50%" alt="logo" />
@@ -54,10 +54,16 @@ const Home: NextPage = () => {
           </small>
         </div>
 
-        <button className="btn btn-dark w-100 mb-2" disabled={isSubmitting} type="submit">
+        <button className="btn btn-dark w-100" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Mohon tunggu..." : "Login"}
         </button>
       </form>
+
+      <Link href="/register" passHref>
+        <a>
+          <small className="text-center">Register/Verifikasi Akun</small>
+        </a>
+      </Link>
     </div>
   );
 };
