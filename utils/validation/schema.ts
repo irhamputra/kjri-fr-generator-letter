@@ -1,4 +1,5 @@
 import { string, array } from "yup";
+import dayjs from "dayjs";
 import capitalizeFirstLetter from "../capitalize";
 
 const schema = (type: string) => {
@@ -18,7 +19,7 @@ const schema = (type: string) => {
     case "hargaGolongan":
     case "golongan":
     case "jabatan":
-    case "roles":
+    case "role":
       return string()
         .trim()
         .required(`${type === "displayName" ? "Nama Pegawai" : capitalizeFirstLetter(type)} wajib diisi!`);
@@ -29,6 +30,11 @@ const schema = (type: string) => {
     case "birthday":
       return string()
         .matches(/^\d{2}[./-]\d{2}[./-]\d{4}$/, "Format tanggal lahir salah. Contoh: 01/01/2000")
+        .required("Tanggal lahir wajib diisi!");
+
+    case "dob":
+      return string()
+        .test("dob", "Minimal umur 21 tahun", (val) => dayjs().diff(dayjs(val), "years") >= 21)
         .required("Tanggal lahir wajib diisi!");
 
     // Login & Register schema

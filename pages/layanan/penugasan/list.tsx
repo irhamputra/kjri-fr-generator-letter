@@ -11,6 +11,18 @@ import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 
 type SuratTugas = { nomorSurat: string; tujuanDinas: string; suratTugasId: string };
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    border: "0px",
+  },
+};
+
 const ListSurat: NextPage = () => {
   const { push } = useRouter();
   const { data: listSuratTugas, isLoading: suratTugasLoading } = useQuerySuratTugas();
@@ -100,18 +112,6 @@ const ListSurat: NextPage = () => {
 const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string }>): JSX.Element => {
   const [open, setOpen] = React.useState(false);
   const { mutateAsync } = useDeleteSPDMutation();
-
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      border: "0px",
-    },
-  };
 
   return (
     <>

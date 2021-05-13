@@ -6,9 +6,7 @@ import { toast } from "react-hot-toast";
 import { ChevronDown, Gear, House, List } from "react-bootstrap-icons";
 import Popup from "./Popup";
 import Link from "next/link";
-import { useQueryClient } from "react-query";
 import useBreakpoint from "../hooks/useBreakpoints";
-import { Auth } from "../typings/AuthQueryClient";
 import { LegacyRef } from "react";
 import useQueryAuth from "../hooks/query/useQueryAuth";
 

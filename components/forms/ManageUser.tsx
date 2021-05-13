@@ -8,7 +8,7 @@ import Select from "react-select";
 import useManageUserForm from "../../hooks/form/useManageUserForm";
 
 const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
-  const { data: listGolongan } = useQueryJalDir();
+  const { data: listGolongan, isLoading } = useQueryJalDir();
   const { data: editedUser = {} } = useQueryUserById(userId as string);
   const { displayName, email, nip, golongan, jabatan, role } = editedUser;
 
@@ -20,14 +20,19 @@ const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
     jabatan: jabatan ?? "",
     role: role ?? "",
   };
+
   const fetcher = !userId ? useAuthForm(initValues, "register") : useManageUserForm(initValues, userId);
   const { values, handleChange, handleSubmit, setFieldValue, errors, touched, isSubmitting, resetForm } = fetcher;
 
   const optionsRole = [
+    { label: "Pilih Role", value: "" },
     { label: "Staff", value: "default" },
-    { label: "Tata Usaha", value: "TU" },
   ];
+
   const optionsGolongan = listGolongan?.map(({ golongan }: Golongan) => ({ label: golongan, value: golongan })) ?? [];
+
+  if (isLoading) return <p>Loading...</p>;
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="row">
@@ -40,6 +45,7 @@ const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
             name="displayName"
             value={capitalizeFirstLetter(values.displayName ?? "")}
             onChange={handleChange}
+            required
           />
           {errors.displayName && touched.displayName && <small className="text-danger">{errors.displayName}</small>}
         </div>
@@ -53,6 +59,7 @@ const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
             type="email"
             value={values.email}
             onChange={handleChange}
+            required
           />
           {errors.email && touched.email && <small className="text-danger">{errors.email}</small>}
         </div>
@@ -112,16 +119,20 @@ const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
         <div className="col mt-3">
           <label className="form-label">Role</label>
 
-          <Select
-            onChange={(v) => setFieldValue("role", v?.value)}
-            value={values.role ? optionsRole.filter(({ value }) => value === values.role)[0] : undefined}
-            defaultValue={optionsRole[0]}
-            options={optionsRole}
-          />
+          {userId ? (
+            <h4>{values.role}</h4>
+          ) : (
+            <>
+              <Select
+                onChange={(v) => setFieldValue("role", v?.value)}
+                value={values.role ? optionsRole.filter(({ value }) => value === values.role)[0] : undefined}
+                defaultValue={optionsRole[0]}
+                options={optionsRole}
+                name="role"
+              />
 
-          {errors.role && touched.role && <small className="text-danger">{errors.role}</small>}
-          {values.role === "TU" && (
-            <small className="text-info">Role "Tata Usaha" tidak akan muncul di list Staff</small>
+              {errors.role && touched.role && <small className="text-danger">{errors.role}</small>}
+            </>
           )}
         </div>
 

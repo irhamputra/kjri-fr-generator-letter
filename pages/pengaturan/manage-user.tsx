@@ -1,23 +1,19 @@
 import * as React from "react";
 import { NextPage } from "next";
-import useAuthForm from "../../hooks/useAuthForm";
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Pencil, Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
 import useQueryUsers from "../../hooks/query/useQueryUsers";
-import capitalizeFirstLetter from "../../utils/capitalize";
-import useQueryJalDir from "../../hooks/query/useQueryJalDir";
 import { Auth } from "../../typings/AuthQueryClient";
-import ManageUserForm from "../../components/forms/ManageUser";
 import Link from "next/link";
+import RegisterUser from "../../components/RegisterUser";
 
 const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
 
   const { data: listUsers, isLoading: loadingUser } = useQueryUsers();
-  const { data: listGolongan, isLoading: loadingGolongan } = useQueryJalDir();
 
   const { mutateAsync } = useMutation(
     "deleteUser",
@@ -42,12 +38,11 @@ const ManageUser: NextPage = () => {
 
   if (!query?.isAdmin && query?.role !== "tu") throw Error("Invalid permission");
 
-  if (loadingUser && loadingGolongan) return <h4>Loading...</h4>;
+  if (loadingUser) return <h4>Loading...</h4>;
 
   return (
     <section className="mt-3">
-      <h4>Manage User</h4>
-      <ManageUserForm />
+      <RegisterUser />
       <table className="table caption-top mt-3">
         <caption>List Staff</caption>
         <thead>
