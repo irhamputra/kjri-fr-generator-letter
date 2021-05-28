@@ -1,0 +1,62 @@
+.circle {
+  border-radius: 50%;
+  background: #212529;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
+  height: 32px;
+  width: 32px;
+  color: white;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.circleUnactive {
+  border-radius: 50%;
+  display: flex;
+  border: 1px solid #212529;
+  justify-content: center;
+  align-items: center;
+  margin-right: 4px;
+  height: 32px;
+  width: 32px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.step {
+  display: flex;
+}
+
+.step .circleBox {
+  flex: 0 0;
+}
+
+.step .circleBox2 {
+  flex: 1 1;
+  display: flex;
+  align-items: center;
+}
+
+.step hr {
+  display: block;
+  overflow: hidden;
+  border-style: inset;
+  border-width: 1px;
+  width: 100%;
+}
+
+.text {
+  padding-right: 64px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: rgba(33, 37, 41, 0.8);
+  margin-top: 8px;
+}

@@ -1,0 +1,53 @@
+.head {
+  display: flex;
+  padding: spacing(3, 1);
+  align-items: center;
+}
+
+.head::after {
+  content: "";
+  height: 0.5px;
+  background: #e2e2e2;
+  flex: 1 1;
+}
+
+.head .title {
+  margin-right: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: bold;
+}
+
+.itemWrap {
+  display: flex;
+  min-width: 0px;
+}
+
+.itemWrap .left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.itemWrap .right {
+  flex: 1 1;
+  margin-left: 24px;
+}
+
+.circle {
+  height: 32px;
+  width: 32px;
+  flex: 0 0 32px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  background: #e2e2e2;
+  border-radius: 50%;
+}
+
+.line {
+  width: 1px;
+  background: #e2e2e2;
+  height: 100%;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
