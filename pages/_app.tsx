@@ -11,7 +11,7 @@ import parseCookies from "../utils/parseCookies";
 import apiInstance from "../utils/firebase/apiInstance";
 import { AppProps } from "next/app";
 import { AppContextType } from "next/dist/next-server/lib/utils";
-
+import "react-datepicker/dist/react-datepicker.css";
 type MyAppProps = AppProps & { dehydrateState: DehydratedState };
 
 function MyApp({ Component, pageProps, dehydrateState }: MyAppProps) {
