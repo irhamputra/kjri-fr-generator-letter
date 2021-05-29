@@ -3,12 +3,11 @@ import { object } from "yup";
 import { useQueryClient } from "react-query";
 
 import React from "react";
-import dayjs from "dayjs";
 import { v4 } from "uuid";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { SelectArsip } from "../Select";
-import useQuerySuratKeluar, { useQuerySuratKeluarById } from "../../hooks/query/useQuerySuratKeluar";
+import { useQuerySuratKeluarById } from "../../hooks/query/useQuerySuratKeluar";
 import useCreateSuratKeluarMutation from "../../hooks/mutation/useCreateSuratKeluarMutation";
 import capitalizeFirstLetter from "../../utils/capitalize";
 import useQueryJenisSurat from "../../hooks/query/useQueryJenisSurat";
@@ -34,9 +33,25 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     author: author ?? "",
   };
 
-  const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation();
+  const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation({
+    onMutate: async ({ nomorSurat, id }) => {
+      setDisabled(true);
+      await setFieldValue("id", id);
+      await setFieldValue("nomorSurat", nomorSurat);
+      await setFieldValue("author", query?.email);
+    },
+    onError: async () => {
+      await setFieldValue("id", "");
+      await setFieldValue("nomorSurat", "");
+      await setFieldValue("author", "");
+      setDisabled(false);
+    },
+    onSuccess: async (val) => {
+      const { data } = val;
+      setFieldValue("nomorSurat", data.nomorSurat);
+    },
+  });
   const { mutateAsync: updateSuratKeluar } = useUpdateSuratKeluarMutation();
-  const { data: listSuratKeluar } = useQuerySuratKeluar();
   const { data: listJenisSurat } = useQueryJenisSurat();
 
   const { values, handleSubmit, handleChange, errors, touched, setFieldValue, isSubmitting, resetForm } = useFormik({
@@ -61,48 +76,14 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
   });
 
   const handleNomorSurat = async () => {
-    if (!values.arsipId || !values.jenisSurat) return await setFieldValue("nomorSurat", "");
+    const { arsipId, jenisSurat } = values;
+
+    if (!arsipId || !jenisSurat) return await setFieldValue("nomorSurat", "");
 
     try {
-      const incrementNumber = `00${listSuratKeluar?.total + 1}`;
-      const thisMonth = dayjs().month() + 1;
-      const thisYear = dayjs().year();
-
-      const labelJenisSurat = listJenisSurat?.find((v: { label: string }) => v.label === values.jenisSurat).label;
-
-      let jenisSurat = "";
-      let suffixFRA = false;
-      let suratKeputusan = "";
-
-      if (labelJenisSurat === "Surat Pengumuman") {
-        jenisSurat = "PEN";
-      }
-
-      if (labelJenisSurat === "Surat Keterangan") {
-        jenisSurat = "SUKET";
-      }
-
-      if (!["Nota Dinas", "Surat Edaran", "Surat Keputusan"].includes(labelJenisSurat)) {
-        suffixFRA = true;
-      }
-
-      if (labelJenisSurat === "Surat Keputusan") {
-        suratKeputusan = "SK-FRA";
-      }
-
       const id = v4();
 
-      const nomorSurat = `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
-        jenisSurat ? `${jenisSurat}/` : ""
-      }${values.arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`;
-
-      await setFieldValue("id", id);
-      await setFieldValue("nomorSurat", nomorSurat);
-      await setFieldValue("author", query?.email);
-
-      await createSuratKeluar({ id, author: query?.email, nomorSurat });
-
-      setDisabled(true);
+      await createSuratKeluar({ id, author: query?.email as string, jenisSurat, arsipId });
     } catch (e) {
       throw new Error(e.message);
     }
