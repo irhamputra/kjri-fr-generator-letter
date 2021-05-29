@@ -17,7 +17,7 @@ export interface UseSuratKeluarOnMutate extends UseSuratKeluarProps {
 }
 
 const useCreateSuratKeluarMutation = ({
-  onMutate = (val) => val,
+  onMutate = async (val) => val,
   onError = (val) => val,
   onSuccess = (val) => val,
 }: {
