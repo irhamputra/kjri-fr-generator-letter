@@ -22,7 +22,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
   const query = queryClient.getQueryData<Auth>("auth");
 
   const { data: dataSuratKeluar = {} } = useQuerySuratKeluarById(editId as string);
-  const { data: statsData } = useQuerySuratKeluarStats();
+  const { data: statsData, isFetching: isFetchingStats } = useQuerySuratKeluarStats();
   const { recipient, content, jenisSurat, nomorSurat, arsipId, id, author } = dataSuratKeluar;
   const initialValues = {
     recipient: recipient ?? "",
@@ -143,7 +143,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
               {values.nomorSurat ? null : (
                 <button
                   className="btn btn-dark"
-                  disabled={!values.arsipId || !values.jenisSurat}
+                  disabled={!values.arsipId || !values.jenisSurat || isFetchingStats}
                   onClick={handleNomorSurat}
                   type="button"
                 >
