@@ -1,9 +1,8 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import useQueryJenisSurat from "../query/useQueryJenisSurat";
-import { useQuerySuratKeluarStats } from "../query/useQuerySuratKeluar";
 
 export interface UseSuratKeluarProps {
   author: string;
@@ -17,17 +16,13 @@ export interface UseSuratKeluarOnMutate extends UseSuratKeluarProps {
 }
 
 const useCreateSuratKeluarMutation = ({
-  onMutate = async (val) => val,
   onError = (val) => val,
   onSuccess = (val) => val,
 }: {
-  onMutate?: (val: UseSuratKeluarOnMutate) => Promise<any>;
-  onError?: (val: any) => Promise<any>;
+  onError?: (err: any, newTodo: any, context: any) => Promise<any>;
   onSuccess?: (val: any) => Promise<any>;
 }) => {
-  const queryClient = useQueryClient();
   const { data: listJenisSurat } = useQueryJenisSurat();
-  const { data: stats } = useQuerySuratKeluarStats();
 
   return useMutation(
     "createSuratKeluar",
@@ -43,21 +38,9 @@ const useCreateSuratKeluarMutation = ({
       return data;
     },
     {
-      onMutate: async (data) => {
-        const { arsipId, ...restValues } = data;
-        const labelJenisSurat = listJenisSurat?.find((v: { label: string }) => v.label === restValues.jenisSurat).label;
-        const nomorSurat = createNomorSurat(stats.counter, arsipId, labelJenisSurat);
-
-        onMutate({ arsipId, nomorSurat, ...restValues });
-
-        const previousTodos = queryClient.getQueryData("createSuratKeluar");
-
-        return { previousTodos };
-      },
       // If the mutation fails, use the context returned from onMutate to roll back
       onError: (err, newTodo, context: any) => {
-        onError(context);
-        queryClient.setQueryData("fetchSuratKeluar", context.previousTodos);
+        onError(err, newTodo, context);
       },
 
       onSuccess: async (data) => {
@@ -68,7 +51,7 @@ const useCreateSuratKeluarMutation = ({
   );
 };
 
-const createNomorSurat = (counter: number, arsipId: string, labelJenisSurat: string) => {
+export const createNomorSurat = (counter: number, arsipId: string, labelJenisSurat: string) => {
   const incrementNumber = `00${counter + 1}`;
   const thisMonth = dayjs().month() + 1;
   const thisYear = dayjs().year();

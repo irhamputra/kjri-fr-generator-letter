@@ -7,8 +7,8 @@ import { v4 } from "uuid";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { SelectArsip } from "../Select";
-import { useQuerySuratKeluarById } from "../../hooks/query/useQuerySuratKeluar";
-import useCreateSuratKeluarMutation from "../../hooks/mutation/useCreateSuratKeluarMutation";
+import { useQuerySuratKeluarById, useQuerySuratKeluarStats } from "../../hooks/query/useQuerySuratKeluar";
+import useCreateSuratKeluarMutation, { createNomorSurat } from "../../hooks/mutation/useCreateSuratKeluarMutation";
 import capitalizeFirstLetter from "../../utils/capitalize";
 import useQueryJenisSurat from "../../hooks/query/useQueryJenisSurat";
 import createSchema from "../../utils/validation/schema";
@@ -22,6 +22,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
   const query = queryClient.getQueryData<Auth>("auth");
 
   const { data: dataSuratKeluar = {} } = useQuerySuratKeluarById(editId as string);
+  const { data: statsData } = useQuerySuratKeluarStats();
   const { recipient, content, jenisSurat, nomorSurat, arsipId, id, author } = dataSuratKeluar;
   const initialValues = {
     recipient: recipient ?? "",
@@ -34,12 +35,6 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
   };
 
   const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation({
-    onMutate: async ({ nomorSurat, id }) => {
-      setDisabled(true);
-      await setFieldValue("id", id);
-      await setFieldValue("nomorSurat", nomorSurat);
-      await setFieldValue("author", query?.email);
-    },
     onError: async () => {
       await setFieldValue("id", "");
       await setFieldValue("nomorSurat", "");
@@ -48,6 +43,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     },
     onSuccess: async (val) => {
       const { data } = val;
+      setDisabled(true);
       setFieldValue("nomorSurat", data.nomorSurat);
     },
   });
@@ -82,7 +78,10 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
 
     try {
       const id = v4();
-
+      const nomorSurat = createNomorSurat(statsData.counter, arsipId, jenisSurat);
+      await setFieldValue("id", id);
+      await setFieldValue("nomorSurat", nomorSurat);
+      await setFieldValue("author", query?.email);
       await createSuratKeluar({ id, author: query?.email as string, jenisSurat, arsipId });
     } catch (e) {
       throw new Error(e.message);
