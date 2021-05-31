@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "GET") {
     try {
       const stats = await db.collection("SuratKeluar").doc("--stats--").get();
-      res.status(200).json(stats.data());
+      res.status(200).json(stats.data() );
       res.end();
     } catch (e) {
       res.status(200).json({ error: e.message });

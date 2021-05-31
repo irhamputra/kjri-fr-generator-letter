@@ -1,46 +1,77 @@
+import axios from "axios";
 import { Field, FieldArray, Form, Formik } from "formik";
 import React from "react";
 import { ArrowRight, GeoFill } from "react-bootstrap-icons";
 import { object, string, array } from "yup";
 import StepperDown from "../../components/StepperDown";
-import { RampunganFill } from "../../typings/RampunganFill";
+import { FormRampunganFillInitialValues, RampunganFill, RampunganFillReqBody } from "../../typings/RampunganFill";
 import { createRampungan } from "../../utils/createHelper";
 import createSchema from "../../utils/validation/schema";
 import { DatePickerComponent } from "../CustomField";
 
 export type FormRampunganFillProps = {
-  initialValues?: {
-    data: FormRampunganFillInitialValues[];
-  };
+  initialValues: FormRampunganFillInitialValues;
   onSave: () => any;
   onClickBack: () => any;
 };
 
-export type FormRampunganFillInitialValues = {
-  nama: string;
-  nip: string;
-  rampungan: RampunganFill[];
-};
-
 const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [], onSave, onClickBack }) => {
-  const validationSchema = object().shape({ data: object().shape(createSchema(initialValues)) });
+  const validationSchema = object();
   return (
     <Formik
       initialValues={initialValues as any}
       validationSchema={validationSchema}
       // enableReinitialize
-      onSubmit={() => {}}
+      onSubmit={async (val: FormRampunganFillInitialValues) => {
+        const rampungan = val.data.map(({ rampungan }) => rampungan);
+        const data: RampunganFillReqBody = {
+          pembuatKomitmenName: val.pembuatKomitmenName,
+          pembuatKomitmenNIP: val.pembuatKomitmenNIP,
+          rampungan: rampungan[0],
+        };
+        const { data: dataAxios } = await axios.post("/api/v1/pdf/rampungan-fill", data, {
+          responseType: "arraybuffer",
+          headers: {
+            Accept: "application/pdf",
+          },
+        });
+      }}
     >
-      {({ values, errors, touched }: { values: { data: FormRampunganFillInitialValues[] } }) => {
+      {({ values, errors, touched }: { values: FormRampunganFillInitialValues }) => {
         return (
           <>
             <Form>
+              <div className="mb-3">
+                <label className="form-label" style={{ fontWeight: "bold" }}>
+                  Pembuat Komitmen
+                </label>
+
+                <Field
+                  className="form-control"
+                  value={values.pembuatKomitmenName}
+                  name="pembuatKomitmenName"
+                  placeholder="Masukan namat"
+                />
+                {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
+              </div>
+              <div className="mb-3">
+                <label className="form-label" style={{ fontWeight: "bold" }}>
+                  NIP
+                </label>
+
+                <Field
+                  className="form-control"
+                  value={values.pembuatKomitmenNIP}
+                  name="pembuatKomitmenNIP"
+                  placeholder="Masukan nip"
+                />
+                {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
+              </div>
               <FieldArray
                 name="data"
                 render={(arrayHelpers) =>
                   values.data.map((_, index) => {
                     const { nama, nip, rampungan } = _;
-                    console.log("RAMPINGAN", _);
                     const lastRampungan = rampungan[rampungan.length - 1];
                     return (
                       <>
