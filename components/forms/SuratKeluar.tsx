@@ -122,8 +122,8 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
             <SelectArsip
               placeholder="Pilih Arsip"
               onChange={(v: string) => {
-                const editedArsip = nomorSurat.replace(/[A-Z]+/g, v);
-
+                const [generatedNumber, _, ...restValues] = nomorSurat.split("/");
+                const editedArsip = [generatedNumber, v, ...restValues].join("/");
                 setFieldValue("arsipId", v);
                 setFieldValue("nomorSurat", editedArsip);
               }}
