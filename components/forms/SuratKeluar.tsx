@@ -1,28 +1,20 @@
-import { useFormik } from "formik";
-import { object } from "yup";
-import { useQueryClient } from "react-query";
-
-import React from "react";
-import { v4 } from "uuid";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
+import React, { useCallback } from "react";
 import { SelectArsip } from "../Select";
-import { useQuerySuratKeluarById, useQuerySuratKeluarStats } from "../../hooks/query/useQuerySuratKeluar";
-import useCreateSuratKeluarMutation, { createNomorSurat } from "../../hooks/mutation/useCreateSuratKeluarMutation";
+import { useQuerySuratKeluarById } from "../../hooks/query/useQuerySuratKeluar";
 import capitalizeFirstLetter from "../../utils/capitalize";
 import useQueryJenisSurat from "../../hooks/query/useQueryJenisSurat";
-import createSchema from "../../utils/validation/schema";
-import useUpdateSuratKeluarMutation from "../../hooks/mutation/useUpdateSuratKeluarMutation";
+import useSuratKeluarForm from "../../hooks/form/useSuratKeluarForm";
+import { v4 } from "uuid";
+import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
 
 const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ editId, backUrl }) => {
   const [disabled, setDisabled] = React.useState(false);
-  const { push } = useRouter();
-  const queryClient = useQueryClient();
-  const query = queryClient.getQueryData<Auth>("auth");
 
+  const queryClient = useQueryClient();
+
+  const query = queryClient.getQueryData<Auth>("auth");
   const { data: dataSuratKeluar = {} } = useQuerySuratKeluarById(editId as string);
-  const { data: statsData, isFetching: isFetchingStats } = useQuerySuratKeluarStats();
   const { recipient, content, jenisSurat, nomorSurat, arsipId, id, author } = dataSuratKeluar;
   const initialValues = {
     recipient: recipient ?? "",
@@ -31,62 +23,23 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     nomorSurat: nomorSurat ?? "",
     arsipId: arsipId ?? "",
     id: id ?? "",
-    author: author ?? "",
+    author: author ?? query?.email,
   };
 
-  const { mutateAsync: createSuratKeluar } = useCreateSuratKeluarMutation({
-    onError: async () => {
-      await setFieldValue("id", "");
-      await setFieldValue("nomorSurat", "");
-      await setFieldValue("author", "");
-      setDisabled(false);
-    },
-    onSuccess: async (val) => {
-      const { data } = val;
-      setDisabled(true);
-      setFieldValue("nomorSurat", data.nomorSurat);
-    },
-  });
-  const { mutateAsync: updateSuratKeluar } = useUpdateSuratKeluarMutation();
   const { data: listJenisSurat } = useQueryJenisSurat();
 
-  const { values, handleSubmit, handleChange, errors, touched, setFieldValue, isSubmitting, resetForm } = useFormik({
-    initialValues,
-    enableReinitialize: true,
-    validationSchema: object().shape(createSchema(initialValues)),
-    onSubmit: async (values, { resetForm, setSubmitting }) => {
-      setSubmitting(true);
-
-      try {
-        await updateSuratKeluar(values);
-        await queryClient.invalidateQueries(["fetchSuratKeluarId", id]);
-      } catch (e) {
-        toast.error("Gagal membuat surat keluar!");
-        throw new Error(e.message);
-      }
-
-      await push(backUrl ?? "/layanan/surat-keluar/list");
-      resetForm();
-      setSubmitting(false);
-    },
-  });
-
-  const handleNomorSurat = async () => {
-    const { arsipId, jenisSurat } = values;
-
-    if (!arsipId || !jenisSurat) return await setFieldValue("nomorSurat", "");
-
-    try {
-      const id = v4();
-      const nomorSurat = createNomorSurat(statsData.counter, arsipId, jenisSurat);
-      await setFieldValue("id", id);
-      await setFieldValue("nomorSurat", nomorSurat);
-      await setFieldValue("author", query?.email);
-      await createSuratKeluar({ id, author: query?.email as string, jenisSurat, arsipId });
-    } catch (e) {
-      throw new Error(e.message);
-    }
-  };
+  const {
+    values,
+    handleSubmit,
+    handleChange,
+    errors,
+    touched,
+    setFieldValue,
+    isSubmitting,
+    resetForm,
+    handleNomorSurat,
+    disableGenerateNomor,
+  } = useSuratKeluarForm(initialValues, backUrl as string);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -143,7 +96,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
               {values.nomorSurat ? null : (
                 <button
                   className="btn btn-dark"
-                  disabled={!values.arsipId || !values.jenisSurat || isFetchingStats}
+                  disabled={disableGenerateNomor}
                   onClick={handleNomorSurat}
                   type="button"
                 >
