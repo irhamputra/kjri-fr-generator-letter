@@ -12,7 +12,7 @@ const MainLayout: React.FC = ({ children }) => {
       <div className="row h-100">{isAuthPage ? children : <DashboardLayout children={children} />}</div>
 
       {!isAuthPage && (
-        <footer className="footer text-center mt-auto py-1 bg-light fixed-bottom">
+        <footer className="footer text-center mt-auto py-1 bg-light fixed-bottom" style={{ zIndex: 9999 }}>
           <div className="container-fluid d-flex justify-content-between">
             <span className="text-muted small">Built with ❤️ &nbsp; for KJRI Frankfurt 🇮🇩</span>
             <span className="text-muted small">
