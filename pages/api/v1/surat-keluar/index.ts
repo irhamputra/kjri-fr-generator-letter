@@ -44,9 +44,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       await batch.commit();
 
-      res.status(200).json({ message: "Surat Keluar berhasil dibuat", data: { surat, id, ...restBody } });
+      res.status(201).json({ message: "Surat Keluar berhasil dibuat", data: { surat, id, ...restBody } });
       res.end();
     } catch (e) {
+      res.status(400).json({ error: e.message });
+
       res.end();
     }
   }
