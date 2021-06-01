@@ -7,15 +7,19 @@ import useSuratKeluarForm from "../../hooks/form/useSuratKeluarForm";
 import { v4 } from "uuid";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
+import { useRouter } from "next/router";
 
 const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ editId, backUrl }) => {
   const [disabled, setDisabled] = React.useState(false);
-
   const queryClient = useQueryClient();
-
+  const router = useRouter();
   const query = queryClient.getQueryData<Auth>("auth");
+  const { data = {}, isLoading } = useQuerySuratKeluarById(router.query.id as string);
   const { data: dataSuratKeluar = {} } = useQuerySuratKeluarById(editId as string);
+  const { data: listJenisSurat } = useQueryJenisSurat();
+
   const { recipient, content, jenisSurat, nomorSurat, arsipId, id, author } = dataSuratKeluar;
+
   const initialValues = {
     recipient: recipient ?? "",
     content: content ?? "",
@@ -25,8 +29,6 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     id: id ?? "",
     author: author ?? query?.email,
   };
-
-  const { data: listJenisSurat } = useQueryJenisSurat();
 
   const {
     values,
@@ -40,6 +42,8 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     handleNomorSurat,
     disableGenerateNomor,
   } = useSuratKeluarForm(initialValues, backUrl as string);
+
+  if (isLoading) return <h4>Loading...</h4>;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -108,7 +112,27 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
         </div>
       )}
 
-      <div className="row mt-3">
+      <div className="row">
+        {editId && (
+          <div className="col-12 mb-3">
+            <h3>Edit Nomor Surat</h3>
+            <p>{data.nomorSurat}</p>
+
+            <label className="form-label">Arsip</label>
+            <SelectArsip
+              placeholder="Pilih Arsip"
+              onChange={(v: string) => {
+                const editedArsip = nomorSurat.replace(/[A-Z]+/g, v);
+
+                setFieldValue("arsipId", v);
+                setFieldValue("nomorSurat", editedArsip);
+              }}
+              value={values.arsipId}
+              isDisabled={disabled}
+            />
+          </div>
+        )}
+
         <div className="col">
           <label className="form-label">Kepada</label>
           <input

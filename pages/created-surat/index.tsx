@@ -5,19 +5,12 @@ import { Pencil, Printer, Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Table from "../../components/Table";
 import useQuerySuratDibuat from "../../hooks/query/useQuerySuratDibuat";
-// import usePrintFile from "../../hooks/usePrintFile";
-
-type SuratPerjalanan = {
-  suratTugasId: string;
-};
 
 const SuratDibuat: NextPage = () => {
   const { data: suratDibuat = [], isLoading } = useQuerySuratDibuat();
-  // const { mutateAsync } = usePrintFile();
 
   const handlePrint = async (id: string) => {
     console.log({ id });
-    // await mutateAsync(id);
   };
 
   const columns = React.useMemo(
@@ -50,8 +43,6 @@ const SuratDibuat: NextPage = () => {
             <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
               <Printer size={25} />
             </button>
-
-            {/* <DeleteAction messageId={value} /> */}
           </div>
         ),
       },
@@ -70,7 +61,6 @@ const SuratDibuat: NextPage = () => {
 
   if (isLoading) return <p>Loading...</p>;
 
-  // TODO: tambahin table surat perjalanan
   return (
     <>
       <NextSeo
@@ -102,18 +92,6 @@ const SuratDibuat: NextPage = () => {
             );
           }}
         />
-        {/* <ul>
-          {data?.map?.((v: SuratPerjalanan) => {
-            return (
-              <li key={v.suratTugasId}>
-                {v.suratTugasId}
-                <button className="btn btn-outline-primary" onClick={() => handlePrint(v.suratTugasId)}>
-                  <Printer size={25} />
-                </button>
-              </li>
-            );
-          })}
-        </ul> */}
       </section>
     </>
   );
