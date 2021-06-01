@@ -73,7 +73,7 @@ const SuratTugas: NextPage = () => {
   };
 
   return (
-    <section className="mt-3">
+    <section style={{ marginTop: "6rem" }}>
       <NextSeo
         title="Surat Tugas | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Tugas Sistem Aplikasi KJRI Frankfurt"

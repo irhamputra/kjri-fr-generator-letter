@@ -1,10 +1,9 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { SelectArsip } from "../Select";
 import { useQuerySuratKeluarById } from "../../hooks/query/useQuerySuratKeluar";
 import capitalizeFirstLetter from "../../utils/capitalize";
 import useQueryJenisSurat from "../../hooks/query/useQueryJenisSurat";
 import useSuratKeluarForm from "../../hooks/form/useSuratKeluarForm";
-import { v4 } from "uuid";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useRouter } from "next/router";
@@ -43,6 +42,22 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     disableGenerateNomor,
   } = useSuratKeluarForm(initialValues, backUrl as string);
 
+  const onChangeEditArsip = (arsipValue: string) => {
+    const [generatedNumber, value, ...restValues] = nomorSurat.split("/").filter((value: string) => value.length !== 2);
+
+    const hasPrefix = value.includes("SK-FRA") || value.includes("SUKET");
+    let generateEditedNomorSurat: string;
+
+    if (!hasPrefix) {
+      generateEditedNomorSurat = [generatedNumber, arsipValue, value, ...restValues].join("/");
+    } else {
+      generateEditedNomorSurat = [generatedNumber, value, arsipValue, ...restValues].join("/");
+    }
+
+    setFieldValue("arsipId", arsipValue);
+    setFieldValue("nomorSurat", generateEditedNomorSurat);
+  };
+
   if (isLoading) return <h4>Loading...</h4>;
 
   return (
@@ -77,9 +92,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
 
             <SelectArsip
               placeholder="Pilih Arsip"
-              onChange={(v: string) => {
-                setFieldValue("arsipId", v);
-              }}
+              onChange={(v: string) => setFieldValue("arsipId", v)}
               value={values.arsipId}
               isDisabled={disabled}
             />
@@ -121,12 +134,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
             <label className="form-label">Arsip</label>
             <SelectArsip
               placeholder="Pilih Arsip"
-              onChange={(v: string) => {
-                const [generatedNumber, _, ...restValues] = nomorSurat.split("/");
-                const editedArsip = [generatedNumber, v, ...restValues].join("/");
-                setFieldValue("arsipId", v);
-                setFieldValue("nomorSurat", editedArsip);
-              }}
+              onChange={onChangeEditArsip}
               value={values.arsipId}
               isDisabled={disabled}
             />

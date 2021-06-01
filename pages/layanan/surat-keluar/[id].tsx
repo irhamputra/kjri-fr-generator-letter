@@ -7,7 +7,7 @@ const SuratKeluarId: NextPage = () => {
   const { query = {}, push } = useRouter();
 
   return (
-    <div style={{ marginTop: "5rem" }}>
+    <div style={{ marginTop: "6rem" }}>
       <button
         onClick={async () => {
           await push((query?.originUrl as string) ?? "/layanan/surat-keluar/list");

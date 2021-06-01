@@ -6,7 +6,7 @@ import SuratKeluarForm from "../../../components/forms/SuratKeluar";
 
 const SuratKeluar: NextPage = () => {
   return (
-    <div className="mt-3">
+    <div className="mt-5">
       <NextSeo
         title="Surat Keluar | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Keluar Sistem Aplikasi KJRI Frankfurt"

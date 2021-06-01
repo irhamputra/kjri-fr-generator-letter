@@ -21,7 +21,7 @@ const Index: NextPage = () => {
         title="Pengaturan | Sistem Aplikasi KJRI Frankfurt"
         description="Pengaturan Sistem Aplikasi KJRI Frankfurt"
       />
-      <section className="mt-3">
+      <section style={{ marginTop: "6rem" }}>
         <h3 className="mx-3">Pengaturan</h3>
 
         <div className="row">

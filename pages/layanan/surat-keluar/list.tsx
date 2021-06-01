@@ -45,7 +45,7 @@ const ListSuratKeluar: NextPage = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className="mt-5">
+    <div style={{ marginTop: "6rem" }}>
       <div className="d-flex justify-content-between">
         <h4>List Surat Keluar</h4>
       </div>
