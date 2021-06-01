@@ -12,6 +12,17 @@ const useQuerySuratKeluar = () =>
     }
   });
 
+const useQuerySuratKeluarStats = () =>
+  useMyQuery("statsSuratKeluar", async () => {
+    try {
+      const { data } = await axios.get("/api/v1/surat-keluar/stats");
+
+      return data;
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  });
+
 const useQuerySuratKeluarById = (id: string) =>
   useMyQuery(["fetchSuratKeluarId", id], async () => {
     try {
@@ -24,4 +35,4 @@ const useQuerySuratKeluarById = (id: string) =>
   });
 
 export default useQuerySuratKeluar;
-export { useQuerySuratKeluarById };
+export { useQuerySuratKeluarById, useQuerySuratKeluarStats };

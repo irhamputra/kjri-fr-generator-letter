@@ -1,3 +1,4 @@
+import { firestore } from "firebase-admin";
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
@@ -29,17 +30,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { surat, id, ...restBody } = req.body;
 
-      await db
-        .collection("SuratKeluar")
-        .doc(id)
-        .set({
-          id,
-          ...restBody,
-        });
+      const docRef = db.collection("SuratKeluar").doc(id);
 
-      res.status(200).json({ message: "Surat Keluar berhasil dibuat" });
+      const increment = firestore.FieldValue.increment(1);
+
+      const batch = db.batch();
+      batch.set(docRef, { id, ...restBody });
+
+      if (req.method === "POST") {
+        const counterRef = db.collection("SuratKeluar").doc("--stats--");
+        batch.set(counterRef, { counter: increment }, { merge: true });
+      }
+
+      await batch.commit();
+
+      res.status(201).json({ message: "Surat Keluar berhasil dibuat", data: { surat, id, ...restBody } });
       res.end();
     } catch (e) {
+      res.status(400).json({ error: e.message });
+
       res.end();
     }
   }

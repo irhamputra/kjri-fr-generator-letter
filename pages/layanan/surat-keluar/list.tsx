@@ -6,7 +6,6 @@ import { Search } from "react-bootstrap-icons";
 import Table from "../../../components/Table";
 import useDeleteSuratKeluar from "../../../hooks/mutation/useDeleteSuratKeluar";
 import ReactModal from "react-modal";
-import Link from "next/link";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../../typings/AuthQueryClient";
 
@@ -35,35 +34,6 @@ const ListSuratKeluar: NextPage = () => {
         Header: "Tujuan Dinas",
         accessor: "col3",
       },
-      {
-        Header: "Opsi",
-        accessor: "col4",
-        Cell: ({ value }: { value: CellValue }) => {
-          if (query?.isAdmin) {
-            return (
-              <div className="d-flex">
-                <Link href={`/layanan/surat-keluar/${value.id}?edit=true`} passHref>
-                  <a>Ubah</a>
-                </Link>
-                <DeleteAction messageId={value.id} />
-              </div>
-            );
-          }
-
-          if (value.author === query?.email) {
-            return (
-              <div className="d-flex">
-                <Link href={`/layanan/surat-keluar/${value.id}?edit=true`} passHref>
-                  <a>Ubah</a>
-                </Link>
-                <DeleteAction messageId={value.id} />
-              </div>
-            );
-          }
-
-          return null;
-        },
-      },
     ],
     [query]
   );
@@ -76,7 +46,6 @@ const ListSuratKeluar: NextPage = () => {
       col1: index + 1,
       col2: nomorSurat,
       col3: content,
-      col4: { id, author },
     })
   );
 
@@ -120,63 +89,6 @@ const ListSuratKeluar: NextPage = () => {
         />
       </div>
     </div>
-  );
-};
-
-const DeleteAction = ({ messageId }: { messageId: string }): JSX.Element => {
-  const [open, setOpen] = React.useState(false);
-  const { mutateAsync } = useDeleteSuratKeluar();
-
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      border: "0px",
-    },
-  };
-
-  return (
-    <>
-      <div
-        style={{ marginLeft: 24, cursor: "pointer" }}
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <a href="#">Delete</a>
-      </div>
-      <ReactModal isOpen={open} onRequestClose={() => setOpen(false)} style={customStyles}>
-        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Hapus SPPD?</h5>
-            </div>
-            <div className="modal-body">
-              <p>Kamu tidak akan bisa mengembalikan surat yang telah dihapus.</p>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={async () => {
-                  await mutateAsync(messageId);
-                  setOpen(false);
-                }}
-              >
-                Hapus
-              </button>
-              <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setOpen(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </ReactModal>
-    </>
   );
 };
 
