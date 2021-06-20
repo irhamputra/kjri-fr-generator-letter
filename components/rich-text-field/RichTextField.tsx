@@ -76,7 +76,6 @@ const toggleMark = (editor: BaseEditor, format: string) => {
 
 const isMarkActive = (editor: BaseEditor, format: string) => {
   const marks = Editor.marks(editor);
-  console.log(marks);
 
   return marks ? (marks as any)[format] === true : false;
 };

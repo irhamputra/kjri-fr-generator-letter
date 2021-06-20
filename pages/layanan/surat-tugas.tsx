@@ -33,19 +33,19 @@ const SuratTugas: NextPage = () => {
   const initialValues = {
     nomorSurat: "",
     tujuanDinas: "",
-    pembuka: [
+    textPembuka: [
       {
         type: "paragraph",
         children: [{ text: "" }],
       },
     ],
-    tengah: [
+    textTengah: [
       {
         type: "paragraph",
         children: [{ text: "" }],
       },
     ],
-    penutup: [
+    textPenutup: [
       {
         type: "paragraph",
         children: [{ text: "" }],
@@ -147,23 +147,27 @@ const SuratTugas: NextPage = () => {
           <div className="mt-3">
             <label className="form-label">Text pembuka</label>
             <RichTextExample
-              name="pembuka"
-              onChange={(value) => setFieldValue("pembuka", value)}
-              value={values.pembuka}
+              name="textPembuka"
+              onChange={(value) => setFieldValue("textPembuka", value)}
+              value={values.textPembuka}
             />
           </div>
 
           <div className="mt-3">
             <label className="form-label">Text tengah</label>
-            <RichTextExample name="tengah" onChange={(value) => setFieldValue("tengah", value)} value={values.tengah} />
+            <RichTextExample
+              name="textTengah"
+              onChange={(value) => setFieldValue("textTengah", value)}
+              value={values.textTengah}
+            />
           </div>
 
           <div className="mt-3">
             <label className="form-label">Text penutup</label>
             <RichTextExample
-              name="penutup"
-              onChange={(value) => setFieldValue("penutup", value)}
-              value={values.penutup}
+              name="textPenutup"
+              onChange={(value) => setFieldValue("textPenutup", value)}
+              value={values.textPenutup}
             />
           </div>
 

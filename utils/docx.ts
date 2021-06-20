@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   AlignmentType,
   convertInchesToTwip,
@@ -12,27 +13,20 @@ import {
   VerticalPositionRelativeFrom,
 } from "docx";
 import fs from "fs";
+import { RichTextValue } from "../typings/Common";
+import { PegawaiSuratTugas } from "../typings/Pegawai";
+import "dayjs/locale/id";
+
+type Modify<T, TData> = T & TData;
 
 type GeneratePegawaiProps = {
-  noSurat: string;
-  pegawai: Pegawai[];
+  nomorSurat: string;
+  pegawai: Modify<PegawaiSuratTugas, { pangkat: string }>[];
   waktuPelaksanaan: number;
+  textTengah: RichTextValue;
   waktuPerjalanan: number;
-  pembuka: RichTextValue;
-  penutup: RichTextValue;
-};
-
-type RichTextValue = {
-  type: string;
-  children: { text: string; bold: boolean; italic: boolean; underline: boolean }[];
-}[];
-
-type Pegawai = {
-  nama: string;
-  nip: string;
-  pangkat: string;
-  golongan: string;
-  jabatan: string;
+  textPembuka: RichTextValue;
+  textPenutup: RichTextValue;
 };
 
 const styles = {
@@ -93,13 +87,14 @@ const tabStop2 = [
   },
 ];
 
-function generate({
-  noSurat,
+function generateSuratTugas({
+  nomorSurat,
   pegawai = [],
   waktuPelaksanaan,
   waktuPerjalanan,
-  pembuka,
-  penutup,
+  textPembuka,
+  textTengah,
+  textPenutup,
 }: GeneratePegawaiProps) {
   const image = new ImageRun({
     data: fs.readFileSync("./public/doc.png"),
@@ -121,8 +116,9 @@ function generate({
     },
   });
 
-  const parsedPembukaan = parseRichTextValue(pembuka);
-  const parsedPenutup = parseRichTextValue(penutup);
+  const parsedPembukaan = parseRichTextValue(textPembuka);
+  const parsedTengah = parseRichTextValue(textTengah);
+  const parsedPenutup = parseRichTextValue(textPenutup);
 
   const spaceLeft = 20 - pegawai.length * 4;
 
@@ -174,7 +170,7 @@ function generate({
               }),
               new TextRun({
                 ...styles.bold,
-                text: noSurat,
+                text: nomorSurat,
               }),
             ],
           }),
@@ -182,10 +178,10 @@ function generate({
           ...parsedPembukaan,
           ...blankSpace(),
           ...pegawai.map((v, index) => createList(index + 1, v)).flat(),
-          new Paragraph({
-            children: [new TextRun({ ...styles.normal, text: "dilaksanakan dengan rincian sebagai berikut :" })],
-            tabStops: tabStop,
-          }),
+
+          // Text Tengah
+          ...parsedTengah,
+
           ...blankSpace(),
           new Paragraph({
             children: [
@@ -205,7 +201,12 @@ function generate({
             tabStops: tabStop,
           }),
           new Paragraph({
-            children: [new TextRun({ ...styles.normal, text: "\t\t\t\t pada tanggal 28 November 2020" })],
+            children: [
+              new TextRun({
+                ...styles.normal,
+                text: `\t\t\t\t pada tanggal ${dayjs().locale("id").format("DD MMMM YYYY")}`,
+              }),
+            ],
             tabStops: tabStop,
           }),
           new Paragraph({
@@ -223,16 +224,16 @@ function generate({
 function createList(
   number: string | number,
   {
-    nama,
+    displayName,
     nip,
     pangkat,
     golongan,
     jabatan,
-  }: { nama?: string; nip: string; pangkat: string; golongan: string; jabatan: string }
+  }: { displayName?: string; nip: string | number; pangkat: string; golongan: string; jabatan: string }
 ) {
   return [
     new Paragraph({
-      children: [new TextRun({ ...styles.normal, text: `\t${number}.\tNama/NIP\t: ${nama}\t/ NIP. ${nip}` })],
+      children: [new TextRun({ ...styles.normal, text: `\t${number}.\tNama/NIP\t: ${displayName}\t/ NIP. ${nip}` })],
       tabStops: tabStop,
     }),
     new Paragraph({
@@ -270,7 +271,7 @@ const blankSpace = (num: number = 1) => {
 };
 
 function parseRichTextValue(data: RichTextValue) {
-  return data.map(
+  const parsedVal = data?.map(
     (v) =>
       new Paragraph({
         alignment: AlignmentType.JUSTIFIED,
@@ -286,6 +287,7 @@ function parseRichTextValue(data: RichTextValue) {
         ),
       })
   );
+  return parsedVal ?? [];
 }
 
-export { generate, blankSpace };
+export { generateSuratTugas, blankSpace };

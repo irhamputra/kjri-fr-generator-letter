@@ -198,7 +198,6 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
                                 ({ golongan }: { golongan: string }) => golongan === _.pegawai?.golongan
                               );
                               const gol = listJalDir[indexGolongan];
-                              console.log("Gol", gol);
                               return (
                                 <div key={index} className={`mb-3 container-fluid p-0`}>
                                   <div className="row">

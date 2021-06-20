@@ -5,12 +5,15 @@ import * as React from "react";
 import { Eye, Printer, Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Table from "../../components/Table";
+import { usePrintSuratTugas } from "../../hooks/mutation/usePrint";
+import { downloadURI } from "../../utils/download";
 
 const SuratPerjalanan: NextPage = () => {
   const { data: listSuratPerjalanan, isLoading } = useQuerySuratPerjalanan();
-
+  const { mutateAsync } = usePrintSuratTugas();
   const handlePrint = async (id: string) => {
-    console.log({ id });
+    const res = await mutateAsync(id);
+    downloadURI(res.data?.url, "surat-tugas.docx");
   };
 
   const columns = React.useMemo(

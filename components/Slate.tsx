@@ -20,7 +20,7 @@ const SlateComponent = () => {
     },
   ]);
   return (
-    <Slate editor={editor} value={value} onChange={(newValue) => setValue(newValue)}>
+    <Slate editor={editor} value={value} onChange={(newValue) => setValue(newValue as any)}>
       <Editable />
     </Slate>
   );
