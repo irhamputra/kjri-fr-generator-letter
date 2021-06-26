@@ -13,7 +13,7 @@ const Sidebar = (): JSX.Element => {
   const query = queryClient.getQueryData<Auth>("auth");
 
   return (
-    <div className={`col-2 bg-dark`} style={{ height: "100vh", position: "fixed" }}>
+    <div className="col-2 bg-dark" style={{ height: "100vh", position: "fixed", zIndex: 9999 }}>
       <nav className="p-1">
         <div className="p-3 d-flex" style={{ justifyContent: "center" }}>
           <Link href="/dashboard">

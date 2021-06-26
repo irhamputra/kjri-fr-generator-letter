@@ -14,11 +14,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         result.push(docs.data());
       });
 
-      const data = result.filter((v: { listPegawai: Array<{ pegawai: { email: string } }> }) => {
-        return v?.listPegawai?.find?.((d) => {
-          return d.pegawai.email === req.query.email;
-        });
-      });
+      const data = result.filter((v: { listPegawai: Array<{ pegawai: { email: string } }> }) =>
+        v?.listPegawai?.find?.((d) => d.pegawai.email === req.query.email)
+      );
 
       res.status(200).json(data);
       res.end();

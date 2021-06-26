@@ -27,7 +27,7 @@ const SuratPenugasanId: NextPage = () => {
   }
 
   return (
-    <>
+    <section style={{ marginTop: "6rem" }}>
       <button onClick={() => back()} className="btn-dark btn my-3">
         Kembali ke list
       </button>
@@ -85,7 +85,7 @@ const SuratPenugasanId: NextPage = () => {
             : null}
         </tbody>
       </table>
-    </>
+    </section>
   );
 };
 

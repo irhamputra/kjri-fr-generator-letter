@@ -38,7 +38,7 @@ const MyProfile = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="container-sm" style={{ maxWidth: "576px" }}>
+      <div className="container-sm" style={{ maxWidth: "576px", marginTop: "6rem" }}>
         <h3 className="mt-5 mb-3">Profile</h3>
 
         <div className="row">

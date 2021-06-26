@@ -4,15 +4,8 @@ import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
 import { useRouter } from "next/router";
 import { Search } from "react-bootstrap-icons";
 import Table from "../../../components/Table";
-import useDeleteSuratKeluar from "../../../hooks/mutation/useDeleteSuratKeluar";
-import ReactModal from "react-modal";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../../typings/AuthQueryClient";
-
-type CellValue = {
-  id: string;
-  author: string | undefined;
-};
 
 const ListSuratKeluar: NextPage = () => {
   const { push } = useRouter();
@@ -52,7 +45,7 @@ const ListSuratKeluar: NextPage = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <div className="mt-3">
+    <div style={{ marginTop: "6rem" }}>
       <div className="d-flex justify-content-between">
         <h4>List Surat Keluar</h4>
       </div>

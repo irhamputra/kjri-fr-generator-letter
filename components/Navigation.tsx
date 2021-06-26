@@ -38,7 +38,7 @@ const Navigation = (): JSX.Element => {
 
   return (
     <>
-      <nav className="bg-light d-flex justify-content-between p-3">
+      <nav className="bg-light d-flex fixed-top justify-content-between p-3">
         <div>
           {is(["xs", "sm"]) && (
             <button onClick={() => setIsOpen((open) => !open)} className="btn">

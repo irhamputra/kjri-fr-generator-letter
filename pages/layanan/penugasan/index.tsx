@@ -19,7 +19,7 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
   if (!query?.isAdmin) throw new Error("Invalid permission");
 
   return (
-    <section className="mt-3">
+    <section style={{ marginTop: "6rem" }}>
       <NextSeo
         title="Penugasan | Sistem Aplikasi KJRI Frankfurt"
         description="Penugasan Sistem Aplikasi KJRI Frankfurt"

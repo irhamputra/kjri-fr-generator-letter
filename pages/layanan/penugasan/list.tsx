@@ -68,7 +68,7 @@ const ListSurat: NextPage = () => {
 
   return (
     <div className="row">
-      <div className="d-flex my-3 align-items-center">
+      <div className="d-flex align-items-center mb-3" style={{ marginTop: "6rem" }}>
         <h4 className="m-0" style={{ flex: "1 1" }}>
           SPPD yang telah dibuat
         </h4>

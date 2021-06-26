@@ -8,9 +8,9 @@ const UserName: NextPage = () => {
     query: { id },
   } = useRouter();
   return (
-    <div>
+    <section style={{ marginTop: "6rem" }}>
       <ManageUserForm userId={id as string} />
-    </div>
+    </section>
   );
 };
 
