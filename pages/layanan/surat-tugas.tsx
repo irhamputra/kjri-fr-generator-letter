@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GetServerSideProps, NextPage } from "next";
+import { NextPage } from "next";
 import { useFormik } from "formik";
 import { object } from "yup";
 import axios from "axios";
@@ -10,8 +10,6 @@ import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 import { NextSeo } from "next-seo";
 import { v4 } from "uuid";
-import apiInstance from "../../utils/firebase/apiInstance";
-import parseCookies from "../../utils/parseCookies";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useMyQuery } from "../../hooks/useMyQuery";
 

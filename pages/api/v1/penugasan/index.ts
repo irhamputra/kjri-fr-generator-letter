@@ -26,7 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const { nomorSurat, listPegawai } = req.body;
+    const { nomorSurat, listPegawai, pembuatKomitmenName, pembuatKomitmenNIP } = req.body;
 
     if (listPegawai.length <= 0) {
       res.status(404).json({ error: "Tidak ada data yang tersimpan" });
@@ -42,9 +42,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         id = doc.id;
       });
 
-      await db.collection("SuratTugas").doc(id).update({
-        listPegawai,
-      });
+      await db
+        .collection("SuratTugas")
+        .doc(id)
+        .update({
+          listPegawai,
+          pembuatKomitmen: {
+            name: pembuatKomitmenName,
+            nip: pembuatKomitmenNIP,
+          },
+        });
 
       res.status(200).json({ message: "Update Surat Tugas" });
       res.end();

@@ -2,46 +2,70 @@ import axios from "axios";
 
 import { useEffect, useState } from "react";
 import { useMyQuery } from "../../hooks/useMyQuery";
+import { FormRampunganFillInitialValues } from "../../typings/RampunganFill";
 import { createRampungan } from "../../utils/createHelper";
 import FormRampunganFill from "./FormRampunganFill";
-import FormSuratStaff from "./FormSuratStaff";
+import FormSuratStaff, { ForumSuratStaffInitialValues } from "./FormSuratStaff";
+
+import { toast } from "react-hot-toast";
+import useCountUangHarianSPD from "../../hooks/useCountUangHarianSPD";
+import { useFormik } from "formik";
+import apiInstance from "../../utils/firebase/apiInstance";
 
 const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => unknown }> = ({
   editId,
   onPageIndexChange,
 }) => {
   const [activePageIndex, setPageIndex] = useState(0);
-  const [suratStaff, setSuratStaff] = useState({});
 
-  const [rampunganFill, setRampunganFill] = useState({
-    data: [
-      {
-        nama: "Abui",
-        nip: "1212121",
-        rampungan: [
-          {
-            pergiDari: "Frankfurt",
-            tanggalPergi: new Date(),
-            tibaDi: "Leipzig",
-            tanggalTiba: new Date(),
-          },
-        ],
+  const { setValues, setFieldValue, values, handleSubmit } = useFormik<{
+    suratStaff: ForumSuratStaffInitialValues;
+    rampunganFill: FormRampunganFillInitialValues;
+  }>({
+    initialValues: {
+      suratStaff: {
+        nomorSurat: "",
+        fullDayKurs: 0.84,
+        namaPegawai: [],
       },
-      {
-        nama: "Siapa aja",
-        nip: "1234141",
-        rampungan: [
-          ,
-          {
-            pergiDari: "Leipzig",
-            tanggalPergi: new Date(),
-            tibaDi: "Munchen",
-            tanggalTiba: new Date(),
-          },
-        ],
+      rampunganFill: {
+        pembuatKomitmenName: "",
+        pembuatKomitmenNIP: "",
+        data: [],
       },
-    ],
+    },
+    onSubmit: async (val) => {
+      console.log("VAL", val);
+      const { data, ...restVal } = val.rampunganFill;
+      const { namaPegawai, fullDayKurs } = val.suratStaff;
+      let response;
+      try {
+        const newValues = {
+          nomorSurat: values.suratStaff.nomorSurat,
+          listPegawai: namaPegawai.map((v) => {
+            const indexRampungan = data.findIndex(({ nip: nipR }) => nipR === v.pegawai.nip);
+            const rampungan = data[indexRampungan].rampungan;
+
+            return {
+              ...v,
+              uangHarian: countToUER(v.pegawai?.golongan, v.durasi, fullDayKurs),
+              destinasi: rampungan,
+            };
+          }),
+          ...restVal,
+        };
+        const res = await axios.put("/api/v1/penugasan", newValues);
+        toast(res.data?.message);
+      } catch (e) {
+        toast.error(e.message);
+        throw new Error(e.message);
+      }
+    },
   });
+
+  const setSuratStaff = (data: ForumSuratStaffInitialValues) => setValues((val) => ({ ...val, suratStaff: data }));
+  const setRampunganFill = (data: FormRampunganFillInitialValues) =>
+    setValues((val) => ({ ...val, rampunganFill: data }));
 
   const { data: editedData = {}, isFetched } = useMyQuery(
     ["fetchSingleSurat", editId],
@@ -54,6 +78,9 @@ const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => un
       enabled: !!editId,
     }
   );
+
+  const { countToUER } = useCountUangHarianSPD();
+
   useEffect(() => {
     setSuratStaff({
       namaPegawai: editedData?.listPegawai || [],
@@ -62,25 +89,37 @@ const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => un
     });
   }, [isFetched]);
 
-  useEffect(() => onPageIndexChange(activePageIndex), [activePageIndex]);
+  useEffect(() => {
+    onPageIndexChange(activePageIndex);
+  }, [activePageIndex]);
+
   switch (activePageIndex) {
     case 0:
       return (
         <FormSuratStaff
-          initialValues={suratStaff}
+          initialValues={values.suratStaff}
           onSave={(val) => {
-            const rampunganFill = val.namaPegawai?.map(({ pegawai }) => {
+            const rampunganData = val.namaPegawai?.map(({ pegawai }: { pegawai: any }) => {
               return { nama: pegawai.displayName, nip: pegawai.nip, rampungan: [createRampungan("Frankfurt")] };
             });
             setSuratStaff(val);
-            setRampunganFill({ data: rampunganFill });
+            setRampunganFill({ ...values.rampunganFill, data: rampunganData });
             setPageIndex((val) => val + 1);
           }}
           editId={editId}
         />
       );
     case 1:
-      return <FormRampunganFill initialValues={rampunganFill} onClickBack={() => setPageIndex((val) => val - 1)} />;
+      return (
+        <FormRampunganFill
+          initialValues={values.rampunganFill}
+          onSave={async (val) => {
+            await setFieldValue("rampunganFill", val);
+            handleSubmit();
+          }}
+          onClickBack={() => setPageIndex((val) => val - 1)}
+        />
+      );
     default:
       return <div>Ada</div>;
   }

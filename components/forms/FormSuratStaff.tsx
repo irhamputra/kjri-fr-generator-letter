@@ -1,30 +1,28 @@
 import React from "react";
 import { Form, FieldArray, Field, Formik, FormikTouched } from "formik";
-import axios, { AxiosResponse } from "axios";
 import { InputComponent, SelectComponent, SelectStaff } from "../../components/CustomField";
-import useQueryJalDir from "../../hooks/query/useQueryJalDir";
 import useQuerySuratTugas from "../../hooks/query/useQuerySuratTugas";
 import { object, string, array } from "yup";
-import { toast } from "react-hot-toast";
-import { Trash as TrashIcon, Plus as PlusIcon, ArrowUpRight, ArrowRight } from "react-bootstrap-icons";
+import { Trash as TrashIcon, Plus as PlusIcon, ArrowRight } from "react-bootstrap-icons";
 import useQueryUsers from "../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
-import { useQuery } from "react-query";
+import useCountUangHarianSPD from "../../hooks/useCountUangHarianSPD";
 
-const { format } = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "EUR",
-});
+export type ForumSuratStaffInitialValues = {
+  nomorSurat: string;
+  fullDayKurs: number;
+  namaPegawai: any[];
+  tujuanDinas?: string;
+};
 
-const FormSuratStaff: React.FC<{ editId: string; onSave: (val: any) => any; initialValues: any }> = ({
-  editId,
-  onSave,
-  initialValues = {},
-}) => {
+const FormSuratStaff: React.FC<{
+  editId: string;
+  onSave: (val: ForumSuratStaffInitialValues) => any;
+  initialValues: ForumSuratStaffInitialValues;
+}> = ({ editId, onSave, initialValues }) => {
   const { data: listSuratTugas, isLoading: suratTugasLoading } = useQuerySuratTugas();
-
   const { push } = useRouter();
-  const { data: listJalDir, isLoading: jalDirLoading } = useQueryJalDir();
+  const { countToUER, jalDirLoading } = useCountUangHarianSPD();
 
   const validationSchema = object().shape({
     nomorSurat: string().trim().required("nomor surat wajib diisi!"),
@@ -39,21 +37,6 @@ const FormSuratStaff: React.FC<{ editId: string; onSave: (val: any) => any; init
       )
       .min(1, "Minimal 1 pegawai"),
   });
-
-  const countDailyCost = (jaldis: string, duration: string, fullDayKurs: number) => {
-    const [fullDayDur, halfDayDur = ""] = duration.split(",");
-
-    let halfDay = 0;
-
-    const days = parseFloat(fullDayDur) * fullDayKurs * parseFloat(jaldis);
-    const oneFullDay = fullDayKurs * parseFloat(jaldis);
-
-    if (halfDayDur === "5") {
-      halfDay = oneFullDay * 0.4;
-    }
-
-    return days + halfDay || 0;
-  };
 
   const { data: listUsers, isLoading: usersLoading } = useQueryUsers();
   const optionsSuratTugas =
@@ -163,79 +146,73 @@ const FormSuratStaff: React.FC<{ editId: string; onSave: (val: any) => any; init
                 render={(arrayHelpers) => (
                   <>
                     <div className="p-0 mb-1">
-                      {values.namaPegawai?.map?.(
-                        (_: { pegawai: Record<string, string>; jaldis: string; durasi: string }, index: number) => {
-                          const error: string = (errors.namaPegawai as string)?.[index];
-                          const touch = (touched.namaPegawai as FormikTouched<any>)?.[index];
-                          const indexGolongan = listJalDir.findIndex(
-                            ({ golongan }: { golongan: string }) => golongan === _.pegawai?.golongan
-                          );
-                          const gol = listJalDir[indexGolongan];
-                          console.log("Gol", gol);
-                          return (
-                            <div key={index} className={`mb-3 container-fluid p-0`}>
-                              <div className="row">
-                                <div className="col-6">
-                                  <label className="form-label">Nama Staff</label>
-                                  <Field
-                                    className="form-control"
-                                    name={`namaPegawai.${index}.pegawai`}
-                                    value={_.pegawai}
-                                    component={SelectStaff}
-                                    options={usersLoading ? [] : listUsers}
-                                    placeholder="Input nama pegawai"
-                                  />
-                                  {/* @ts-ignore */}
-                                  {error?.pegawai && touch.pegawai && (
-                                    <small className="text-danger">
-                                      {/* @ts-ignore */}
-                                      {error?.pegawai}
-                                    </small>
-                                  )}
-                                </div>
+                      {values.namaPegawai?.map?.((_, index: number) => {
+                        const error: string = (errors.namaPegawai as string)?.[index];
+                        const touch = (touched.namaPegawai as FormikTouched<any>[])?.[index];
 
-                                <div className="col-3">
-                                  <label className="form-label">Lama Perjalanan</label>
-                                  <Field
-                                    className="form-control"
-                                    name={`namaPegawai.${index}.durasi`}
-                                    as={InputComponent}
-                                    value={_.durasi}
-                                    style={{
-                                      height: 66,
-                                    }}
-                                    placeholder="(e.g 1 hari atau 2,5 hari)"
-                                  />
-                                  {/* @ts-ignore */}
-                                  {error?.durasi && touch?.durasi && (
-                                    <small className="text-danger">
-                                      {/* @ts-ignore */}
-                                      {error?.durasi}
-                                    </small>
-                                  )}
-                                </div>
-                                <div className="col">
-                                  <label className="form-label">Uang Harian</label>
-                                  <div className="d-flex align-items-center h-75">
-                                    <h6>{format(countDailyCost(gol?.harga, _.durasi, values.fullDayKurs))}</h6>
-                                  </div>
-                                </div>
+                        return (
+                          <div key={index} className={`mb-3 container-fluid p-0`}>
+                            <div className="row">
+                              <div className="col-6">
+                                <label className="form-label">Nama Staff</label>
+                                <Field
+                                  className="form-control"
+                                  name={`namaPegawai.${index}.pegawai`}
+                                  value={_.pegawai}
+                                  component={SelectStaff}
+                                  options={usersLoading ? [] : listUsers}
+                                  placeholder="Input nama pegawai"
+                                />
+                                {/* @ts-ignore */}
+                                {error?.pegawai && touch.pegawai && (
+                                  <small className="text-danger">
+                                    {/* @ts-ignore */}
+                                    {error?.pegawai}
+                                  </small>
+                                )}
+                              </div>
 
-                                <div className="col-1 d-flex align-items-end">
-                                  <button
-                                    className="btn btn-outline-danger w-100"
-                                    type="button"
-                                    style={{ height: 66 }}
-                                    onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
-                                  >
-                                    <TrashIcon height={20} width={20} />
-                                  </button>
+                              <div className="col-3">
+                                <label className="form-label">Lama Perjalanan</label>
+                                <Field
+                                  className="form-control"
+                                  name={`namaPegawai.${index}.durasi`}
+                                  as={InputComponent}
+                                  value={_.durasi}
+                                  style={{
+                                    height: 66,
+                                  }}
+                                  placeholder="(e.g 1 hari atau 2,5 hari)"
+                                />
+                                {/* @ts-ignore */}
+                                {error?.durasi && touch?.durasi && (
+                                  <small className="text-danger">
+                                    {/* @ts-ignore */}
+                                    {error?.durasi}
+                                  </small>
+                                )}
+                              </div>
+                              <div className="col">
+                                <label className="form-label">Uang Harian</label>
+                                <div className="d-flex align-items-center h-75">
+                                  <h6>{countToUER(_.pegawai?.golongan, _.durasi, values.fullDayKurs)}</h6>
                                 </div>
                               </div>
+
+                              <div className="col-1 d-flex align-items-end">
+                                <button
+                                  className="btn btn-outline-danger w-100"
+                                  type="button"
+                                  style={{ height: 66 }}
+                                  onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                >
+                                  <TrashIcon height={20} width={20} />
+                                </button>
+                              </div>
                             </div>
-                          );
-                        }
-                      )}
+                          </div>
+                        );
+                      })}
 
                       <button
                         className="btn btn-primary text-white mt-3"

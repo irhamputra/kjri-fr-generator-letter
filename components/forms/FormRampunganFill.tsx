@@ -2,42 +2,44 @@ import axios from "axios";
 import { Field, FieldArray, Form, Formik } from "formik";
 import React from "react";
 import { ArrowRight, GeoFill } from "react-bootstrap-icons";
-import { object, string, array } from "yup";
+import { object } from "yup";
 import StepperDown from "../../components/StepperDown";
-import { FormRampunganFillInitialValues, RampunganFill, RampunganFillReqBody } from "../../typings/RampunganFill";
+import { FormRampunganFillInitialValues, RampunganFillReqBody } from "../../typings/RampunganFill";
 import { createRampungan } from "../../utils/createHelper";
-import createSchema from "../../utils/validation/schema";
 import { DatePickerComponent } from "../CustomField";
 
 export type FormRampunganFillProps = {
   initialValues: FormRampunganFillInitialValues;
-  onSave: () => any;
+  onSave: (val: FormRampunganFillInitialValues) => any;
   onClickBack: () => any;
 };
 
-const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [], onSave, onClickBack }) => {
+const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
+  initialValues = [],
+  onSave = (val: any) => val,
+  onClickBack,
+}) => {
   const validationSchema = object();
   return (
     <Formik
       initialValues={initialValues as any}
       validationSchema={validationSchema}
       // enableReinitialize
-      onSubmit={async (val: FormRampunganFillInitialValues) => {
-        const rampungan = val.data.map(({ rampungan }) => rampungan);
-        const data: RampunganFillReqBody = {
-          pembuatKomitmenName: val.pembuatKomitmenName,
-          pembuatKomitmenNIP: val.pembuatKomitmenNIP,
-          rampungan: rampungan[0],
-        };
-        const { data: dataAxios } = await axios.post("/api/v1/pdf/rampungan-fill", data, {
-          responseType: "arraybuffer",
-          headers: {
-            Accept: "application/pdf",
-          },
-        });
+      onSubmit={async (val, { setSubmitting }) => {
+        setSubmitting(true);
+        onSave(val);
+        setSubmitting(false);
       }}
     >
-      {({ values, errors, touched }: { values: FormRampunganFillInitialValues }) => {
+      {({
+        values,
+        errors,
+        touched,
+      }: {
+        values: FormRampunganFillInitialValues;
+        errors: Record<string, any>;
+        touched: Record<string, any>;
+      }) => {
         return (
           <>
             <Form>
@@ -100,7 +102,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [
 
                                               <Field
                                                 className="form-control"
-                                                disabled={idx === 0}
+                                                disabled
                                                 value={val.pergiDari}
                                                 name={`data[${index}].rampungan[${idx}].pergiDari`}
                                                 placeholder="Masukan tempat"
@@ -111,7 +113,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [
                                             </div>
                                             <div className="col-sm-4">
                                               <label className="form-label" style={{ fontWeight: "bold" }}>
-                                                Tanggal{" "}
+                                                Tanggal Pergi{" "}
                                                 <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
                                                   (Date)
                                                 </span>
@@ -142,6 +144,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [
 
                                               <Field
                                                 className="form-control"
+                                                disabled={idx !== rampungan.length - 1}
                                                 name={`data[${index}].rampungan[${idx}].tibaDi`}
                                                 value={val.tibaDi}
                                                 placeholder="Masukan tempat"
@@ -152,7 +155,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [
                                             </div>
                                             <div className="col-sm-4">
                                               <label className="form-label" style={{ fontWeight: "bold" }}>
-                                                Tanggal{" "}
+                                                Tanggal Tiba{" "}
                                                 <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
                                                   (Date)
                                                 </span>
@@ -174,7 +177,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [
                                       </div>
                                     );
                                   })}
-                                  <div style={{ marginLeft: 56 }}>
+                                  <div style={{ marginLeft: 56 }} className="d-flex">
                                     <button
                                       type="button"
                                       className="btn btn-primary"
@@ -186,6 +189,13 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({ initialValues = [
                                       disabled={!lastRampungan?.tibaDi}
                                     >
                                       Tambah destinasi
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline-dark mx-2"
+                                      onClick={() => arrayHelpr.pop()}
+                                    >
+                                      Hapus
                                     </button>
                                   </div>
                                 </>

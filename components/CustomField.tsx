@@ -106,7 +106,7 @@ const SelectStaff = ({ placeholder, form, field, value, options }: React.PropsWi
   );
 };
 
-const DatePickerComponent = ({ form, field, value }) => {
+const DatePickerComponent = ({ form, field, value }: FieldAttributes<any>) => {
   const { setFieldValue } = form;
   const { name } = field;
   return (
