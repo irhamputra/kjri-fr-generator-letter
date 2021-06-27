@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
-import { Search } from "react-bootstrap-icons";
+import { Eye, Search } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Modal from "react-modal";
@@ -45,11 +45,24 @@ const ListSurat: NextPage = () => {
         Header: "Opsi",
         accessor: "col4",
         Cell: ({ value }: { value: string }) => (
+          // <div style={{ display: "flex" }}>
+          //   <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
+          //     <a>Edit</a>
+          //   </Link>
+          //   <DeleteAction messageId={value} />
+          // </div>
           <div style={{ display: "flex" }}>
-            <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
-              <a>Edit</a>
+            <Link href={`#`} passHref>
+              <a>
+                <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
+                  <Eye size={25} />
+                </button>
+              </a>
             </Link>
-            <DeleteAction messageId={value} />
+
+            {/* <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
+              <Printer size={25} />
+            </button> */}
           </div>
         ),
       },
