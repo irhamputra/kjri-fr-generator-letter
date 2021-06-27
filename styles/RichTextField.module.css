@@ -30,6 +30,10 @@
   padding: 10px 20px;
 }
 
+.textButton {
+  font-size: 24px;
+}
+
 .textLines div {
   margin: 0 0 0.5em;
 }
@@ -49,7 +53,7 @@
 
 .toolbar {
   position: relative;
-  background-color: "#f9fafb";
-  padding: 8px;
+  background-color: #f9fafb;
+  padding: 0px 8px;
   border-bottom: 2px solid #eee;
 }

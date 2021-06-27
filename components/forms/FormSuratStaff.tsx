@@ -16,10 +16,9 @@ export type ForumSuratStaffInitialValues = {
 };
 
 const FormSuratStaff: React.FC<{
-  editId: string;
   onSave: (val: ForumSuratStaffInitialValues) => any;
   initialValues: ForumSuratStaffInitialValues;
-}> = ({ editId, onSave, initialValues }) => {
+}> = ({ onSave, initialValues }) => {
   const { data: listSuratTugas, isLoading: suratTugasLoading } = useQuerySuratTugas();
   const { push } = useRouter();
   const { countToUER, jalDirLoading } = useCountUangHarianSPD();
@@ -53,37 +52,10 @@ const FormSuratStaff: React.FC<{
       initialValues={initialValues}
       validationSchema={validationSchema}
       enableReinitialize
-      onSubmit={async (values, { setSubmitting, resetForm }) => {
+      onSubmit={async (values, { setSubmitting }) => {
         setSubmitting(true);
-
-        // const newValues = {
-        //   listPegawai: namaPegawai.map((v: { pegawai: any; durasi: string }) => {
-        //     const indexGolongan = listJalDir.findIndex(
-        //       ({ golongan }: { golongan: string }) => golongan === v.pegawai?.golongan
-        //     );
-        //     const gol = listJalDir[indexGolongan];
-        //     const total = countDailyCost(gol.harga, v.durasi, fullDayKurs);
-
-        //     return { ...v, uangHarian: format(total) };
-        //   }),
-        //   ...values,
-        // };
-
         onSave(values);
         setSubmitting(false);
-
-        // try {
-        // //   response = await axios.put("/api/v1/penugasan", newValues);
-        // } catch (e) {
-        //   toast.error(e.message);
-        //   throw new Error(e.message);
-        // }
-
-        // toast.success(response.data.message);
-
-        // await push("/layanan/penugasan/list");
-        // resetForm();
-        // setSubmitting(false);
       }}
     >
       {({ values, errors, touched }) => {

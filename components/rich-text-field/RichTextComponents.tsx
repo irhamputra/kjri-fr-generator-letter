@@ -7,7 +7,6 @@ interface BaseProps {
   className: string;
   [key: string]: unknown;
 }
-type OrNull<T> = T | null;
 
 export const Button = React.forwardRef(
   (
@@ -28,9 +27,11 @@ export const Button = React.forwardRef(
       {...props}
       ref={ref}
       type="button"
+      tabIndex={-1}
       className={clsx(
-        "btn btn-l-ight",
+        "btn btn-light btn-sm",
         className,
+        styles.textButton,
         reversed
           ? active
             ? styles.btnRichTextReverseActive

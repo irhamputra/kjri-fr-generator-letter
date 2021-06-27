@@ -32,7 +32,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       // Create Document
-      const formUrl = "http://localhost:3000/docs/Rampungan%20Fill.pdf";
+      const formUrl =
+        "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRampungan%20Fill.pdf?alt=media&token=cbb0764d-2e42-449e-bcfc-c003fee8832af";
       const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
 
       const iPegawai = listPegawai.findIndex(({ pegawai }) => pegawai.email === email);

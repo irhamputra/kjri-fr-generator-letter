@@ -10,12 +10,8 @@ import FormSuratStaff, { ForumSuratStaffInitialValues } from "./FormSuratStaff";
 import { toast } from "react-hot-toast";
 import useCountUangHarianSPD from "../../hooks/useCountUangHarianSPD";
 import { useFormik } from "formik";
-import apiInstance from "../../utils/firebase/apiInstance";
 
-const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => unknown }> = ({
-  editId,
-  onPageIndexChange,
-}) => {
+const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ onPageIndexChange }) => {
   const [activePageIndex, setPageIndex] = useState(0);
 
   const { setValues, setFieldValue, values, handleSubmit } = useFormik<{
@@ -35,10 +31,8 @@ const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => un
       },
     },
     onSubmit: async (val) => {
-      console.log("VAL", val);
       const { data, ...restVal } = val.rampunganFill;
       const { namaPegawai, fullDayKurs } = val.suratStaff;
-      let response;
       try {
         const newValues = {
           nomorSurat: values.suratStaff.nomorSurat,
@@ -67,27 +61,20 @@ const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => un
   const setRampunganFill = (data: FormRampunganFillInitialValues) =>
     setValues((val) => ({ ...val, rampunganFill: data }));
 
-  const { data: editedData = {}, isFetched } = useMyQuery(
-    ["fetchSingleSurat", editId],
-    async () => {
-      const { data } = await axios.get(`/api/v1/surat-tugas/${editId}`);
+  // TODO : Edit?
+  // const { data: editedData = {}, isFetched } = useMyQuery(
+  //   ["fetchSingleSurat", editId],
+  //   async () => {
+  //     const { data } = await axios.get(`/api/v1/surat-tugas/${editId}`);
 
-      return data;
-    },
-    {
-      enabled: !!editId,
-    }
-  );
+  //     return data;
+  //   },
+  //   {
+  //     enabled: !!editId,
+  //   }
+  // );
 
   const { countToUER } = useCountUangHarianSPD();
-
-  useEffect(() => {
-    setSuratStaff({
-      namaPegawai: editedData?.listPegawai || [],
-      nomorSurat: editedData?.nomorSurat || "",
-      fullDayKurs: 0.84,
-    });
-  }, [isFetched]);
 
   useEffect(() => {
     onPageIndexChange(activePageIndex);
@@ -106,7 +93,6 @@ const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => un
             setRampunganFill({ ...values.rampunganFill, data: rampunganData });
             setPageIndex((val) => val + 1);
           }}
-          editId={editId}
         />
       );
     case 1:
@@ -121,7 +107,19 @@ const FormSPD: React.FC<{ editId: string; onPageIndexChange: (val: number) => un
         />
       );
     default:
-      return <div>Ada</div>;
+      return (
+        <FormSuratStaff
+          initialValues={values.suratStaff}
+          onSave={(val) => {
+            const rampunganData = val.namaPegawai?.map(({ pegawai }: { pegawai: any }) => {
+              return { nama: pegawai.displayName, nip: pegawai.nip, rampungan: [createRampungan("Frankfurt")] };
+            });
+            setSuratStaff(val);
+            setRampunganFill({ ...values.rampunganFill, data: rampunganData });
+            setPageIndex((val) => val + 1);
+          }}
+        />
+      );
   }
 };
 

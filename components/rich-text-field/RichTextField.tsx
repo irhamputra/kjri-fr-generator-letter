@@ -1,6 +1,6 @@
-import React, { PropsWithChildren, useCallback, useRef } from "react";
+import React, { PropsWithChildren, useCallback, useState } from "react";
 import isHotkey from "is-hotkey";
-import { Editable, withReact, useSlate, Slate, ReactEditor } from "slate-react";
+import { Editable, withReact, useSlate, Slate } from "slate-react";
 import { Editor, createEditor, BaseEditor } from "slate";
 
 import { Button, Toolbar } from "./RichTextComponents";
@@ -24,11 +24,9 @@ const RichTextFieldComponent = ({
 }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-  const editorRef = useRef<any>();
-  if (!editorRef.current) editorRef.current = withReact(createEditor() as BaseEditor & ReactEditor);
-  const editor = editorRef.current;
+  const [editor] = useState(() => withReact(createEditor() as any));
   return (
-    <div style={{ border: "1px solid rgb(206, 212, 218)", borderRadius: 8 }}>
+    <div style={{ border: "1px solid rgb(206, 212, 218)", borderRadius: 8, overflow: "hidden" }}>
       <Slate editor={editor} value={value} onChange={onChange}>
         <Toolbar>
           <MarkButton format="bold">
@@ -135,7 +133,6 @@ const MarkButton = ({ format, children }: PropsWithChildren<{ format: string }>)
   const editor = useSlate();
   return (
     <Button
-      style={{ marginRight: 8 }}
       active={isMarkActive(editor, format)}
       onMouseDown={(event: any) => {
         event.preventDefault();

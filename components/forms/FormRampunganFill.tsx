@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Field, FieldArray, Form, Formik } from "formik";
+import { useRouter } from "next/router";
 import React from "react";
 import { ArrowRight, GeoFill } from "react-bootstrap-icons";
 import { object } from "yup";
@@ -20,6 +21,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
   onClickBack,
 }) => {
   const validationSchema = object();
+  const { push } = useRouter();
   return (
     <Formik
       initialValues={initialValues as any}
@@ -29,6 +31,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
         setSubmitting(true);
         onSave(val);
         setSubmitting(false);
+        await push("/layanan/penugasan/list");
       }}
     >
       {({
@@ -43,7 +46,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
         return (
           <>
             <Form>
-              <div className="mb-3">
+              <div className="mb-2">
                 <label className="form-label" style={{ fontWeight: "bold" }}>
                   Pembuat Komitmen
                 </label>
@@ -56,7 +59,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
                 />
                 {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
               </div>
-              <div className="mb-3">
+              <div className="mb-4">
                 <label className="form-label" style={{ fontWeight: "bold" }}>
                   NIP
                 </label>
@@ -69,6 +72,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
                 />
                 {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
               </div>
+
               <FieldArray
                 name="data"
                 render={(arrayHelpers) =>
@@ -178,21 +182,25 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
                                     );
                                   })}
                                   <div style={{ marginLeft: 56 }} className="d-flex">
+                                    {rampungan.length < 3 && (
+                                      <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        style={{ marginRight: 16 }}
+                                        onClick={() =>
+                                          arrayHelpr.push(
+                                            createRampungan(lastRampungan.tibaDi, lastRampungan.tanggalTiba)
+                                          )
+                                        }
+                                        disabled={!lastRampungan?.tibaDi}
+                                      >
+                                        Tambah destinasi
+                                      </button>
+                                    )}
+
                                     <button
                                       type="button"
-                                      className="btn btn-primary"
-                                      onClick={() =>
-                                        arrayHelpr.push(
-                                          createRampungan(lastRampungan.tibaDi, lastRampungan.tanggalTiba)
-                                        )
-                                      }
-                                      disabled={!lastRampungan?.tibaDi}
-                                    >
-                                      Tambah destinasi
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline-dark mx-2"
+                                      className="btn btn-outline-dark"
                                       onClick={() => arrayHelpr.pop()}
                                     >
                                       Hapus
@@ -216,8 +224,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
                     </button>
                   </div>
                   <button className="btn btn-dark btn" type="submit">
-                    Selanjutnya
-                    <ArrowRight style={{ marginLeft: 4 }} />
+                    Simpan Surat
                   </button>
                 </div>
               </div>

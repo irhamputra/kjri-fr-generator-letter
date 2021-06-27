@@ -6,14 +6,14 @@ import { Auth } from "../../../typings/AuthQueryClient";
 import FormSPD from "../../../components/forms/SPD";
 import Stepper from "../../../components/Stepper";
 
-const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
+const Penugasan: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
   const [activeIndex, setActive] = React.useState(0);
   const options = [
     { number: 1, text: "Nomor Surat dan Staff" },
     { number: 2, text: "Destinasi" },
-    { number: 3, text: "Rincian" },
+    { number: 3, text: "Selesai" },
   ];
 
   if (!query?.isAdmin) throw new Error("Invalid permission");
@@ -29,8 +29,8 @@ const Penugasan: NextPage<{ editId: string }> = ({ editId }) => {
       <div style={{ background: "#f8f8f8", borderRadius: 4 }} className="p-3">
         <Stepper data={options} activeIndex={activeIndex} />
       </div>
-      <div className="row p-3">
-        <FormSPD editId={editId} onPageIndexChange={(val) => setActive(val as number)} />
+      <div className="row p-3 mb-5">
+        <FormSPD onPageIndexChange={(val) => setActive(val as number)} />
       </div>
     </section>
   );

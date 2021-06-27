@@ -110,77 +110,79 @@ const SuratTugas: NextPage = () => {
           ...restFormik,
         }}
       >
-        <form onSubmit={handleSubmit}>
-          <div className="row">
-            <label className="form-label">Nomor Surat Arsip</label>
-            <div className="col-3">
-              <input
-                className="form-control"
-                name="nomorSurat"
-                onChange={handleChange}
-                value={values.nomorSurat}
-                disabled
-              />
-              {errors.nomorSurat && touched.nomorSurat && <small className="text-danger">{errors.nomorSurat}</small>}
+        <div className="mb-5" style={{ maxWidth: 640 }}>
+          <form onSubmit={handleSubmit}>
+            <div className="row">
+              <label className="form-label">Nomor Surat Arsip</label>
+              <div className="col-4">
+                <input
+                  className="form-control"
+                  name="nomorSurat"
+                  onChange={handleChange}
+                  value={values.nomorSurat}
+                  disabled
+                />
+                {errors.nomorSurat && touched.nomorSurat && <small className="text-danger">{errors.nomorSurat}</small>}
+              </div>
+
+              {values.nomorSurat ? null : (
+                <div className="col-4">
+                  <button type="button" onClick={onCounterId} className="btn btn-dark">
+                    Generate Nomor Surat
+                  </button>
+                </div>
+              )}
             </div>
 
-            {values.nomorSurat ? null : (
-              <div className="col-3">
-                <button type="button" onClick={onCounterId} className="btn btn-dark">
-                  Generate Nomor Surat
-                </button>
-              </div>
-            )}
-          </div>
+            <div className="mt-3">
+              <label className="form-label">Nama Dinas / Tujuan Dinas</label>
+              <input
+                disabled={isSubmitting}
+                className="form-control"
+                name="tujuanDinas"
+                onChange={handleChange}
+                value={values.tujuanDinas}
+              />
+              {errors.tujuanDinas && touched.tujuanDinas && <small className="text-danger">{errors.tujuanDinas}</small>}
+            </div>
+            <div className="mt-3">
+              <label className="form-label">Text pembuka</label>
+              <RichTextExample
+                name="textPembuka"
+                onChange={(value) => setFieldValue("textPembuka", value)}
+                value={values.textPembuka}
+              />
+            </div>
 
-          <div className="mt-3">
-            <label className="form-label">Nama Dinas / Tujuan Dinas</label>
-            <input
-              disabled={isSubmitting}
-              className="form-control"
-              name="tujuanDinas"
-              onChange={handleChange}
-              value={values.tujuanDinas}
-            />
-            {errors.tujuanDinas && touched.tujuanDinas && <small className="text-danger">{errors.tujuanDinas}</small>}
-          </div>
-          <div className="mt-3">
-            <label className="form-label">Text pembuka</label>
-            <RichTextExample
-              name="textPembuka"
-              onChange={(value) => setFieldValue("textPembuka", value)}
-              value={values.textPembuka}
-            />
-          </div>
+            <div className="mt-3">
+              <label className="form-label">Text tengah</label>
+              <RichTextExample
+                name="textTengah"
+                onChange={(value) => setFieldValue("textTengah", value)}
+                value={values.textTengah}
+              />
+            </div>
 
-          <div className="mt-3">
-            <label className="form-label">Text tengah</label>
-            <RichTextExample
-              name="textTengah"
-              onChange={(value) => setFieldValue("textTengah", value)}
-              value={values.textTengah}
-            />
-          </div>
+            <div className="mt-3">
+              <label className="form-label">Text penutup</label>
+              <RichTextExample
+                name="textPenutup"
+                onChange={(value) => setFieldValue("textPenutup", value)}
+                value={values.textPenutup}
+              />
+            </div>
 
-          <div className="mt-3">
-            <label className="form-label">Text penutup</label>
-            <RichTextExample
-              name="textPenutup"
-              onChange={(value) => setFieldValue("textPenutup", value)}
-              value={values.textPenutup}
-            />
-          </div>
+            <div className="mt-3">
+              <button disabled={isSubmitting} className="btn btn-dark " type="submit">
+                Simpan Surat
+              </button>
 
-          <div className="mt-3">
-            <button disabled={isSubmitting} className="btn btn-dark " type="submit">
-              Simpan Surat
-            </button>
-
-            <button className="btn btn-outline-danger mx-3" onClick={() => resetForm()} type="reset">
-              Ulangi
-            </button>
-          </div>
-        </form>
+              <button className="btn btn-outline-danger mx-3" onClick={() => resetForm()} type="reset">
+                Ulangi
+              </button>
+            </div>
+          </form>
+        </div>
       </FormikProvider>
     </section>
   );
