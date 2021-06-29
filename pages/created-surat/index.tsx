@@ -8,9 +8,8 @@ import useQuerySuratDibuat from "../../hooks/query/useQuerySuratDibuat";
 
 const SuratDibuat: NextPage = () => {
   const { data: suratDibuat = [], isLoading } = useQuerySuratDibuat();
-
   const handlePrint = async (id: string) => {
-    console.log({ id });
+    console.log(id);
   };
 
   const columns = React.useMemo(
@@ -69,7 +68,7 @@ const SuratDibuat: NextPage = () => {
       />
       <section style={{ marginTop: "6rem" }}>
         <div className="mb-3">
-          <h3>List Surat Perjalanan</h3>
+          <h3>Surat yang Telah Dibuat</h3>
         </div>
         <Table
           columns={columns}

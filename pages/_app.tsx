@@ -1,4 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import "react-datepicker/dist/react-datepicker.css";
 import "../styles/globals.css";
 import React from "react";
 import { QueryClientProvider, QueryClient } from "react-query";
@@ -11,7 +13,6 @@ import parseCookies from "../utils/parseCookies";
 import apiInstance from "../utils/firebase/apiInstance";
 import { AppProps } from "next/app";
 import { AppContextType } from "next/dist/next-server/lib/utils";
-
 type MyAppProps = AppProps & { dehydrateState: DehydratedState };
 
 function MyApp({ Component, pageProps, dehydrateState }: MyAppProps) {
