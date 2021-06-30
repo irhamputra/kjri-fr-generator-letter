@@ -22,10 +22,6 @@ const SuratPenugasanId: NextPage = () => {
 
   if (isLoading) return <h4>Loading...</h4>;
 
-  if (query.edit) {
-    return <Penugasan editId={query.id as string} />;
-  }
-
   return (
     <section style={{ marginTop: "6rem" }}>
       <button onClick={() => back()} className="btn-dark btn my-3">
