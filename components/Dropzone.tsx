@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { useMutation } from "react-query";
 import { FormikErrors } from "formik";
 import type { useSuratKeluarFormValues } from "../hooks/form/useSuratKeluarForm";
+import { toast } from "react-hot-toast";
 
 const baseStyle: React.CSSProperties = {
   flex: 1,
@@ -43,7 +44,11 @@ const Dropzone: React.FC<{
       onSuccess: async () => {
         if (onSetFieldValue) {
           await onSetFieldValue("hasFile", true);
+          toast.success("File berhasil terupload");
         }
+      },
+      onError: () => {
+        toast.error("Terjadi kesalahan, silahkan coba kembali!");
       },
     }
   );
@@ -51,8 +56,6 @@ const Dropzone: React.FC<{
   const onDrop = React.useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length) {
       const formData = new FormData();
-
-      console.log(acceptedFiles[0]);
       formData.append("file", acceptedFiles[0]);
 
       await mutateAsync(formData);
@@ -64,6 +67,7 @@ const Dropzone: React.FC<{
     accept: ".pdf",
     multiple: false,
     disabled,
+    maxFiles: 1,
   });
 
   return (
