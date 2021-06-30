@@ -7,6 +7,7 @@ import useSuratKeluarForm from "../../hooks/form/useSuratKeluarForm";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useRouter } from "next/router";
+import Dropzone from "../Dropzone";
 
 const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ editId, backUrl }) => {
   const [disabled, setDisabled] = React.useState(false);
@@ -27,6 +28,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     arsipId: arsipId ?? "",
     id: id ?? "",
     author: author ?? query?.email,
+    hasFile: false,
   };
 
   const {
@@ -125,7 +127,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
         </div>
       )}
 
-      <div className="row">
+      <div className="row mt-3">
         {editId && (
           <div className="col-12 mb-3">
             <h3>Edit Nomor Surat</h3>
@@ -162,6 +164,11 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
           />
           {errors.content && touched.content && <small className="text-danger">{errors.content}</small>}
         </div>
+      </div>
+
+      <div className="col-12 mb-3">
+        <p>Upload Surat Keluar</p>
+        <Dropzone disabled={values.hasFile} onSetFieldValue={setFieldValue} />
       </div>
 
       <button type="submit" disabled={isSubmitting} className="btn btn-dark">

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "deploy": "vercel deploy --prod",
-    "format": "prettier --write \"./**/*.+(js|ts|tsx|vue)\" --ignore-path ./.gitignore"
+    "format": "prettier --write \"./**/*.+(js|ts|tsx|vue)\" --ignore-path ./.gitignore",
+    "check-package": "npx typesyncs && yarn"
   },
   "dependencies": {
     "@popperjs/core": "^2.9.2",
@@ -31,6 +32,7 @@
     "react-bootstrap-icons": "^1.4.0",
     "react-datepicker": "^4.0.0",
     "react-dom": "17.0.1",
+    "react-dropzone": "^11.3.4",
     "react-hot-toast": "^1.0.2",
     "react-loader-spinner": "^4.0.0",
     "react-modal": "^3.12.1",
