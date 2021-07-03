@@ -33,15 +33,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      const pegawai = listPegawai.map(({ pegawai: p }) => ({ ...p, pangkat: "" }));
-
+      const pegawai = listPegawai.map(({ pegawai: p }) => (p));
+      const day = listPegawai.map(({ durasi }) => durasi);
+      console.log(day, pegawai)
+      const maxDay = day.sort()[day.length - 1];
       const docx = generateSuratTugas({
         nomorSurat,
         pegawai,
         textPembuka,
         textPenutup,
-        waktuPelaksanaan: 0,
-        waktuPerjalanan: 0,
+        waktuPelaksanaan: maxDay,
+        waktuPerjalanan: maxDay,
         textTengah,
       });
 

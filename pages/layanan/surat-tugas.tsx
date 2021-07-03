@@ -96,7 +96,7 @@ const SuratTugas: NextPage = () => {
         title="Surat Tugas | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Tugas Sistem Aplikasi KJRI Frankfurt"
       />
-      <h4>Surat Tugas (SPPD)</h4>
+      <h4>Surat Tugas (ST)</h4>
       <FormikProvider
         value={{
           handleChange,

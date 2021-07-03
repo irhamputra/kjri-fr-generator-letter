@@ -23,7 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const { displayName, email, nip, golongan, jabatan, role } = req.body;
+    const { displayName, email, nip, golongan, jabatan, role, pangkat } = req.body;
 
     const { id } = req.query;
 
@@ -37,6 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         golongan,
         jabatan,
         role,
+        pangkat
       });
 
     res.status(200).json({ message: "Update Profile", data: { displayName, email, nip, golongan, jabatan, role } });

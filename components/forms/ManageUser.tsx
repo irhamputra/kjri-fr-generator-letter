@@ -10,7 +10,7 @@ import useManageUserForm from "../../hooks/form/useManageUserForm";
 const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
   const { data: listGolongan, isLoading } = useQueryJalDir();
   const { data: editedUser = {} } = useQueryUserById(userId as string);
-  const { displayName, email, nip, golongan, jabatan, role } = editedUser;
+  const { displayName, email, nip, golongan, jabatan, role, pangkat } = editedUser;
 
   const initValues = {
     displayName: displayName ?? "",
@@ -19,6 +19,7 @@ const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
     golongan: golongan ?? "",
     jabatan: jabatan ?? "",
     role: role ?? "",
+    pangkat: pangkat ?? "",
   };
 
   const fetcher = !userId ? useAuthForm(initValues, "register") : useManageUserForm(initValues, userId);
@@ -90,6 +91,19 @@ const ManageUserForm: React.FC<{ userId?: string }> = ({ userId }) => {
             onChange={handleChange}
           />
           {errors.nip && touched.nip && <small className="text-danger">{errors.nip}</small>}
+        </div>
+
+        <div className="col-3 mt-3">
+          <label className="form-label">Pangkat (dalam angka romawi)</label>
+          <input
+            className="form-control"
+            name="pangkat"
+            type="text"
+            disabled={isSubmitting}
+            value={values.pangkat}
+            onChange={handleChange}
+          />
+          {errors.pangkat && touched.pangkat && <small className="text-danger">{errors.pangkat}</small>}
         </div>
 
         <div className="col-3 mt-3">

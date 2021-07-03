@@ -12,6 +12,7 @@ interface UseAuthFormValues {
   nip?: string;
   role?: string;
   password?: string;
+  pangkat?: string;
 }
 
 const useAuthForm = (initialValues: UseAuthFormValues, type: "login" | "register") => {
