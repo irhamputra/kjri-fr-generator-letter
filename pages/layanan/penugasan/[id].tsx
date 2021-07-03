@@ -2,7 +2,6 @@ import * as React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import axios from "axios";
-import Penugasan from ".";
 import { useMyQuery } from "../../../hooks/useMyQuery";
 
 const SuratPenugasanId: NextPage = () => {

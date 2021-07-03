@@ -26,6 +26,7 @@ export interface useSuratKeluarFormValues {
   arsipId: string;
   id: string;
   author: string;
+  hasFile: boolean;
 }
 const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: string) => {
   const { data: listJenisSurat } = useQueryJenisSurat();
@@ -70,9 +71,9 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
         data: { message, data },
       } = await axios.post("/api/v1/surat-keluar", { nomorSurat, ...restValues });
 
-      setFieldValue("nomorSurat", data?.nomorSurat);
-      setFieldValue("author", data?.author);
-      setFieldValue("id", data?.id);
+      await setFieldValue("nomorSurat", data?.nomorSurat);
+      await setFieldValue("author", data?.author);
+      await setFieldValue("id", data?.id);
 
       toast.success(message);
     },
