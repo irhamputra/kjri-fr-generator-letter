@@ -27,9 +27,10 @@ export interface useSuratKeluarFormValues {
   id: string;
   author: string;
   hasFile: boolean;
-  file: FormData;
+  file?: FormData;
   url: string;
 }
+
 const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: string) => {
   const { data: listJenisSurat } = useQueryJenisSurat();
   const { mutateAsync: updateSuratKeluar } = useUpdateSuratKeluarMutation();
@@ -41,10 +42,10 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
     initialValues,
     enableReinitialize: true,
     validationSchema: object().shape(createSchema(initialValues)),
-    onSubmit: async (values, { resetForm, setSubmitting }) => {
+    onSubmit: async (values, { resetForm, setSubmitting, setFieldValue }) => {
       setSubmitting(true);
       const { hasFile, file, ...rest } = values;
-      let newVal = { ...rest, url: "" };
+
       try {
         if (hasFile) {
           const {
@@ -54,10 +55,11 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
               "Content-Type": "multipart/form-data",
             },
           });
-          newVal.url = url;
+
+          await setFieldValue("url", url);
+          await updateSuratKeluar(rest);
+          await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
         }
-        await updateSuratKeluar(newVal);
-        await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
       } catch (e) {
         toast.error("Gagal membuat surat keluar!");
         throw new Error(e.message);

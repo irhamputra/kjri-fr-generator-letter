@@ -3,11 +3,13 @@ import { SelectArsip } from "../Select";
 import { useQuerySuratKeluarById } from "../../hooks/query/useQuerySuratKeluar";
 import capitalizeFirstLetter from "../../utils/capitalize";
 import useQueryJenisSurat from "../../hooks/query/useQueryJenisSurat";
-import useSuratKeluarForm from "../../hooks/form/useSuratKeluarForm";
+import useSuratKeluarForm, { useSuratKeluarFormValues } from "../../hooks/form/useSuratKeluarForm";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useRouter } from "next/router";
 import Dropzone from "../Dropzone";
+
+type SuratKeluarInitialValue = Omit<useSuratKeluarFormValues, "file">;
 
 const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ editId, backUrl }) => {
   const [disabled, setDisabled] = React.useState(false);
@@ -20,7 +22,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
 
   const { recipient, content, jenisSurat, nomorSurat, arsipId, id, author } = dataSuratKeluar;
 
-  const initialValues = {
+  const initialValues: SuratKeluarInitialValue = {
     recipient: recipient ?? "",
     content: content ?? "",
     jenisSurat: jenisSurat ?? "",
@@ -29,6 +31,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     id: id ?? "",
     author: author ?? query?.email,
     hasFile: false,
+    url: "",
   };
 
   const {
