@@ -27,6 +27,8 @@ export interface useSuratKeluarFormValues {
   id: string;
   author: string;
   hasFile: boolean;
+  file: FormData;
+  url: string;
 }
 const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: string) => {
   const { data: listJenisSurat } = useQueryJenisSurat();
@@ -41,9 +43,20 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       setSubmitting(true);
-
+      const { hasFile, file, ...rest } = values;
+      let newVal = { ...rest, url: "" };
       try {
-        await updateSuratKeluar(values);
+        if (hasFile) {
+          const {
+            data: { url },
+          } = await axios.post("/api/v1/surat-keluar/upload", file, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          newVal.url = url;
+        }
+        await updateSuratKeluar(newVal);
         await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
       } catch (e) {
         toast.error("Gagal membuat surat keluar!");

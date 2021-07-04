@@ -16,7 +16,7 @@ const useUpdateSuratKeluarMutation = <T>() => {
       onSuccess: async (data) => {
         await queryClient.invalidateQueries("fetchSuratKeluar");
         await queryClient.invalidateQueries("fetchSuratDibuat");
-        toast.success(data.message);
+        // toast.success(data.message);
       },
     }
   );

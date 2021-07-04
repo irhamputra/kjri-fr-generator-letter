@@ -31,7 +31,7 @@ type GeneratePegawaiProps = {
 
 const styles = {
   bold: {
-    font: "Arial-BoldMT",
+    font: "Arial",
     size: 22,
     bold: true,
   },

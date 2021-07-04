@@ -34,17 +34,17 @@ const Dropzone: React.FC<{
     "uploadSuratKeluar",
     async (file: FormData) => {
       try {
-        // TODO: upload files
-        console.log(file);
+        if (onSetFieldValue) {
+          await onSetFieldValue("file", file);
+        }
       } catch (e) {
         throw new Error(e.message);
       }
     },
     {
-      onSuccess: async () => {
+      onSuccess: async (file) => {
         if (onSetFieldValue) {
           await onSetFieldValue("hasFile", true);
-          toast.success("File berhasil terupload");
         }
       },
       onError: () => {

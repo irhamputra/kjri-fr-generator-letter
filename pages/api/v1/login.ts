@@ -25,7 +25,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.end();
     } catch (e) {
       res.status(500).json({ message: "Email tidak ditemukan" });
-      console.log(e);
+
       res.end();
     }
   }
