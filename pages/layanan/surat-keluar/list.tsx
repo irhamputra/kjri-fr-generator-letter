@@ -2,16 +2,30 @@ import * as React from "react";
 import { NextPage } from "next";
 import useQuerySuratKeluar from "../../../hooks/query/useQuerySuratKeluar";
 import { useRouter } from "next/router";
-import { Search } from "react-bootstrap-icons";
+import { Printer, Search } from "react-bootstrap-icons";
 import Table from "../../../components/Table";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../../typings/AuthQueryClient";
+import axios from "axios";
+import { downloadURI } from "../../../utils/download";
+import toast from "react-hot-toast";
+import { SuratKeluarCollection } from "../../../typings/SuratKeluar";
 
 const ListSuratKeluar: NextPage = () => {
   const { push } = useRouter();
   const { data: listSuratKeluar, isLoading } = useQuerySuratKeluar();
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
+
+  const handlePrint = async (id: string) => {
+    try {
+      const { data } = await axios.get(`/api/v1/surat-keluar/${id}/download`);
+      downloadURI(data.url);
+    } catch (e) {
+      console.error(e);
+      toast.error(e.response?.data?.error);
+    }
+  };
 
   const columns = React.useMemo(
     () => [
@@ -27,18 +41,32 @@ const ListSuratKeluar: NextPage = () => {
         Header: "Tujuan Dinas",
         accessor: "col3",
       },
+      {
+        Header: "Opsi",
+        accessor: "col4",
+        Cell: ({ value }: { value: { id: string; url: string } }) => (
+          <div style={{ display: "flex" }}>
+            <button
+              disabled={!value.url}
+              className={`btn ${!value.url ? "btn-outline-dark" : "btn-outline-primary"}`}
+              onClick={() => handlePrint(value.id)}
+            >
+              <Printer size={25} />
+            </button>
+          </div>
+        ),
+      },
     ],
+
     [query]
   );
 
   const data = listSuratKeluar?.listSurat.map?.(
-    (
-      { nomorSurat, content, id, author }: { nomorSurat: string; content: string; id: string; author: string },
-      index: number
-    ) => ({
+    ({ nomorSurat, content, id, url }: SuratKeluarCollection, index: number) => ({
       col1: index + 1,
       col2: nomorSurat,
       col3: content,
+      col4: { id, url },
     })
   );
 

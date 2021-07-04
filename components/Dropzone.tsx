@@ -35,7 +35,6 @@ const Dropzone: React.FC<{
     async (file: FormData) => {
       try {
         if (onSetFieldValue) {
-          console.log(file.get("file"));
           await onSetFieldValue("file", file);
         }
       } catch (e) {

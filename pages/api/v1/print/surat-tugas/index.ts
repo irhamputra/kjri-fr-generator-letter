@@ -33,9 +33,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      const pegawai = listPegawai.map(({ pegawai: p }) => (p));
+      const pegawai = listPegawai.map(({ pegawai: p }) => p);
       const day = listPegawai.map(({ durasi }) => durasi);
-      console.log(day, pegawai)
+
       const maxDay = day.sort()[day.length - 1];
       const docx = generateSuratTugas({
         nomorSurat,
@@ -48,6 +48,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       const fileRef = storageRef.file(`surat-tugas/${id}.docx`);
+
       await Packer.toBuffer(docx).then(async (buffer) => {
         await fileRef.save(buffer, { resumable: false });
       });

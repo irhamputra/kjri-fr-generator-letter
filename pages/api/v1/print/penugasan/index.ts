@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { db, storage } from "../../../../../utils/firebase";
 import { cors } from "../../../../../utils/middlewares";
 import { SuratTugasRes } from "../../../../../typings/SuratTugas";
-import fs from "fs";
 import { PDFDocument } from "pdf-lib";
 import dayjs from "dayjs";
 
@@ -129,10 +128,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           suratPenugasan: signedUrls[0],
         },
       });
-
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename=${suratTugasId}.pdf`);
-      res.setHeader("Content-Length", pdfBytes.length);
 
       res.status(201).json({
         message: "Document berhasil dibuat",

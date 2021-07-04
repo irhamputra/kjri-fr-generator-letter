@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { db } from "../../../../utils/firebase";
-import { cors } from "../../../../utils/middlewares";
+import { db } from "../../../../../utils/firebase";
+import { cors } from "../../../../../utils/middlewares";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
