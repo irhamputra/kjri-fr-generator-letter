@@ -37,6 +37,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const batch = db.batch();
       batch.set(docRef, { id, ...restBody });
 
+      console.log({ id, ...restBody });
+
       if (req.method === "POST") {
         const counterRef = db.collection("SuratKeluar").doc("--stats--");
         batch.set(counterRef, { counter: increment }, { merge: true });
