@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import * as React from "react";
 import Link from "next/link";
 import useAuthForm from "../hooks/useAuthForm";
+import { useFetchBackground } from "../hooks/mutation/useMediaMutation";
 
 const Home: NextPage = () => {
   const { handleSubmit, values, handleChange, errors, touched, isSubmitting } = useAuthForm(
@@ -9,9 +10,19 @@ const Home: NextPage = () => {
     "login"
   );
 
+  const { data } = useFetchBackground();
+
   return (
-    <div style={{ display: "grid", placeItems: "center" }}>
-      <form className="mt-5" onSubmit={handleSubmit}>
+    <div
+      style={{
+        display: "grid",
+        placeItems: "center",
+        backgroundImage: `url(${data?.url})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <form className="mt-5 p-4" onSubmit={handleSubmit} style={{ background: "white", borderRadius: "1rem" }}>
         <div className="text-center">
           <img src="/kjri-frankfurt.jpg" width="50%" alt="logo" />
           <h1>KJRI Frankfurt</h1>

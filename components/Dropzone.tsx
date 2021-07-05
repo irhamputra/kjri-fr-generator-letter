@@ -84,4 +84,35 @@ const Dropzone: React.FC<{
   );
 };
 
+const ImageDropzone: React.FC<{
+  onAccept: (value: File) => unknown;
+  disabled?: boolean;
+  placeholder?: string;
+}> = ({ onAccept, disabled, placeholder = "Klik box ini atau drag 'n drop image yang akan di upload" }) => {
+  const onDrop = React.useCallback(async (acceptedFiles) => {
+    if (acceptedFiles.length) {
+      onAccept(acceptedFiles[0]);
+    }
+  }, []);
+
+  const { getInputProps, getRootProps } = useDropzone({
+    onDrop,
+    accept: "image/*",
+    multiple: false,
+    disabled,
+    maxFiles: 1,
+  });
+
+  return (
+    <section>
+      <div {...getRootProps({ style: { ...baseStyle, padding: 0, height: 60, justifyContent: "center" } })}>
+        <input {...getInputProps()} />
+
+        <span>{placeholder}</span>
+      </div>
+    </section>
+  );
+};
+
 export default Dropzone;
+export { ImageDropzone };

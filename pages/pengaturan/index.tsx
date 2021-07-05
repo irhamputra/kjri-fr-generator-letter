@@ -1,10 +1,13 @@
 import * as React from "react";
 import { NextPage } from "next";
-import { People as UserIcon, FileEarmarkWord as ArsipIcon, Tag as GolonganIcon } from "react-bootstrap-icons";
+import {
+  People as UserIcon,
+  FileEarmarkWord as ArsipIcon,
+  Tag as GolonganIcon,
+  Window as WindowIcon,
+} from "react-bootstrap-icons";
 import Card from "../../components/Card";
 import { NextSeo } from "next-seo";
-import parseCookies from "../../utils/parseCookies";
-import apiInstance from "../../utils/firebase/apiInstance";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
 
@@ -35,6 +38,10 @@ const Index: NextPage = () => {
           </div>
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card icon={<GolonganIcon {...iconProps} />} title="Manage Golongan" link="/pengaturan/manage-golongan" />
+          </div>
+
+          <div className="col-md-4 col-sm-6 col-lg-3">
+            <Card icon={<WindowIcon {...iconProps} />} title="Manage Media" link="/pengaturan/manage-media" />
           </div>
         </div>
       </section>
