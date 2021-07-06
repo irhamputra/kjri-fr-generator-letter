@@ -15,6 +15,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const suratTugasRef = db.collection("SuratTugas").doc(id as string);
       const snapshot = await suratTugasRef.get();
 
+      const destination = `surat-tugas/${id}.docx`
+      const fileRef = storageRef.file(destination);
+
       const {
         nomorSurat,
         listPegawai = [],
@@ -25,11 +28,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       } = snapshot.data() as SuratTugasRes;
 
       if (downloadUrl?.suratTugas) {
-        res.status(201).json({
-          message: "Document telah dibuat",
-          url: downloadUrl.suratTugas,
+
+        const signedUrls = await fileRef.getSignedUrl({
+          action: "read",
+          expires: Date.now() + 15 * 60 * 1000, // 15 minutes,
+        });
+
+        res.status(200).json({
+          message: "Surat akan di downloadt",
+          url: signedUrls[0],
         });
         res.end();
+
         return;
       }
 
@@ -47,25 +57,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         textTengah,
       });
 
-      const fileRef = storageRef.file(`surat-tugas/${id}.docx`);
-
       await Packer.toBuffer(docx).then(async (buffer) => {
         await fileRef.save(buffer, { resumable: false });
       });
 
-      const signedUrls = await fileRef.getSignedUrl({
-        action: "read",
-        expires: "03-09-2491",
-      });
 
       await suratTugasRef.update({
         downloadUrl: {
           ...downloadUrl,
-          suratTugas: signedUrls[0],
+          suratTugas: destination,
         },
       });
 
+      const signedUrls = await fileRef.getSignedUrl({
+        action: "read",
+        expires: Date.now() + 15 * 60 * 1000, // 15 minutes,
+      });
+
       res.status(200).json({
+        message: "Sukses membuat surat",
         url: signedUrls[0],
       });
 
