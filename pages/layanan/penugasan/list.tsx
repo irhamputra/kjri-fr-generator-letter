@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
-import { Eye, Search } from "react-bootstrap-icons";
+import { Eye, Printer, Search } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Modal from "react-modal";
@@ -8,8 +8,9 @@ import { PropsWithChildren } from "react";
 import Table from "../../../components/Table";
 import useDeleteSPDMutation from "../../../hooks/mutation/useDeleteSPDMutation";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
-
-type SuratTugas = { nomorSurat: string; tujuanDinas: string; suratTugasId: string };
+import { useDownloadSuratPenugasan, useDownloadSuratTugas } from "../../../hooks/useDownloadSurat";
+import { SuratTugasRes } from "../../../typings/SuratTugas";
+import { Pegawai } from "../../../typings/Pegawai";
 
 const customStyles = {
   content: {
@@ -44,38 +45,44 @@ const ListSurat: NextPage = () => {
       {
         Header: "Opsi",
         accessor: "col4",
-        Cell: ({ value }: { value: string }) => (
-          // <div style={{ display: "flex" }}>
-          //   <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
-          //     <a>Edit</a>
-          //   </Link>
-          //   <DeleteAction messageId={value} />
-          // </div>
-          <div style={{ display: "flex" }}>
-            <Link href={`#`} passHref>
-              <a>
-                <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
-                  <Eye size={25} />
-                </button>
-              </a>
-            </Link>
+        Cell: ({ value }: { value: Pick<SuratTugasRes, "listPegawai" | "suratTugasId"> }) => {
+          const listPegawai = value.listPegawai?.map(({ pegawai }) => pegawai) as Pegawai[];
+          return (
+            // <div style={{ display: "flex" }}>
+            //   <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
+            //     <a>Edit</a>
+            //   </Link>
+            //   <DeleteAction messageId={value} />
+            // </div>
+            <div style={{ display: "flex" }}>
+              <Link href={`#`} passHref>
+                <a>
+                  <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
+                    <Eye size={25} />
+                  </button>
+                </a>
+              </Link>
+              <ButtonPrint suratTugasId={value.suratTugasId as string} pegawai={listPegawai} />
 
-            {/* <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
+              {/* <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
               <Printer size={25} />
             </button> */}
-          </div>
-        ),
+            </div>
+          );
+        },
       },
     ],
     []
   );
 
-  const data = listSuratTugas?.map?.(({ nomorSurat, tujuanDinas, suratTugasId }: SuratTugas, index: number) => ({
-    col1: index + 1,
-    col2: nomorSurat,
-    col3: tujuanDinas,
-    col4: suratTugasId,
-  }));
+  const data = listSuratTugas?.map?.(
+    ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai }: SuratTugasRes, index: number) => ({
+      col1: index + 1,
+      col2: nomorSurat,
+      col3: tujuanDinas,
+      col4: { suratTugasId, listPegawai },
+    })
+  );
 
   if (suratTugasLoading) return <p>Loading...</p>;
 
@@ -122,7 +129,7 @@ const ListSurat: NextPage = () => {
   );
 };
 
-const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string }>): JSX.Element => {
+const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string; pegawai: Pegawai[] }>): JSX.Element => {
   const [open, setOpen] = React.useState(false);
   const { mutateAsync } = useDeleteSPDMutation();
 
@@ -159,6 +166,88 @@ const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string }>): 
               <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setOpen(false)}>
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+const ButtonPrint: React.FC<{ suratTugasId: string; pegawai: Pegawai[] }> = ({ suratTugasId, pegawai }) => {
+  const [modalOpen, setModalOpen] = React.useState(false);
+
+  const { mutateAsync: mutateSuratTugas, isLoading: isLoadingSuratTugas } = useDownloadSuratTugas();
+  const {
+    mutateAsync: mutateSuratPenugasan,
+    isLoading: isLoadingSuratPenugasan,
+    downloadUid,
+  } = useDownloadSuratPenugasan();
+
+  const handleSuratTugas = async () => {
+    await mutateSuratTugas(suratTugasId);
+  };
+
+  const handleSuratPenugasan = async (suratTugasId: string, uid: string) => {
+    await mutateSuratPenugasan({ suratTugasId, uid });
+  };
+  return (
+    <>
+      <button
+        className="btn btn-outline-primary"
+        onClick={() => {
+          setModalOpen(true);
+        }}
+      >
+        <Printer size={25} />
+      </button>
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={() => setModalOpen(false)}
+        contentLabel="User Registration Modal"
+        style={customStyles}
+      >
+        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Download Surat</h5>
+            </div>
+            <div className="modal-body">
+              <div className="mb-2">
+                <h5>Surat Tugas</h5>
+              </div>
+              <div className="d-flex mb-4">
+                <div style={{ flex: "1 1" }}>Surat Tugas</div>
+                <div style={{ flex: "1 1" }}>
+                  {!isLoadingSuratTugas ? (
+                    <a href="#" onClick={handleSuratTugas}>
+                      Download
+                    </a>
+                  ) : (
+                    <span>Downloading...</span>
+                  )}
+                </div>
+              </div>
+              <div className="mb-2">
+                <h5>Surat Penugasan</h5>
+              </div>
+
+              {pegawai.map(({ uid, displayName }) => {
+                return (
+                  <div className="d-flex mb-2">
+                    <div style={{ flex: "1 1" }}>Surat Penugasan {displayName}</div>
+                    <div style={{ flex: "1 1" }}>
+                      {isLoadingSuratPenugasan && uid === downloadUid ? (
+                        <span>Downloading...</span>
+                      ) : (
+                        <a href="#" onClick={() => handleSuratPenugasan(suratTugasId, uid)}>
+                          Download
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

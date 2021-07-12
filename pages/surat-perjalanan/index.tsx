@@ -50,7 +50,6 @@ const SuratPerjalanan: NextPage = () => {
                 </button>
               </a>
             </Link>
-            <ButtonPrint suratTugasId={value} />
             {/* <DeleteAction messageId={value} /> */}
           </div>
         ),
@@ -105,73 +104,6 @@ const SuratPerjalanan: NextPage = () => {
           }}
         />
       </section>
-    </>
-  );
-};
-
-const ButtonPrint: React.FC<{ suratTugasId: string }> = ({ suratTugasId }) => {
-  const [modalOpen, setModalOpen] = React.useState(false);
-
-  const { mutateAsync: mutateSuratTugas, isLoading: isLoadingSuratTugas } = useDownloadSuratTugas();
-  const { mutateAsync: mutateSuratPenugasan, isLoading: isLoadingSuratPenugasan } = useDownloadSuratPenugasan();
-
-  const handleSuratTugas = async () => {
-    await mutateSuratTugas(suratTugasId);
-  };
-
-  const handleSuratPenugasan = async () => {
-    await mutateSuratPenugasan(suratTugasId);
-  };
-  return (
-    <>
-      <button
-        className="btn btn-outline-primary"
-        onClick={() => {
-          setModalOpen(true);
-        }}
-      >
-        <Printer size={25} />
-      </button>
-      <Modal
-        isOpen={modalOpen}
-        onRequestClose={() => setModalOpen(false)}
-        contentLabel="User Registration Modal"
-        style={customStyles}
-      >
-        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Download Surat</h5>
-            </div>
-            <div className="modal-body">
-              <div className="d-flex mb-2">
-                <div style={{ flex: "1 1" }}>Surat Tugas</div>
-                <div style={{ flex: "1 1" }}>
-                  {!isLoadingSuratTugas ? (
-                    <a href="#" onClick={handleSuratTugas}>
-                      Download
-                    </a>
-                  ) : (
-                    <span>Downloading...</span>
-                  )}
-                </div>
-              </div>
-              <div className="d-flex">
-                <div style={{ flex: "1 1" }}>Surat Penugasan</div>
-                <div style={{ flex: "1 1" }}>
-                  {!isLoadingSuratPenugasan ? (
-                    <a href="#" onClick={handleSuratPenugasan}>
-                      Download
-                    </a>
-                  ) : (
-                    <span>Downloading...</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
     </>
   );
 };
