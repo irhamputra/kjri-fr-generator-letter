@@ -18,7 +18,9 @@ export interface SuratTugasRes {
   };
 
   downloadUrl?: {
-    suratPenugasan: string;
+    suratPenugasan: {
+      [k in string]: string;
+    }
     suratTugas: string;
   };
 }

@@ -12,16 +12,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     try {
-      const { suratTugasId, email } = req.body;
+      const { suratTugasId, uid } = req.body;
 
-      const destination = `penugasan/${suratTugasId}.pdf`;
+      const destination = `penugasan/${suratTugasId}-${uid}.pdf`;
       const fileRef = storage.bucket().file(destination);
       const suratTugasRef = db.collection("SuratTugas").doc(suratTugasId as string);
       const snapshot = await suratTugasRef.get();
 
       const { listPegawai = [], pembuatKomitmen, downloadUrl } = snapshot.data() as SuratTugasRes;
 
-      if (downloadUrl?.suratPenugasan) {
+      if (downloadUrl?.suratPenugasan?.[uid]) {
         const signedUrls = await fileRef.getSignedUrl({
           action: "read",
           expires: Date.now() + 15 * 60 * 1000, // 15 minutes,
@@ -40,7 +40,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRampungan%20Fill.pdf?alt=media&token=cbb0764d-2e42-449e-bcfc-c003fee8832af";
       const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
 
-      const iPegawai = listPegawai.findIndex(({ pegawai }) => pegawai.email === email);
+      const iPegawai = listPegawai.findIndex(({ pegawai }) => pegawai.uid === uid);
       const rampungan = listPegawai[iPegawai].destinasi ?? [];
 
       if (rampungan.length > 3) {
@@ -125,7 +125,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       await suratTugasRef.update({
         downloadUrl: {
           ...downloadUrl,
-          suratPenugasan: destination,
+          suratPenugasan: { ...downloadUrl?.suratPenugasan, [uid]: destination },
         },
       });
 
