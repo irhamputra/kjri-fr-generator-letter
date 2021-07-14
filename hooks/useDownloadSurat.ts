@@ -20,6 +20,22 @@ const useDownloadSuratTugas = () => {
   );
 };
 
+const useDownloadFile = () => {
+  return useMutation(
+    "downloadFile",
+    async (destination: string) => {
+      const { data } = await axios.post(`/api/v1/print`, { destination });
+      return { ...data, destination };
+    },
+    {
+      onSuccess: async ({ message, url, destination }) => {
+        saveAs(url, destination); // name not work??
+        toast(message);
+      },
+    }
+  );
+};
+
 const useDownloadSuratPenugasan = () => {
   const [downloadUid, setDownloadUid] = useState("");
   const mutation = useMutation(
@@ -40,4 +56,4 @@ const useDownloadSuratPenugasan = () => {
   return { downloadUid, ...mutation }
 };
 
-export { useDownloadSuratTugas, useDownloadSuratPenugasan };
+export { useDownloadSuratTugas, useDownloadSuratPenugasan, useDownloadFile };

@@ -27,8 +27,8 @@ export interface useSuratKeluarFormValues {
   id: string;
   author: string;
   hasFile: boolean;
-  file?: FormData;
-  url: string;
+  file?: FormData | undefined;
+  url?: string;
 }
 
 const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: string) => {
@@ -42,12 +42,12 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
     initialValues,
     enableReinitialize: true,
     validationSchema: object().shape(createSchema(initialValues)),
-    onSubmit: async (values, { resetForm, setSubmitting, setFieldValue }) => {
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
       setSubmitting(true);
-      const { hasFile, file, ...rest } = values;
+      const { file, ...rest } = values;
 
       try {
-        if (hasFile) {
+        if (file) {
           const {
             data: { url },
           } = await axios.post("/api/v1/surat-keluar/upload", file, {
@@ -56,8 +56,7 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
             },
           });
 
-          await setFieldValue("url", url);
-          await updateSuratKeluar(rest);
+          await updateSuratKeluar({ ...rest, url });
           await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
         }
       } catch (e) {
@@ -142,9 +141,8 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
       suratKeputusan = "SK-FRA";
     }
 
-    const nomorSurat = `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
-      jenisSurat ? `${jenisSurat}/` : ""
-    }${arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`;
+    const nomorSurat = `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${jenisSurat ? `${jenisSurat}/` : ""
+      }${arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`;
 
     return nomorSurat;
   };

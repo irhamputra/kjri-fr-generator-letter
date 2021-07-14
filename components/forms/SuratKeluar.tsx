@@ -9,7 +9,7 @@ import { Auth } from "../../typings/AuthQueryClient";
 import { useRouter } from "next/router";
 import Dropzone from "../Dropzone";
 
-type SuratKeluarInitialValue = Omit<useSuratKeluarFormValues, "file">;
+type SuratKeluarInitialValue = useSuratKeluarFormValues;
 
 const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ editId, backUrl }) => {
   const [disabled, setDisabled] = React.useState(false);
@@ -20,7 +20,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
   const { data: dataSuratKeluar = {} } = useQuerySuratKeluarById(editId as string);
   const { data: listJenisSurat } = useQueryJenisSurat();
 
-  const { recipient, content, jenisSurat, nomorSurat, arsipId, id, author } = dataSuratKeluar;
+  const { recipient, content, jenisSurat, nomorSurat, arsipId, id, author, url } = dataSuratKeluar;
 
   const initialValues: SuratKeluarInitialValue = {
     recipient: recipient ?? "",
@@ -30,8 +30,8 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     arsipId: arsipId ?? "",
     id: id ?? "",
     author: author ?? query?.email,
+    url: url ?? "",
     hasFile: false,
-    url: "",
   };
 
   const {
@@ -171,7 +171,7 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
 
       <div className="col-12 mb-3">
         <p>Upload Surat Keluar</p>
-        <Dropzone disabled={values.hasFile} onSetFieldValue={setFieldValue} />
+        <Dropzone path={values?.url as string} onSetFieldValue={setFieldValue} />
       </div>
 
       <button type="submit" disabled={isSubmitting} className="btn btn-dark">

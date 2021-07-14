@@ -10,6 +10,7 @@ import axios from "axios";
 import { downloadURI } from "../../../utils/download";
 import toast from "react-hot-toast";
 import { SuratKeluarCollection } from "../../../typings/SuratKeluar";
+import { useDownloadFile } from "../../../hooks/useDownloadSurat";
 
 const ListSuratKeluar: NextPage = () => {
   const { push } = useRouter();
@@ -17,10 +18,11 @@ const ListSuratKeluar: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
 
-  const handlePrint = async (id: string) => {
+  const { mutateAsync } = useDownloadFile();
+
+  const handlePrint = async (url: string) => {
     try {
-      const { data } = await axios.get(`/api/v1/surat-keluar/${id}/download`);
-      downloadURI(data.url);
+      await mutateAsync(url);
     } catch (e) {
       console.error(e);
       toast.error(e.response?.data?.error);
@@ -44,12 +46,12 @@ const ListSuratKeluar: NextPage = () => {
       {
         Header: "Opsi",
         accessor: "col4",
-        Cell: ({ value }: { value: { id: string; url: string } }) => (
+        Cell: ({ value }: { value: string }) => (
           <div style={{ display: "flex" }}>
             <button
-              disabled={!value.url}
-              className={`btn ${!value.url ? "btn-outline-dark" : "btn-outline-primary"}`}
-              onClick={() => handlePrint(value.id)}
+              disabled={!value}
+              className={`btn ${!value ? "" : "btn-outline-primary"}`}
+              onClick={() => handlePrint(value)}
             >
               <Printer size={25} />
             </button>
@@ -62,11 +64,11 @@ const ListSuratKeluar: NextPage = () => {
   );
 
   const data = listSuratKeluar?.listSurat.map?.(
-    ({ nomorSurat, content, id, url }: SuratKeluarCollection, index: number) => ({
+    ({ nomorSurat, content, url }: SuratKeluarCollection, index: number) => ({
       col1: index + 1,
       col2: nomorSurat,
       col3: content,
-      col4: { id, url },
+      col4: url,
     })
   );
 

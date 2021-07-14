@@ -1,9 +1,8 @@
 import * as React from "react";
 import { useDropzone } from "react-dropzone";
-import { useMutation } from "react-query";
 import { FormikErrors } from "formik";
 import type { useSuratKeluarFormValues } from "../hooks/form/useSuratKeluarForm";
-import { toast } from "react-hot-toast";
+import { FilePdf } from "react-bootstrap-icons";
 
 const baseStyle: React.CSSProperties = {
   flex: 1,
@@ -23,42 +22,23 @@ const baseStyle: React.CSSProperties = {
 };
 
 const Dropzone: React.FC<{
+  path: string;
   onSetFieldValue?: (
     field: string,
     value: any,
     shouldValidate?: boolean | undefined
   ) => Promise<void> | Promise<FormikErrors<useSuratKeluarFormValues>>;
   disabled?: boolean;
-}> = ({ onSetFieldValue, disabled }) => {
-  const { mutateAsync } = useMutation(
-    "uploadSuratKeluar",
-    async (file: FormData) => {
-      try {
-        if (onSetFieldValue) {
-          await onSetFieldValue("file", file);
-        }
-      } catch (e) {
-        throw new Error(e.message);
-      }
-    },
-    {
-      onSuccess: async (file) => {
-        if (onSetFieldValue) {
-          await onSetFieldValue("hasFile", true);
-        }
-      },
-      onError: () => {
-        toast.error("Terjadi kesalahan, silahkan coba kembali!");
-      },
-    }
-  );
-
+}> = ({ onSetFieldValue, disabled, path }) => {
   const onDrop = React.useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length) {
       const formData = new FormData();
       formData.append("file", acceptedFiles[0]);
-
-      await mutateAsync(formData);
+      if (onSetFieldValue) {
+        onSetFieldValue("hasFile", true);
+        onSetFieldValue("url", acceptedFiles[0].name);
+        onSetFieldValue("file", formData);
+      }
     }
   }, []);
 
@@ -74,10 +54,13 @@ const Dropzone: React.FC<{
     <section>
       <div {...getRootProps({ style: baseStyle })}>
         <input {...getInputProps()} />
-        {disabled ? (
-          <span>File telah terupload</span>
+        {!!path ? (
+          <>
+            <FilePdf height={120} width={120} style={{ marginBottom: 32, display: "block" }} />
+            <span>{path}</span>
+          </>
         ) : (
-          <span>Klik box ini atau drag 'n drop file yang akan di upload</span>
+          <span>"Klik box ini atau drag 'n drop file yang akan di upload"</span>
         )}
       </div>
     </section>
