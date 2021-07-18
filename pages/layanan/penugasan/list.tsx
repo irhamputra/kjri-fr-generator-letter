@@ -45,7 +45,7 @@ const ListSurat: NextPage = () => {
       {
         Header: "Opsi",
         accessor: "col4",
-        Cell: ({ value }: { value: Pick<SuratTugasRes, "listPegawai" | "suratTugasId"> }) => {
+        Cell: ({ value }: { value: Pick<SuratTugasRes, "listPegawai" | "suratTugasId" | "downloadUrl"> }) => {
           const listPegawai = value.listPegawai?.map(({ pegawai }) => pegawai) as Pegawai[];
           return (
             // <div style={{ display: "flex" }}>
@@ -62,7 +62,11 @@ const ListSurat: NextPage = () => {
                   </button>
                 </a>
               </Link>
-              <ButtonPrint suratTugasId={value.suratTugasId as string} pegawai={listPegawai} />
+              <ButtonPrint
+                suratTugasId={value.suratTugasId as string}
+                pegawai={listPegawai}
+                downloadUrl={value.downloadUrl}
+              />
 
               {/* <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
               <Printer size={25} />
@@ -76,11 +80,11 @@ const ListSurat: NextPage = () => {
   );
 
   const data = listSuratTugas?.map?.(
-    ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai }: SuratTugasRes, index: number) => ({
+    ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl }: SuratTugasRes, index: number) => ({
       col1: index + 1,
       col2: nomorSurat,
       col3: tujuanDinas,
-      col4: { suratTugasId, listPegawai },
+      col4: { suratTugasId, listPegawai, downloadUrl: downloadUrl },
     })
   );
 
@@ -174,7 +178,11 @@ const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string; pega
   );
 };
 
-const ButtonPrint: React.FC<{ suratTugasId: string; pegawai: Pegawai[] }> = ({ suratTugasId, pegawai }) => {
+const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> & { pegawai: Pegawai[] }> = ({
+  suratTugasId,
+  pegawai,
+  downloadUrl,
+}) => {
   const [modalOpen, setModalOpen] = React.useState(false);
 
   const { mutateAsync: mutateSuratTugas, isLoading: isLoadingSuratTugas } = useDownloadSuratTugas();
@@ -188,8 +196,8 @@ const ButtonPrint: React.FC<{ suratTugasId: string; pegawai: Pegawai[] }> = ({ s
     await mutateSuratTugas(suratTugasId);
   };
 
-  const handleSuratPenugasan = async (suratTugasId: string, uid: string) => {
-    await mutateSuratPenugasan({ suratTugasId, uid });
+  const handleSuratPenugasan = async (suratTugasId: string, uid: string, forceRecreate: boolean) => {
+    await mutateSuratPenugasan({ suratTugasId, uid, forceRecreate });
   };
   return (
     <>
@@ -233,6 +241,8 @@ const ButtonPrint: React.FC<{ suratTugasId: string; pegawai: Pegawai[] }> = ({ s
               </div>
 
               {pegawai.map(({ uid, displayName }) => {
+                const canRecreate = downloadUrl?.suratPenugasan?.[uid];
+
                 return (
                   <div className="d-flex mb-2">
                     <div style={{ flex: "1 1" }}>Surat Penugasan {displayName}</div>
@@ -240,9 +250,20 @@ const ButtonPrint: React.FC<{ suratTugasId: string; pegawai: Pegawai[] }> = ({ s
                       {isLoadingSuratPenugasan && uid === downloadUid ? (
                         <span>Downloading...</span>
                       ) : (
-                        <a href="#" onClick={() => handleSuratPenugasan(suratTugasId, uid)}>
-                          Download
-                        </a>
+                        <div className="d-flex">
+                          <a href="#" onClick={() => handleSuratPenugasan(suratTugasId, uid, false)}>
+                            Download
+                          </a>
+                          {canRecreate && (
+                            <a
+                              href="#"
+                              style={{ marginLeft: 16 }}
+                              onClick={() => handleSuratPenugasan(suratTugasId, uid, true)}
+                            >
+                              Buat Ulang
+                            </a>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>

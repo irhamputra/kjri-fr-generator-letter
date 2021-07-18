@@ -1,11 +1,10 @@
-import axios from "axios";
 import { Field, FieldArray, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
-import { ArrowRight, GeoFill } from "react-bootstrap-icons";
+import { GeoFill } from "react-bootstrap-icons";
 import { object } from "yup";
 import StepperDown from "../../components/StepperDown";
-import { FormRampunganFillInitialValues, RampunganFillReqBody } from "../../typings/RampunganFill";
+import { FormRampunganFillInitialValues } from "../../typings/RampunganFill";
 import { createRampungan } from "../../utils/createHelper";
 import { DatePickerComponent } from "../CustomField";
 

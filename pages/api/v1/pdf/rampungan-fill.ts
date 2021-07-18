@@ -3,7 +3,6 @@ import { PDFDocument } from "pdf-lib";
 import { RampunganFillReqBody } from "../../../../typings/RampunganFill";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
-const fs = require("fs");
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
@@ -11,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     try {
       const { rampungan, pembuatKomitmenName, pembuatKomitmenNIP } = <RampunganFillReqBody>req.body;
-      const formUrl = "http://localhost:3000/docs/Rampungan%20Fill.pdf";
+      const formUrl = "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRampungan%20Fill.pdf?alt=media&token=cbb0764d-2e42-449e-bcfc-c003fee8832a";
       const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
 
       if (rampungan.length > 3) res.status(500).json({ error: "data length must be below 3" });

@@ -5,21 +5,6 @@ import * as React from "react";
 import { Eye, Printer, Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Table from "../../components/Table";
-import Modal from "react-modal";
-
-import { useDownloadSuratPenugasan, useDownloadSuratTugas } from "../../hooks/useDownloadSurat";
-
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    border: "0px",
-  },
-};
 
 const SuratPerjalanan: NextPage = () => {
   const { data: listSuratPerjalanan, isLoading } = useQuerySuratPerjalanan();

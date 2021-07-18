@@ -1,6 +1,6 @@
 import { useMutation } from "react-query";
 import axios from "axios";
-import { saveAs } from "file-saver"
+import { saveAs } from "file-saver";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 
@@ -40,9 +40,9 @@ const useDownloadSuratPenugasan = () => {
   const [downloadUid, setDownloadUid] = useState("");
   const mutation = useMutation(
     "downloadSuratTugas",
-    async ({ suratTugasId, uid }: { suratTugasId: string, uid: string }) => {
+    async ({ suratTugasId, uid, forceRecreate }: { suratTugasId: string; uid: string; forceRecreate: boolean }) => {
       setDownloadUid(uid);
-      const { data } = await axios.post("/api/v1/print/penugasan", { suratTugasId, uid });
+      const { data } = await axios.post("/api/v1/print/penugasan", { suratTugasId, uid, forceRecreate });
       return data;
     },
     {
@@ -53,7 +53,7 @@ const useDownloadSuratPenugasan = () => {
       },
     }
   );
-  return { downloadUid, ...mutation }
+  return { downloadUid, ...mutation };
 };
 
 export { useDownloadSuratTugas, useDownloadSuratPenugasan, useDownloadFile };

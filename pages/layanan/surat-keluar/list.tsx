@@ -6,8 +6,6 @@ import { Printer, Search } from "react-bootstrap-icons";
 import Table from "../../../components/Table";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../../typings/AuthQueryClient";
-import axios from "axios";
-import { downloadURI } from "../../../utils/download";
 import toast from "react-hot-toast";
 import { SuratKeluarCollection } from "../../../typings/SuratKeluar";
 import { useDownloadFile } from "../../../hooks/useDownloadSurat";

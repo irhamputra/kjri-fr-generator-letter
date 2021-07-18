@@ -3,25 +3,29 @@ import { db, storage } from "../../../../../utils/firebase";
 import { cors } from "../../../../../utils/middlewares";
 import { SuratTugasRes } from "../../../../../typings/SuratTugas";
 import { PDFDocument } from "pdf-lib";
-import dayjs from "dayjs";
-
-const formattedDayjs = (date: Date) => dayjs(date).format("DD.MM.YYYY");
-
+import {
+  createKwitansiFill,
+  createPernyataanFill,
+  createRampunganFill,
+  createRincianFill,
+} from "../../../../../utils/pdfLib";
+import fs from "fs";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "POST") {
     try {
-      const { suratTugasId, uid } = req.body;
+      const { suratTugasId, uid, forceRecreate } = req.body;
 
       const destination = `penugasan/${suratTugasId}-${uid}.pdf`;
       const fileRef = storage.bucket().file(destination);
       const suratTugasRef = db.collection("SuratTugas").doc(suratTugasId as string);
       const snapshot = await suratTugasRef.get();
 
-      const { listPegawai = [], pembuatKomitmen, downloadUrl } = snapshot.data() as SuratTugasRes;
+      const suratTugas = snapshot.data() as SuratTugasRes;
+      const { listPegawai = [], pembuatKomitmen, downloadUrl, nomorSurat } = suratTugas;
 
-      if (downloadUrl?.suratPenugasan?.[uid]) {
+      if (downloadUrl?.suratPenugasan?.[uid] && !forceRecreate) {
         const signedUrls = await fileRef.getSignedUrl({
           action: "read",
           expires: Date.now() + 15 * 60 * 1000, // 15 minutes,
@@ -35,99 +39,60 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      // Create Document
-      const formUrl =
-        "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRampungan%20Fill.pdf?alt=media&token=cbb0764d-2e42-449e-bcfc-c003fee8832af";
-      const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
-
       const iPegawai = listPegawai.findIndex(({ pegawai }) => pegawai.uid === uid);
       const rampungan = listPegawai[iPegawai].destinasi ?? [];
+      const jaldis = await db
+        .collection("JalDis")
+        .limit(1)
+        .where("golongan", "==", listPegawai[iPegawai].pegawai.golongan)
+        .get();
+      const jaldisSnap = jaldis.docs[0].data();
 
       if (rampungan.length > 3) {
         res.status(500).json({ error: "data length must be below 3" });
         return res.end();
       }
 
-      //  tujuan_1_rampungan
-      const pdfDoc = await PDFDocument.load(formPdfBytes);
+      try {
+        const mergedPdf = await PDFDocument.create();
 
-      const form = pdfDoc.getForm();
+        const pdfBytes = await createRampunganFill(pembuatKomitmen, rampungan);
+        const rincianPdf = await createRincianFill(suratTugas, uid, jaldisSnap?.harga);
+        const pernyataanFill = await createPernyataanFill(listPegawai[iPegawai].pegawai, nomorSurat);
+        const kwitansiPdf = await createKwitansiFill(pembuatKomitmen);
 
-      const namaPembuatKomitmen = form.getTextField("nama_pejabat_komitmen_rincian");
-      const nip1 = form.getTextField("NIP_1_rincian");
+        const copyA = await PDFDocument.load(pdfBytes);
+        const copyB = await PDFDocument.load(rincianPdf);
+        const copyC = await PDFDocument.load(pernyataanFill);
+        const copyD = await PDFDocument.load(kwitansiPdf);
 
-      namaPembuatKomitmen.setText(pembuatKomitmen?.name);
-      nip1.setText(pembuatKomitmen?.nip);
+        const copiedPagesA = await mergedPdf.copyPages(copyA, copyA.getPageIndices());
+        copiedPagesA.forEach((page) => mergedPdf.addPage(page));
 
-      const tujuan1 = form.getTextField("tujuan_1_rampungan");
-      const tanggalTujuan1 = form.getTextField("tanggal_1_rincian");
-      const kedatangan1 = form.getTextField("kedatangan_1_rincian");
-      const tanggalKedatangan1 = form.getTextField("tanggal_2_rincian");
+        const copiedPagesB = await mergedPdf.copyPages(copyB, copyB.getPageIndices());
+        copiedPagesB.forEach((page) => mergedPdf.addPage(page));
 
-      if (rampungan[0]) {
-        tujuan1.setText(rampungan[0].tibaDi);
-        tanggalTujuan1.setText(formattedDayjs(rampungan[0].tanggalPergi));
-        kedatangan1.setText(rampungan[0].tibaDi);
-        tanggalKedatangan1.setText(formattedDayjs(rampungan[0].tanggalTiba));
+        const copiedPagesC = await mergedPdf.copyPages(copyC, copyC.getPageIndices());
+        copiedPagesC.forEach((page) => mergedPdf.addPage(page));
+
+        const copiedPagesD = await mergedPdf.copyPages(copyD, copyD.getPageIndices());
+        copiedPagesD.forEach((page) => mergedPdf.addPage(page));
+
+        const mergedPdfFile = await mergedPdf.save();
+
+        fs.writeFile(Math.random() + ".pdf", Buffer.from(mergedPdfFile), () => {});
+
+        await fileRef.save(mergedPdfFile as Buffer);
+
+        await suratTugasRef.update({
+          downloadUrl: {
+            ...downloadUrl,
+            suratPenugasan: { ...downloadUrl?.suratPenugasan, [uid]: destination },
+          },
+        });
+      } catch (e) {
+        console.error(e);
       }
-
-      const berangkat1 = form.getTextField("berangkat_1_rincian");
-      const tujuan2 = form.getTextField("tujuan_2_rincian");
-      const tanggalTujuan2 = form.getTextField("tanggal_2_rincian");
-      const kedatangan2 = form.getTextField("kedatangan_2_rincian");
-      const tanggalKedatangan2 = form.getTextField("tanggal_3_rincian");
-
-      if (rampungan[1]) {
-        berangkat1.setText(rampungan[1].pergiDari);
-        tujuan2.setText(rampungan[1].tibaDi);
-        tanggalTujuan2.setText(formattedDayjs(rampungan[1].tanggalPergi));
-        kedatangan2.setText(rampungan[1].tibaDi);
-        tanggalKedatangan2.setText(formattedDayjs(rampungan[1].tanggalTiba));
-      }
-
-      const berangkat2 = form.getTextField("berangkat_2_rincian");
-      const tujuan3 = form.getTextField("tujuan_3_rincian");
-      const tanggalTujuan3 = form.getTextField("tanggal_4_rincian");
-      const kedatangan3 = form.getTextField("kedatangan_3_rincian");
-      const tanggalKedatangan3 = form.getTextField("tanggal_5_rincian");
-
-      if (rampungan[2]) {
-        berangkat2.setText(rampungan[2].pergiDari);
-        tujuan3.setText(rampungan[2].tibaDi);
-        tanggalTujuan3.setText(formattedDayjs(rampungan[2].tanggalPergi));
-        kedatangan3.setText(rampungan[2].tibaDi);
-        tanggalKedatangan3.setText(formattedDayjs(rampungan[2].tanggalTiba));
-      }
-
-      tujuan1.enableReadOnly();
-      tanggalTujuan1.enableReadOnly();
-      kedatangan1.enableReadOnly();
-      tanggalKedatangan1.enableReadOnly();
-
-      berangkat1.enableReadOnly();
-      tujuan2.enableReadOnly();
-      tanggalTujuan2.enableReadOnly();
-      kedatangan2.enableReadOnly();
-      tanggalKedatangan2.enableReadOnly();
-
-      berangkat2.enableReadOnly();
-      tujuan3.enableReadOnly();
-      tanggalTujuan3.enableReadOnly();
-      kedatangan3.enableReadOnly();
-      tanggalKedatangan3.enableReadOnly();
-
-      namaPembuatKomitmen.enableReadOnly();
-      nip1.enableReadOnly();
-
-      const pdfBytes = await pdfDoc.save();
-      await fileRef.save(pdfBytes as Buffer);
-
-      await suratTugasRef.update({
-        downloadUrl: {
-          ...downloadUrl,
-          suratPenugasan: { ...downloadUrl?.suratPenugasan, [uid]: destination },
-        },
-      });
 
       const signedUrls = await fileRef.getSignedUrl({
         action: "read",
