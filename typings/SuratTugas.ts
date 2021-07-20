@@ -6,19 +6,24 @@ export interface SuratTugasRes {
   nomorSurat: string;
   suratTugasId: string;
   tujuanDinas: string;
+  fullDayKurs: number;
 
   textPembuka?: RichTextValue;
   textTengah?: RichTextValue;
   textPenutup?: RichTextValue;
 
-  listPegawai?: { durasi: number; pegawai: Pegawai; destinasi: RampunganFill[] }[];
+  listPegawai?: ListPegawai[];
   pembuatKomitmen?: {
     name: string;
     nip: string;
   };
 
   downloadUrl?: {
-    suratPenugasan: string;
+    suratPenugasan: {
+      [k in string]: string;
+    }
     suratTugas: string;
   };
 }
+
+export type ListPegawai = { uangHarian: string; durasi: number; pegawai: Pegawai; destinasi: RampunganFill[] }

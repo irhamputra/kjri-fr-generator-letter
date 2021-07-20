@@ -5,11 +5,15 @@ import { Pencil, Printer, Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Table from "../../components/Table";
 import useQuerySuratDibuat from "../../hooks/query/useQuerySuratDibuat";
+import { SuratKeluarCollection } from "../../typings/SuratKeluar";
+import { useDownloadFile } from "../../hooks/useDownloadSurat";
 
 const SuratDibuat: NextPage = () => {
   const { data: suratDibuat = [], isLoading } = useQuerySuratDibuat();
-  const handlePrint = async (id: string) => {
-    console.log(id);
+  const { mutateAsync } = useDownloadFile();
+
+  const handlePrint = async (url: string) => {
+    await mutateAsync(url);
   };
 
   const columns = React.useMemo(
@@ -29,17 +33,20 @@ const SuratDibuat: NextPage = () => {
       {
         Header: "Opsi",
         accessor: "col4",
-        Cell: ({ value }: { value: string }) => (
+        Cell: ({ value }: { value: Pick<SuratKeluarCollection, "id" | "url"> }) => (
           <div style={{ display: "flex" }}>
-            <Link href={`/layanan/surat-keluar/${value}?edit=true&originUrl=/created-surat`} passHref>
+            <Link href={`/layanan/surat-keluar/${value.id}?edit=true&originUrl=/created-surat`} passHref>
               <a>
                 <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
                   <Pencil size={25} />
                 </button>
               </a>
             </Link>
-
-            <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
+            <button
+              className={`btn ${value.url ? "btn-outline-primary" : "btn-outlined-dark"}`}
+              disabled={!value.url}
+              onClick={() => handlePrint(value.url)}
+            >
               <Printer size={25} />
             </button>
           </div>
@@ -49,14 +56,12 @@ const SuratDibuat: NextPage = () => {
     []
   );
 
-  const data = suratDibuat?.map?.(
-    ({ nomorSurat, content, id }: { nomorSurat: string; content: string; id: string }, index: number) => ({
-      col1: index + 1,
-      col2: nomorSurat,
-      col3: content,
-      col4: id,
-    })
-  );
+  const data = suratDibuat?.map?.(({ nomorSurat, content, id, url }: SuratKeluarCollection, index: number) => ({
+    col1: index + 1,
+    col2: nomorSurat,
+    col3: content,
+    col4: { id, url },
+  }));
 
   if (isLoading) return <p>Loading...</p>;
 

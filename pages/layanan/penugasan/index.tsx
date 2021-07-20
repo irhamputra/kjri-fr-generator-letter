@@ -10,6 +10,7 @@ const Penugasan: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
   const [activeIndex, setActive] = React.useState(0);
+
   const options = [
     { number: 1, text: "Nomor Surat dan Staff" },
     { number: 2, text: "Destinasi" },
@@ -24,6 +25,7 @@ const Penugasan: NextPage = () => {
         title="Penugasan | Sistem Aplikasi KJRI Frankfurt"
         description="Penugasan Sistem Aplikasi KJRI Frankfurt"
       />
+
       <h3 style={{ marginBottom: 24 }}>Surat Penugasan Perjalanan Dinas (SPD)</h3>
 
       <div style={{ background: "#f8f8f8", borderRadius: 4 }} className="p-3">

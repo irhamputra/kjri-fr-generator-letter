@@ -47,20 +47,6 @@ const Sidebar = (): JSX.Element => {
             </Link>
           </li>
 
-          <li className="list-group-item text-white bg-transparent" style={{ borderColor: "#ffffff20" }}>
-            <Link href="/surat-perjalanan">
-              <a className="d-flex align-items-center p-2">
-                <FileEarmarkPerson size={25} style={{ color: "white" }} />
-                <p className="my-0 mx-2 ">Surat Perjalanan</p>
-                {!isLoading && data > 0 && (
-                  <span className="badge badge-danger" style={{ background: "#dc3545" }}>
-                    {data}
-                  </span>
-                )}
-              </a>
-            </Link>
-          </li>
-
           {query?.isAdmin && (
             <li className="list-group-item text-white bg-transparent">
               <Link href="/pengaturan">

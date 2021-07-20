@@ -1,10 +1,11 @@
-import React, { PropsWithChildren, useCallback, useState } from "react";
+import React, { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import isHotkey from "is-hotkey";
-import { Editable, withReact, useSlate, Slate } from "slate-react";
-import { Editor, createEditor, BaseEditor } from "slate";
+import { Editable, withReact, useSlate, Slate, ReactEditor } from "slate-react";
+import { Editor, createEditor, BaseEditor, Descendant } from "slate";
 
 import { Button, Toolbar } from "./RichTextComponents";
 import { TypeBold, TypeItalic, TypeUnderline } from "react-bootstrap-icons";
+import { withHistory } from "slate-history";
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -13,21 +14,26 @@ const HOTKEYS = {
   "mod+`": "code",
 };
 
-const RichTextFieldComponent = ({
-  name,
-  value,
-  onChange,
-}: {
-  name: string;
-  value: any;
-  onChange: (value: any) => any;
-}) => {
+const initialValue: Descendant[] = [
+  {
+    children: [{ text: "" }],
+  },
+];
+
+const RichTextField = ({ onChange, onFocus }: { onChange: (value: any) => any; onFocus?: (value?: any) => any }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
-  const [editor] = useState(() => withReact(createEditor() as any));
+  const editorRef = useRef();
+  if (!editorRef.current) editorRef.current = withHistory(withReact(createEditor() as any));
+  const editor: ReactEditor = editorRef.current as any;
+
+  const [value, setValue] = useState<Descendant[]>(initialValue);
+  useEffect(() => {
+    onChange(value);
+  }, [value]);
   return (
     <div style={{ border: "1px solid rgb(206, 212, 218)", borderRadius: 8, overflow: "hidden" }}>
-      <Slate editor={editor} value={value} onChange={onChange}>
+      <Slate editor={editor} value={value} onChange={setValue}>
         <Toolbar>
           <MarkButton format="bold">
             <TypeBold />
@@ -40,13 +46,13 @@ const RichTextFieldComponent = ({
           </MarkButton>
         </Toolbar>
         <Editable
-          name={name}
           style={{ padding: 16 }}
           renderElement={renderElement}
           renderLeaf={renderLeaf}
           placeholder="Enter some rich text…"
+          onFocus={onFocus}
           spellCheck
-          autoFocus
+          // autoFocus
           onKeyDown={(event) => {
             for (const hotkey in HOTKEYS) {
               if (isHotkey(hotkey, event as any)) {
@@ -143,4 +149,4 @@ const MarkButton = ({ format, children }: PropsWithChildren<{ format: string }>)
     </Button>
   );
 };
-export default RichTextFieldComponent;
+export default RichTextField;

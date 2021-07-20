@@ -1,7 +1,6 @@
 import axios from "axios";
 
 import { useEffect, useState } from "react";
-import { useMyQuery } from "../../hooks/useMyQuery";
 import { FormRampunganFillInitialValues } from "../../typings/RampunganFill";
 import { createRampungan } from "../../utils/createHelper";
 import FormRampunganFill from "./FormRampunganFill";
@@ -36,6 +35,7 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
       try {
         const newValues = {
           nomorSurat: values.suratStaff.nomorSurat,
+          fullDayKurs,
           listPegawai: namaPegawai.map((v) => {
             const indexRampungan = data.findIndex(({ nip: nipR }) => nipR === v.pegawai.nip);
             const rampungan = data[indexRampungan].rampungan;

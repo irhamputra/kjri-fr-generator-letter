@@ -26,7 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const { nomorSurat, listPegawai, pembuatKomitmenName, pembuatKomitmenNIP } = req.body;
+    const { fullDayKurs, nomorSurat, listPegawai, pembuatKomitmenName, pembuatKomitmenNIP } = req.body;
 
     if (listPegawai.length <= 0) {
       res.status(404).json({ error: "Tidak ada data yang tersimpan" });
@@ -47,6 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         .doc(id)
         .update({
           listPegawai,
+          fullDayKurs,
           pembuatKomitmen: {
             name: pembuatKomitmenName,
             nip: pembuatKomitmenNIP,
