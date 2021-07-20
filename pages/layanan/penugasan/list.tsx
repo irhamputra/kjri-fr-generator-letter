@@ -55,7 +55,7 @@ const ListSurat: NextPage = () => {
             //   <DeleteAction messageId={value} />
             // </div>
             <div style={{ display: "flex" }}>
-              <Link href={`#`} passHref>
+              <Link href={`/layanan/penugasan/${value.suratTugasId}`} passHref>
                 <a>
                   <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
                     <Eye size={25} />

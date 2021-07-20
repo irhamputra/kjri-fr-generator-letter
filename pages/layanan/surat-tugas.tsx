@@ -12,8 +12,8 @@ import { NextSeo } from "next-seo";
 import { v4 } from "uuid";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useMyQuery } from "../../hooks/useMyQuery";
-import RichTextExample from "../../components/rich-text-field/RichTextField";
-
+import RichTextField from "../../components/rich-text-field/RichTextField";
+import Image from "next/image";
 const SuratTugas: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
@@ -30,24 +30,25 @@ const SuratTugas: NextPage = () => {
     }
   );
 
+  const [hint, setHint] = React.useState(-1);
+
+  const hintList = ["/images/e1.png", "/images/e2.png", "/images/e3.png"];
+
   const initialValues = {
     nomorSurat: "",
     tujuanDinas: "",
     textPembuka: [
       {
-        type: "paragraph",
         children: [{ text: "" }],
       },
     ],
     textTengah: [
       {
-        type: "paragraph",
         children: [{ text: "" }],
       },
     ],
     textPenutup: [
       {
-        type: "paragraph",
         children: [{ text: "" }],
       },
     ],
@@ -96,94 +97,119 @@ const SuratTugas: NextPage = () => {
         title="Surat Tugas | Sistem Aplikasi KJRI Frankfurt"
         description="Surat Tugas Sistem Aplikasi KJRI Frankfurt"
       />
-      <h4>Surat Tugas (ST)</h4>
-      <FormikProvider
-        value={{
-          handleChange,
-          handleSubmit,
-          values,
-          setFieldValue,
-          errors,
-          touched,
-          resetForm,
-          isSubmitting,
-          ...restFormik,
-        }}
-      >
-        <div className="mb-5" style={{ maxWidth: 640 }}>
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <label className="form-label">Nomor Surat Arsip</label>
-              <div className="col-4">
-                <input
-                  className="form-control"
-                  name="nomorSurat"
-                  onChange={handleChange}
-                  value={values.nomorSurat}
-                  disabled
-                />
-                {errors.nomorSurat && touched.nomorSurat && <small className="text-danger">{errors.nomorSurat}</small>}
-              </div>
+      <div className="d-flex">
+        <div style={{ flex: 1 }}>
+          <h4>Surat Tugas (ST)</h4>
+          <FormikProvider
+            value={{
+              handleChange,
+              handleSubmit,
+              values,
+              setFieldValue,
+              errors,
+              touched,
+              resetForm,
+              isSubmitting,
+              ...restFormik,
+            }}
+          >
+            <div className="mb-5" style={{ maxWidth: 640 }}>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <label className="form-label">Nomor Surat Arsip</label>
+                  <div className="col-4">
+                    <input
+                      className="form-control"
+                      name="nomorSurat"
+                      onChange={handleChange}
+                      value={values.nomorSurat}
+                      disabled
+                    />
+                    {errors.nomorSurat && touched.nomorSurat && (
+                      <small className="text-danger">{errors.nomorSurat}</small>
+                    )}
+                  </div>
 
-              {values.nomorSurat ? null : (
-                <div className="col-4">
-                  <button type="button" onClick={onCounterId} className="btn btn-dark">
-                    Generate Nomor Surat
+                  {values.nomorSurat ? null : (
+                    <div className="col-4">
+                      <button type="button" onClick={onCounterId} className="btn btn-dark">
+                        Generate Nomor Surat
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-3">
+                  <label className="form-label">Nama Dinas / Tujuan Dinas</label>
+                  <input
+                    disabled={isSubmitting}
+                    className="form-control"
+                    name="tujuanDinas"
+                    onChange={handleChange}
+                    onFocus={() => setHint(-1)}
+                    value={values.tujuanDinas}
+                  />
+                  {errors.tujuanDinas && touched.tujuanDinas && (
+                    <small className="text-danger">{errors.tujuanDinas}</small>
+                  )}
+                </div>
+                <div className="mt-3">
+                  <label className="form-label">Text pembuka</label>
+                  <RichTextField
+                    onFocus={() => setHint(0)}
+                    onChange={(value) => {
+                      setFieldValue("textPembuka", value);
+                    }}
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <label className="form-label">Text tengah</label>
+                  <RichTextField
+                    onFocus={() => setHint(1)}
+                    onChange={(value) => {
+                      setFieldValue("textTengah", value);
+                    }}
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <label className="form-label">Text penutup</label>
+                  <RichTextField
+                    onFocus={() => setHint(2)}
+                    onChange={(value) => {
+                      setFieldValue("textPenutup", value);
+                    }}
+                  />
+                </div>
+
+                <div className="mt-3">
+                  <button disabled={isSubmitting} className="btn btn-dark " type="submit">
+                    Simpan Surat
+                  </button>
+
+                  <button className="btn btn-outline-danger mx-3" onClick={() => resetForm()} type="reset">
+                    Ulangi
                   </button>
                 </div>
-              )}
+              </form>
             </div>
-
-            <div className="mt-3">
-              <label className="form-label">Nama Dinas / Tujuan Dinas</label>
-              <input
-                disabled={isSubmitting}
-                className="form-control"
-                name="tujuanDinas"
-                onChange={handleChange}
-                value={values.tujuanDinas}
-              />
-              {errors.tujuanDinas && touched.tujuanDinas && <small className="text-danger">{errors.tujuanDinas}</small>}
-            </div>
-            <div className="mt-3">
-              <label className="form-label">Text pembuka</label>
-              <RichTextExample
-                name="textPembuka"
-                onChange={(value) => setFieldValue("textPembuka", value)}
-                value={values.textPembuka}
-              />
-            </div>
-
-            <div className="mt-3">
-              <label className="form-label">Text tengah</label>
-              <RichTextExample
-                name="textTengah"
-                onChange={(value) => setFieldValue("textTengah", value)}
-                value={values.textTengah}
-              />
-            </div>
-
-            <div className="mt-3">
-              <label className="form-label">Text penutup</label>
-              <RichTextExample
-                name="textPenutup"
-                onChange={(value) => setFieldValue("textPenutup", value)}
-                value={values.textPenutup}
-              />
-            </div>
-
-            <div className="mt-3">
-              <button disabled={isSubmitting} className="btn btn-dark " type="submit">
-                Simpan Surat
-              </button>
-
-              <button className="btn btn-outline-danger mx-3" onClick={() => resetForm()} type="reset">
-                Ulangi
-              </button>
-            </div>
-          </form>
+          </FormikProvider>
         </div>
-      </FormikProvider>
+        <div
+          style={{
+            flex: 1,
+            paddingRight: 64,
+            paddingLeft: 64,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+          }}
+        >
+          {hint !== -1 && <img width="100%" height="100%" loading="lazy" src={hintList[hint]} />}
+        </div>
+      </div>
     </section>
   );
 };
