@@ -1,6 +1,6 @@
 import * as React from "react";
-import { GetServerSideProps, NextPage } from "next";
-import { useFormik, Field, FormikProvider } from "formik";
+import { NextPage } from "next";
+import { useFormik, FormikProvider } from "formik";
 import { object } from "yup";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -13,7 +13,7 @@ import { v4 } from "uuid";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useMyQuery } from "../../hooks/useMyQuery";
 import RichTextField from "../../components/rich-text-field/RichTextField";
-import Image from "next/image";
+
 const SuratTugas: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");

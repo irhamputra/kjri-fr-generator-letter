@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
 import isHotkey from "is-hotkey";
 import { Editable, withReact, useSlate, Slate, ReactEditor } from "slate-react";
 import { Editor, createEditor, BaseEditor, Descendant } from "slate";
