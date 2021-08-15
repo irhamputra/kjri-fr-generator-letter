@@ -69,16 +69,18 @@ const ListSurat: NextPage = () => {
     []
   );
 
-  const data = listSuratTugas?.map?.(
-    ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl }: SuratTugasRes, index: number) => ({
-      col1: index + 1,
-      col2: nomorSurat,
-      col3: tujuanDinas,
-      col4: { suratTugasId, listPegawai, downloadUrl: downloadUrl },
-    })
-  );
+  const data =
+    suratTugasLoading &&
+    listSuratTugas?.map?.(
+      ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl }: SuratTugasRes, index: number) => ({
+        col1: index + 1,
+        col2: nomorSurat,
+        col3: tujuanDinas,
+        col4: { suratTugasId, listPegawai, downloadUrl: downloadUrl },
+      })
+    );
 
-  if (suratTugasLoading) return <p>Loading...</p>;
+  if (suratTugasLoading && Array.isArray(listSuratTugas)) return <p>Loading...</p>;
 
   return (
     <div className="row mb-5">
@@ -120,51 +122,6 @@ const ListSurat: NextPage = () => {
         />
       </div>
     </div>
-  );
-};
-
-const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string; pegawai: Pegawai[] }>): JSX.Element => {
-  const [open, setOpen] = React.useState(false);
-  const { mutateAsync } = useDeleteSPDMutation();
-
-  return (
-    <>
-      <div
-        style={{ marginLeft: 24, cursor: "pointer" }}
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <a href="#">Delete</a>
-      </div>
-      <Modal isOpen={open} onRequestClose={() => setOpen(false)} contentLabel="Example Modal" style={customStyles}>
-        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Hapus SPPD?</h5>
-            </div>
-            <div className="modal-body">
-              <p>Kamu tidak akan bisa mengembalikan surat yang telah dihapus.</p>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={async () => {
-                  await mutateAsync(messageId);
-                  setOpen(false);
-                }}
-              >
-                Hapus
-              </button>
-              <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setOpen(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </>
   );
 };
 
