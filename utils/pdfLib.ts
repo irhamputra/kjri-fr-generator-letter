@@ -1,20 +1,70 @@
-import { computeStyles } from "@popperjs/core";
-import { PDFDocument } from "pdf-lib";
-import { Pegawai } from "../typings/Pegawai";
+import dayjs from "dayjs";
+import { PDFForm } from "pdf-lib";
+import { JalDis } from "../typings/Jaldis";
+import { Pegawai, PegawaiSuratTugas } from "../typings/Pegawai";
 import { RampunganFill } from "../typings/RampunganFill";
 import { ListPegawai, SuratTugasRes } from "../typings/SuratTugas";
 import { formattedDayjs } from "./dates";
 import { terbilangWithKoma } from "./terbilang";
 
-async function createRincianFill(suratTugas: SuratTugasRes, pegawaiId: string, hargaJaldis: string) {
-  const formUrl =
-    "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRincian%20Fill.pdf?alt=media&token=a1d06305-4c31-40dd-b680-5f2516950b74";
-  const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
+async function fillCover(form: PDFForm, suratTugas: SuratTugasRes, jaldis: JalDis, pegawaiId: string) {
+  const { listPegawai = [], pembuatKomitmen } = suratTugas;
 
+  const namePejabat = form.getTextField("nama_pejabat_komitmen__spd");
+  const namenip = form.getTextField("nama_nip_spd");
+  const pangkat = form.getTextField("pangkat_golongan_spd");
+  const jabatanInstansi = form.getTextField("jabatan_instansi_spd");
+  const gol_jaldis_spd = form.getTextField("gol_jaldis_spd");
+  const hari_spd = form.getTextField("hari_spd");
+  const tanggal_berangkat_spd = form.getTextField("tanggal_berangkat_spd");
+  const tanggal_dikeluarkan_spd = form.getTextField("tanggal_dikeluarkan_spd");
+  const tempat_tujuan_spd = form.getTextField("tempat_tujuan_spd");
+
+  const name = form.getTextField("nama_pejabat_komitmen_spd");
+  const nip = form.getTextField("nip_spd");
+
+  const tanggal_pulang_spd = form.getTextField("tanggal_pulang_spd");
+
+  const { pegawai, durasi, destinasi } = listPegawai.filter(({ pegawai }) => pegawai.uid === pegawaiId)[0];
+
+  if (pembuatKomitmen) {
+    namePejabat.setText(pembuatKomitmen.name);
+    namenip.setText(pegawai.displayName + " / " + pegawai.nip);
+    pangkat.setText(pegawai.pangkat);
+    jabatanInstansi.setText(pegawai.jabatan);
+    gol_jaldis_spd.setText(jaldis.golongan);
+    hari_spd.setText(durasi.toString());
+    tanggal_berangkat_spd.setText(formattedDayjs(destinasi[0].tanggalPergi));
+    tanggal_dikeluarkan_spd.setText(formattedDayjs(new Date()));
+    tempat_tujuan_spd.setText(destinasi.map(({ tibaDi }) => tibaDi).toString());
+    tanggal_pulang_spd.setText(
+      dayjs(destinasi[0].tanggalPergi)
+        .add(Math.round(+durasi.replace(/,/g, ".")), "day")
+        .format("DD.MM.YYYY")
+    );
+
+    name.setText(pembuatKomitmen.name);
+    nip.setText(pembuatKomitmen.nip.toString());
+
+    namePejabat.enableReadOnly();
+    namenip.enableReadOnly();
+    pangkat.enableReadOnly();
+    jabatanInstansi.enableReadOnly();
+    gol_jaldis_spd.enableReadOnly();
+    hari_spd.enableReadOnly();
+    tanggal_berangkat_spd.enableReadOnly();
+    tanggal_dikeluarkan_spd.enableReadOnly();
+    tempat_tujuan_spd.enableReadOnly();
+    tanggal_pulang_spd.enableReadOnly();
+    name.enableReadOnly();
+    nip.enableReadOnly();
+  }
+
+  return form;
+}
+
+async function fillRincian(form: PDFForm, suratTugas: SuratTugasRes, pegawaiId: string, hargaJaldis: string) {
   const { nomorSurat, listPegawai = [], fullDayKurs = 0.84, pembuatKomitmen } = suratTugas;
-
-  const pdfDoc = await PDFDocument.load(formPdfBytes);
-  const form = pdfDoc.getForm();
 
   if (nomorSurat) {
     const lampiranSPDNo = form.getTextField("no_spd_rincian");
@@ -51,6 +101,9 @@ async function createRincianFill(suratTugas: SuratTugasRes, pegawaiId: string, h
     const keterangan = form.getTextField("keterangan_rincian");
     const terbilangTextField = form.getTextField("terbilang_rincian");
 
+    const nama_penerima_rincian = form.getTextField("nama_penerima_rincian");
+    const NIP_penerima_rincian = form.getTextField("NIP_penerima_rincian");
+
     hariRincian.setText(fullDayDur);
     uangFullRincian.setText(hargaJaldis);
     hariRincian.enableReadOnly();
@@ -71,13 +124,19 @@ async function createRincianFill(suratTugas: SuratTugasRes, pegawaiId: string, h
     jumlah2Rincian.enableReadOnly();
     jumlahTotalRincian.enableReadOnly();
 
-    terbilangTextField.setText(nilaiTerbilang);
+    terbilangTextField.setText(nilaiTerbilang + " Euro");
     persen40.setText("0.4");
     terbilangTextField.enableReadOnly();
     persen40.enableReadOnly();
 
     uangJumlah.setText(jumlahTotal.toString());
     uangJumlah.enableReadOnly();
+
+    nama_penerima_rincian.setText(pegawai.pegawai.displayName);
+    nama_penerima_rincian.enableReadOnly();
+
+    NIP_penerima_rincian.setText(pegawai.pegawai.nip.toString());
+    NIP_penerima_rincian.enableReadOnly();
   }
 
   if (pembuatKomitmen) {
@@ -91,19 +150,18 @@ async function createRincianFill(suratTugas: SuratTugasRes, pegawaiId: string, h
     NIP_komitmen_rincian.enableReadOnly();
   }
 
-  return pdfDoc.save();
+  return form;
 }
 
-async function createRampunganFill(pembuatKomitmen?: { name: string; nip: string }, rampungan: RampunganFill[] = []) {
-  // Create Document
-  const formUrl =
-    "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRampungan%20Fill.pdf?alt=media&token=cbb0764d-2e42-449e-bcfc-c003fee8832af";
-  const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
-
-  //  tujuan_1_rampungan
-  const pdfDoc = await PDFDocument.load(formPdfBytes);
-
-  const form = pdfDoc.getForm();
+async function fillRampungan(
+  form: PDFForm,
+  pegawai: Pegawai,
+  pembuatKomitmen?: { name: string; nip: string },
+  rampungan: RampunganFill[] = []
+) {
+  const nama = form.getTextField("nama");
+  nama.setText(pegawai.displayName);
+  nama.enableReadOnly();
 
   if (pembuatKomitmen) {
     const namaPembuatKomitmen = form.getTextField("nama_pejabat_komitmen_rincian");
@@ -173,44 +231,66 @@ async function createRampunganFill(pembuatKomitmen?: { name: string; nip: string
     tanggalKedatangan3.enableReadOnly();
   }
 
-  return pdfDoc.save();
+  return form;
 }
 
-async function createPernyataanFill(pegawai: Pegawai, nomorSuratTugas: string) {
-  const formUrl =
-    "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FSURAT%20PERNYATAAN%20TELAH%20MELAKSANAKAN%20PERJALANAN%20DINAS%20Fill.pdf?alt=media&token=b3af9879-fc16-4be1-b8a9-76160dde9c58";
-  const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
-  const pdfDoc = await PDFDocument.load(formPdfBytes);
-  const form = pdfDoc.getForm();
-
+async function fillPernyataan(form: PDFForm, pegawai: Pegawai, nomorSuratTugas: string) {
   if (pegawai) {
     const name = form.getTextField("nama_surat_pernyataan");
     const nip = form.getTextField("nip_surat_pernyataan");
-    const jabatan = form.getTextField("jabatan­_surat_pernyataan");
+
+    const jabatanField = form.getTextField("jabatan_surat_pernyataan");
     const nomorSPD = form.getTextField("nomor_spd_surat_pernyataan");
+
+    const tanggal_jaldis_surat_pernyataan = form.getTextField("tanggal_jaldis_surat_pernyataan");
 
     name.setText(pegawai.displayName);
     nip.setText(pegawai.nip.toString());
-    jabatan.setText(pegawai.jabatan);
+    jabatanField.setText(pegawai.jabatan);
     nomorSPD.setText(nomorSuratTugas);
+    tanggal_jaldis_surat_pernyataan.setText(formattedDayjs(new Date()));
 
     name.enableReadOnly();
     nip.enableReadOnly();
-    jabatan.enableReadOnly();
+    jabatanField.enableReadOnly();
     nomorSPD.enableReadOnly();
+    tanggal_jaldis_surat_pernyataan.enableReadOnly();
   }
-  return pdfDoc.save();
+  return form;
 }
 
-async function createKwitansiFill(pembuatKomitmen?: { name: string; nip: string }) {
-  const formUrl =
-    "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2F3.%20Kwitansi%20Jaldis%20Fill.pdf?alt=media&token=19125c41-4f8b-47cb-9299-af51544a4a34";
-  const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
-  const pdfDoc = await PDFDocument.load(formPdfBytes);
-  const form = pdfDoc.getForm();
-
+async function fillKwitansi(form: PDFForm, suratTugas: ListPegawai, pembuatKomitmen?: { name: string; nip: string }) {
   const name = form.getTextField("pejabat_komitmen");
   const nip = form.getTextField("NIP1");
+
+  const jumlah_uang = form.getTextField("jumlah_uang");
+  const terbilangField = form.getTextField("terbilang");
+  const datum = form.getTextField("datum");
+  const jahr = form.getTextField("jahr");
+  const nama_penerima = form.getTextField("nama_penerima");
+  const tanggal_pulang_jaldis_surat_pernyataan = form.getTextField("tanggal_pulang_jaldis_surat_pernyataan");
+
+  tanggal_pulang_jaldis_surat_pernyataan.setText(
+    dayjs(suratTugas?.destinasi[0].tanggalPergi)
+      .add(Math.round(+suratTugas?.durasi.replace(/,/g, ".")), "day")
+      .format("DD.MM.YYYY")
+  );
+
+  const nilaiTerbilang = +suratTugas.uangHarian.slice(1).replace(/,/g, "");
+  console.log(nilaiTerbilang, "nilai");
+  jumlah_uang.setText(suratTugas.uangHarian);
+  console.log(suratTugas.uangHarian.slice(1));
+  terbilangField.setText(terbilangWithKoma(nilaiTerbilang) + " Euro");
+  datum.setText(dayjs().format("DD.MM."));
+  jahr.setText(dayjs().format("YYYY").slice(2));
+  nama_penerima.setText(suratTugas.pegawai.displayName);
+
+  jumlah_uang.enableReadOnly();
+  terbilangField.enableReadOnly();
+  datum.enableReadOnly();
+  jahr.enableReadOnly();
+  nama_penerima.enableReadOnly();
+  tanggal_pulang_jaldis_surat_pernyataan.enableReadOnly();
 
   if (pembuatKomitmen) {
     name.setText(pembuatKomitmen.name);
@@ -219,7 +299,7 @@ async function createKwitansiFill(pembuatKomitmen?: { name: string; nip: string 
     nip.enableReadOnly();
   }
 
-  return pdfDoc.save();
+  return form;
 }
 
-export { createRincianFill, createRampunganFill, createPernyataanFill, createKwitansiFill };
+export { fillCover, fillRincian, fillRampungan, fillPernyataan, fillKwitansi };

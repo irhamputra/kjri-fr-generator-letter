@@ -13,7 +13,7 @@ const useDownloadSuratTugas = () => {
     },
     {
       onSuccess: async ({ message, url, suratTugasId }) => {
-        saveAs(url, `Surat-Tugas-${suratTugasId}.docx`); // name not work??
+        // saveAs(url, `Surat-Tugas-${suratTugasId}.docx`); // name not work??
         toast(message);
       },
     }
@@ -29,7 +29,7 @@ const useDownloadFile = () => {
     },
     {
       onSuccess: async ({ message, url, destination }) => {
-        saveAs(url, destination); // name not work??
+        // saveAs(url, destination); // name not work??
         toast(message);
       },
     }
@@ -47,8 +47,8 @@ const useDownloadSuratPenugasan = () => {
     },
     {
       onSuccess: async ({ message, url }) => {
-        saveAs(url);
-        setDownloadUid("");
+        // saveAs(url);
+        // setDownloadUid("");
         toast(message);
       },
     }

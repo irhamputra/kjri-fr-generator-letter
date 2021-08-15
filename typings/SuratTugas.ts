@@ -21,9 +21,9 @@ export interface SuratTugasRes {
   downloadUrl?: {
     suratPenugasan: {
       [k in string]: string;
-    }
+    };
     suratTugas: string;
   };
 }
 
-export type ListPegawai = { uangHarian: string; durasi: number; pegawai: Pegawai; destinasi: RampunganFill[] }
+export type ListPegawai = { uangHarian: string; durasi: string; pegawai: Pegawai; destinasi: RampunganFill[] };
