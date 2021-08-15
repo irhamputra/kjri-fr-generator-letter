@@ -47,27 +47,27 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
             <Form>
               <div className="mb-2">
                 <label className="form-label" style={{ fontWeight: "bold" }}>
-                  Pembuat Komitmen
+                  Nama Pembuat Komitmen
                 </label>
 
                 <Field
                   className="form-control"
                   value={values.pembuatKomitmenName}
                   name="pembuatKomitmenName"
-                  placeholder="Masukan namat"
+                  placeholder="Masukan nama pembuat komitmen"
                 />
                 {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
               </div>
               <div className="mb-4">
                 <label className="form-label" style={{ fontWeight: "bold" }}>
-                  NIP
+                  NIP Pembuat Komitmen
                 </label>
 
                 <Field
                   className="form-control"
                   value={values.pembuatKomitmenNIP}
                   name="pembuatKomitmenNIP"
-                  placeholder="Masukan nip"
+                  placeholder="Masukan NIP pembuat komitmen"
                 />
                 {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
               </div>
@@ -218,7 +218,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
               <div className="mt-3">
                 <div className="d-flex justify-content-between">
                   <div className="d-flex">
-                    <button onClick={() => onClickBack()} className="btn btn-outline-dark ms-2 btn" type="button">
+                    <button onClick={() => onClickBack()} className="btn btn-outline-dark btn" type="button">
                       Kembali ke list
                     </button>
                   </div>

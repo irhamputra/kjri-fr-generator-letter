@@ -240,7 +240,7 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
                 <h5>Surat Penugasan</h5>
               </div>
 
-              {pegawai.map(({ uid, displayName }) => {
+              {pegawai?.map(({ uid, displayName }) => {
                 const canRecreate = downloadUrl?.suratPenugasan?.[uid];
 
                 return (

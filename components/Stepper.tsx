@@ -40,10 +40,14 @@ const StepperItem: React.FC<StepperItemProps> = ({ number, text, isLast, isActiv
         <div className={styles.circleBox}>
           <div className={isActive ? styles.circle : styles.circleUnactive}>{number}</div>
         </div>
-        <div className={styles.circleBox2}>{!isLast && <hr />}</div>
+        {!isLast && (
+          <div className={styles.circleBox2}>
+            <hr />
+          </div>
+        )}
       </div>
       <div className={styles.text} style={{ fontWeight: isActive ? "bold" : "normal" }}>
-        {text}{" "}
+        {text}
       </div>
     </div>
   );

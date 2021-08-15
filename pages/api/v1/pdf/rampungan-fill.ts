@@ -3,6 +3,7 @@ import { PDFDocument } from "pdf-lib";
 import { RampunganFillReqBody } from "../../../../typings/RampunganFill";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
+import axios from "axios";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
@@ -10,13 +11,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     try {
       const { rampungan, pembuatKomitmenName, pembuatKomitmenNIP } = <RampunganFillReqBody>req.body;
-      const formUrl = "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRampungan%20Fill.pdf?alt=media&token=cbb0764d-2e42-449e-bcfc-c003fee8832a";
-      const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
+      const formUrl =
+        "https://firebasestorage.googleapis.com/v0/b/kjri-fr-dev.appspot.com/o/template%2FRampungan%20Fill.pdf?alt=media&token=cbb0764d-2e42-449e-bcfc-c003fee8832a";
+      const { data } = await axios.get(formUrl, { responseType: "arraybuffer" }); // fetch(formUrl).then((res) => res.arrayBuffer());
 
       if (rampungan.length > 3) res.status(500).json({ error: "data length must be below 3" });
 
-      //  tujuan_1_rampungan
-      const pdfDoc = await PDFDocument.load(formPdfBytes);
+      const pdfDoc = await PDFDocument.load(data);
 
       const form = pdfDoc.getForm();
 
@@ -25,6 +26,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       namaPembuatKomitmen.setText(pembuatKomitmenName);
       nip1.setText(pembuatKomitmenNIP);
+
+      namaPembuatKomitmen.enableReadOnly();
+      nip1.enableReadOnly();
 
       const tujuan1 = form.getTextField("tujuan_1_rampungan");
       const tanggalTujuan1 = form.getTextField("tanggal_1_rincian");
@@ -36,6 +40,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         tanggalTujuan1.setText(rampungan[0].tanggalPergi);
         kedatangan1.setText(rampungan[0].tibaDi);
         tanggalKedatangan1.setText(rampungan[0].tanggalTiba);
+
+        // readonly
+        tujuan1.enableReadOnly();
+        tanggalTujuan1.enableReadOnly();
+        kedatangan1.enableReadOnly();
+        kedatangan1.enableReadOnly();
+        tanggalKedatangan1.enableReadOnly();
       }
 
       const berangkat1 = form.getTextField("berangkat_1_rincian");
@@ -50,6 +61,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         tanggalTujuan2.setText(rampungan[1].tanggalPergi);
         kedatangan2.setText(rampungan[1].tibaDi);
         tanggalKedatangan2.setText(rampungan[1].tanggalTiba);
+
+        // readonly
+        berangkat1.enableReadOnly();
+        tujuan2.enableReadOnly();
+        tanggalTujuan2.enableReadOnly();
+        kedatangan2.enableReadOnly();
+        tanggalKedatangan2.enableReadOnly();
       }
 
       const berangkat2 = form.getTextField("berangkat_2_rincian");
@@ -64,6 +82,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         tanggalTujuan3.setText(rampungan[2].tanggalPergi);
         kedatangan3.setText(rampungan[2].tibaDi);
         tanggalKedatangan3.setText(rampungan[2].tanggalTiba);
+
+        // readonly
+        berangkat2.enableReadOnly();
+        tujuan3.enableReadOnly();
+        tanggalTujuan3.enableReadOnly();
+        kedatangan3.enableReadOnly();
+        tanggalKedatangan3.enableReadOnly();
       }
 
       const pdfBytes = await pdfDoc.save();
