@@ -61,6 +61,8 @@ const ListSuratKeluar: NextPage = () => {
     [query]
   );
 
+  if (isLoading) return <p>Loading...</p>;
+
   const data = listSuratKeluar?.listSurat.map?.(
     ({ nomorSurat, content, url }: SuratKeluarCollection, index: number) => ({
       col1: index + 1,
@@ -69,8 +71,6 @@ const ListSuratKeluar: NextPage = () => {
       col4: url,
     })
   );
-
-  if (isLoading) return <p>Loading...</p>;
 
   return (
     <div style={{ marginTop: "6rem" }}>
