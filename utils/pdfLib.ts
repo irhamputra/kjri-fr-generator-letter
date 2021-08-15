@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
-import { PDFForm } from "pdf-lib";
+import { PDFForm, PDFFont } from "pdf-lib";
+import { string } from "yup/lib/locale";
 import { JalDis } from "../typings/Jaldis";
 import { Pegawai, PegawaiSuratTugas } from "../typings/Pegawai";
 import { RampunganFill } from "../typings/RampunganFill";
@@ -7,7 +8,16 @@ import { ListPegawai, SuratTugasRes } from "../typings/SuratTugas";
 import { formattedDayjs } from "./dates";
 import { terbilangWithKoma } from "./terbilang";
 
-async function fillCover(form: PDFForm, suratTugas: SuratTugasRes, jaldis: JalDis, pegawaiId: string) {
+interface Option {
+  font: PDFFont;
+}
+
+async function fillCover(
+  form: PDFForm,
+  data: { suratTugas: SuratTugasRes; jaldis: JalDis; pegawaiId: string },
+  option: Option
+) {
+  const { suratTugas, jaldis, pegawaiId } = data;
   const { listPegawai = [], pembuatKomitmen } = suratTugas;
 
   const namePejabat = form.getTextField("nama_pejabat_komitmen__spd");
@@ -63,7 +73,12 @@ async function fillCover(form: PDFForm, suratTugas: SuratTugasRes, jaldis: JalDi
   return form;
 }
 
-async function fillRincian(form: PDFForm, suratTugas: SuratTugasRes, pegawaiId: string, hargaJaldis: string) {
+async function fillRincian(
+  form: PDFForm,
+  data: { suratTugas: SuratTugasRes; pegawaiId: string; hargaJaldis: string },
+  option: Option
+) {
+  const { suratTugas, pegawaiId, hargaJaldis } = data;
   const { nomorSurat, listPegawai = [], fullDayKurs = 0.84, pembuatKomitmen } = suratTugas;
 
   if (nomorSurat) {
@@ -80,10 +95,17 @@ async function fillRincian(form: PDFForm, suratTugas: SuratTugasRes, pegawaiId: 
     const pegawai = listPegawai.filter(({ pegawai }) => pegawai.uid === pegawaiId)[0];
 
     const numberRincian = pegawai?.durasi?.toString() ?? "";
-    const [fullDayDur, halfDayDur = "0"] = numberRincian.split(",");
-    const jumlah1 = Number.parseFloat(fullDayDur) * fullDayKurs * Number.parseFloat(hargaJaldis);
-    const jumlah2 = Number.parseFloat(halfDayDur) * fullDayKurs * Number.parseFloat(hargaJaldis);
-    const jumlahTotal = jumlah1 + jumlah2;
+    let [fullDayDur, halfDayDur = ""] = numberRincian.split(",");
+    if (halfDayDur === "5") {
+      halfDayDur = "1";
+    }
+
+    const days = parseFloat(fullDayDur) * fullDayKurs * parseFloat(hargaJaldis);
+    const halfDay = parseFloat(halfDayDur) * 0.4 * fullDayKurs * parseFloat(hargaJaldis);
+
+    // use toFixed to fix additional .9999 in decimal
+    // read : https://stackoverflow.com/questions/10473994/javascript-adding-decimal-numbers-issue
+    const jumlahTotal = +(days + halfDay).toFixed(2) || 0;
     const nilaiTerbilang = terbilangWithKoma(jumlahTotal).toString();
 
     const hariRincian = form.getTextField("hari_full_rincian");
@@ -117,8 +139,8 @@ async function fillRincian(form: PDFForm, suratTugas: SuratTugasRes, pegawaiId: 
     kurs.setText(fullDayKurs.toString());
     kurs.enableReadOnly();
 
-    jumlah1Rincian.setText(jumlah1.toString());
-    jumlah2Rincian.setText(jumlah2.toString());
+    jumlah1Rincian.setText(days.toString());
+    jumlah2Rincian.setText(halfDay.toString());
     jumlahTotalRincian.setText(jumlahTotal.toString());
     jumlah1Rincian.enableReadOnly();
     jumlah2Rincian.enableReadOnly();
@@ -155,10 +177,10 @@ async function fillRincian(form: PDFForm, suratTugas: SuratTugasRes, pegawaiId: 
 
 async function fillRampungan(
   form: PDFForm,
-  pegawai: Pegawai,
-  pembuatKomitmen?: { name: string; nip: string },
-  rampungan: RampunganFill[] = []
+  data: { pegawai: Pegawai; pembuatKomitmen?: { name: string; nip: string }; rampungan: RampunganFill[] },
+  option: Option
 ) {
+  const { pegawai, pembuatKomitmen, rampungan = [] } = data;
   const nama = form.getTextField("nama");
   nama.setText(pegawai.displayName);
   nama.enableReadOnly();
@@ -234,61 +256,60 @@ async function fillRampungan(
   return form;
 }
 
-async function fillPernyataan(form: PDFForm, pegawai: Pegawai, nomorSuratTugas: string) {
+async function fillPernyataan(form: PDFForm, data: { pegawai: Pegawai; nomorSuratTugas: string }, option: Option) {
+  const { pegawai, nomorSuratTugas } = data;
   if (pegawai) {
     const name = form.getTextField("nama_surat_pernyataan");
     const nip = form.getTextField("nip_surat_pernyataan");
 
     const jabatanField = form.getTextField("jabatan_surat_pernyataan");
-    const nomorSPD = form.getTextField("nomor_spd_surat_pernyataan");
 
-    const tanggal_jaldis_surat_pernyataan = form.getTextField("tanggal_jaldis_surat_pernyataan");
+    const text_pembuka_surat = form.getTextField("text_pembuka_surat");
 
     name.setText(pegawai.displayName);
-    nip.setText(pegawai.nip.toString());
+    nip.setText("NIP. " + pegawai.nip.toString());
     jabatanField.setText(pegawai.jabatan);
-    nomorSPD.setText(nomorSuratTugas);
-    tanggal_jaldis_surat_pernyataan.setText(formattedDayjs(new Date()));
+    text_pembuka_surat.setText(`Menyatakan dengan sesungguhnya bahwa saya telah melaksanakan tugas perjalanan dinas`);
 
     name.enableReadOnly();
     nip.enableReadOnly();
     jabatanField.enableReadOnly();
-    nomorSPD.enableReadOnly();
-    tanggal_jaldis_surat_pernyataan.enableReadOnly();
+    text_pembuka_surat.enableReadOnly();
   }
   return form;
 }
 
-async function fillKwitansi(form: PDFForm, suratTugas: ListPegawai, pembuatKomitmen?: { name: string; nip: string }) {
+async function fillKwitansi(
+  form: PDFForm,
+  data: { listPegawai: ListPegawai; pembuatKomitmen?: { name: string; nip: string } },
+  option: Option
+) {
+  const { listPegawai, pembuatKomitmen } = data;
   const name = form.getTextField("pejabat_komitmen");
   const nip = form.getTextField("NIP1");
 
   const jumlah_uang = form.getTextField("jumlah_uang");
   const terbilangField = form.getTextField("terbilang");
-  const datum = form.getTextField("datum");
-  const jahr = form.getTextField("jahr");
   const nama_penerima = form.getTextField("nama_penerima");
   const tanggal_pulang_jaldis_surat_pernyataan = form.getTextField("tanggal_pulang_jaldis_surat_pernyataan");
+  const datum = form.getTextField("datum");
 
   tanggal_pulang_jaldis_surat_pernyataan.setText(
-    dayjs(suratTugas?.destinasi[0].tanggalPergi)
-      .add(Math.round(+suratTugas?.durasi.replace(/,/g, ".")), "day")
+    dayjs(listPegawai?.destinasi[0].tanggalPergi)
+      .add(Math.round(+listPegawai?.durasi.replace(/,/g, ".")), "day")
       .format("DD.MM.YYYY")
   );
 
-  const nilaiTerbilang = +suratTugas.uangHarian.slice(1).replace(/,/g, "");
+  const nilaiTerbilang = +listPegawai.uangHarian.slice(1).replace(/,/g, "");
   console.log(nilaiTerbilang, "nilai");
-  jumlah_uang.setText(suratTugas.uangHarian);
-  console.log(suratTugas.uangHarian.slice(1));
+  jumlah_uang.setText(listPegawai.uangHarian);
+  console.log(listPegawai.uangHarian.slice(1));
   terbilangField.setText(terbilangWithKoma(nilaiTerbilang) + " Euro");
-  datum.setText(dayjs().format("DD.MM."));
-  jahr.setText(dayjs().format("YYYY").slice(2));
-  nama_penerima.setText(suratTugas.pegawai.displayName);
+  nama_penerima.setText(listPegawai.pegawai.displayName);
+  datum.setText(formattedDayjs(new Date()));
 
   jumlah_uang.enableReadOnly();
   terbilangField.enableReadOnly();
-  datum.enableReadOnly();
-  jahr.enableReadOnly();
   nama_penerima.enableReadOnly();
   tanggal_pulang_jaldis_surat_pernyataan.enableReadOnly();
 
@@ -297,9 +318,19 @@ async function fillKwitansi(form: PDFForm, suratTugas: ListPegawai, pembuatKomit
     nip.setText(pembuatKomitmen.nip.toString());
     name.enableReadOnly();
     nip.enableReadOnly();
+    datum.enableReadOnly();
   }
 
   return form;
+}
+
+function fillAndSetReadOnly(form: PDFForm, data: { fieldName: string; value: string }[], option: Option) {
+  data.forEach(({ fieldName, value }) => {
+    const textField = form.getTextField(fieldName);
+    textField.setText(value);
+    textField.updateAppearances(option.font);
+    textField.enableReadOnly();
+  });
 }
 
 export { fillCover, fillRincian, fillRampungan, fillPernyataan, fillKwitansi };

@@ -57,17 +57,57 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           expires: Date.now() + 1000 * 60 * 2, // 2 minutes
         };
 
-        const [url] = await storage.bucket().file("template/SPD FILL Zusammenfugen.pdf").getSignedUrl(urlOptions);
+        const fontPath = "fonts/calibri.ttf";
+        const [urlFont] = await storage.bucket().file(fontPath).getSignedUrl(urlOptions);
+
+        const font = await fetch(urlFont).then((res) => res.arrayBuffer());
+
+        const [url] = await storage.bucket().file("template/SPD_FILL_Zusammenfugen.pdf").getSignedUrl(urlOptions);
         const formPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
         // Fill form
         const pdfDoc = await PDFDocument.load(formPdfBytes);
+        const calibriFont = await pdfDoc.embedFont(font);
+
+        const chosenListPegawai = listPegawai[iPegawai];
+        const pegawai = listPegawai[iPegawai].pegawai;
+
         let pdfBytes = pdfDoc.getForm();
-        pdfBytes = await fillCover(pdfBytes, suratTugas, jaldisSnap, uid);
-        pdfBytes = await fillRampungan(pdfBytes, listPegawai[iPegawai].pegawai, pembuatKomitmen, rampungan);
-        pdfBytes = await fillRincian(pdfBytes, suratTugas, uid, jaldisSnap?.harga);
-        pdfBytes = await fillPernyataan(pdfBytes, listPegawai[iPegawai].pegawai, nomorSurat);
-        pdfBytes = await fillKwitansi(pdfBytes, listPegawai[iPegawai], pembuatKomitmen);
+        pdfBytes = await fillCover(
+          pdfBytes,
+          { suratTugas, jaldis: jaldisSnap, pegawaiId: uid },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillRampungan(
+          pdfBytes,
+          { pegawai, pembuatKomitmen, rampungan },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillRincian(
+          pdfBytes,
+          { suratTugas, pegawaiId: uid, hargaJaldis: jaldisSnap?.harga },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillPernyataan(
+          pdfBytes,
+          { pegawai, nomorSuratTugas: nomorSurat },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillKwitansi(
+          pdfBytes,
+          { listPegawai: chosenListPegawai, pembuatKomitmen },
+          {
+            font: calibriFont,
+          }
+        );
 
         const mergedPdfFile = await pdfDoc.save();
 
