@@ -6,6 +6,7 @@ import { PDFDocument } from "pdf-lib";
 import { fillKwitansi, fillPernyataan, fillRampungan, fillRincian, fillCover } from "../../../../../utils/pdfLib";
 import fs from "fs";
 import { JalDis } from "../../../../../typings/Jaldis";
+import fontkit from "@pdf-lib/fontkit";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
@@ -62,11 +63,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         const font = await fetch(urlFont).then((res) => res.arrayBuffer());
 
-        const [url] = await storage.bucket().file("template/SPD_FILL_Zusammenfugen.pdf").getSignedUrl(urlOptions);
+        const [url] = await storage.bucket().file("template/SPD_Template.pdf").getSignedUrl(urlOptions);
         const formPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
         // Fill form
         const pdfDoc = await PDFDocument.load(formPdfBytes);
+        pdfDoc.registerFontkit(fontkit);
+
         const calibriFont = await pdfDoc.embedFont(font);
 
         const chosenListPegawai = listPegawai[iPegawai];
