@@ -12,7 +12,7 @@ import MainLayout from "../components/layout/MainLayout";
 import parseCookies from "../utils/parseCookies";
 import apiInstance from "../utils/firebase/apiInstance";
 import { AppProps } from "next/app";
-import { AppContextType } from "next/dist/next-server/lib/utils";
+import { AppContextType } from "next/dist/shared/lib/utils";
 type MyAppProps = AppProps & { dehydrateState: DehydratedState };
 
 function MyApp({ Component, pageProps, dehydrateState }: MyAppProps) {
