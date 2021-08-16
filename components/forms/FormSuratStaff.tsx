@@ -38,15 +38,13 @@ const FormSuratStaff: React.FC<{
   });
 
   const { data: listUsers, isLoading: usersLoading } = useQueryUsers();
-  const optionsSuratTugas =
-    suratTugasLoading &&
-    Array.isArray(listSuratTugas) &&
-    listSuratTugas?.map?.((v: { nomorSurat: string; tujuanDinas: string }) => ({
-      label: `${v.nomorSurat} - ${v.tujuanDinas}`,
-      value: v.nomorSurat,
-    }));
 
-  if (suratTugasLoading && jalDirLoading && usersLoading && Array.isArray(listSuratTugas)) return <h4>Loading...</h4>;
+  if (suratTugasLoading && jalDirLoading && usersLoading) return <h4>Loading...</h4>;
+
+  const optionsSuratTugas = listSuratTugas?.map?.((v: { nomorSurat: string; tujuanDinas: string }) => ({
+    label: `${v.nomorSurat} - ${v.tujuanDinas}`,
+    value: v.nomorSurat,
+  }));
 
   return (
     <Formik
