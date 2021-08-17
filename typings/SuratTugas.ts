@@ -18,6 +18,10 @@ export interface SuratTugasRes {
     nip: string;
   };
 
+  keterangan?: {
+    rincian: string;
+  };
+
   downloadUrl?: {
     suratPenugasan: {
       [k in string]: string;

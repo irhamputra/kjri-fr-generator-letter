@@ -46,35 +46,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const jaldisSnap = jaldis.docs[0].data() as JalDis;
 
       if (rampungan.length > 3) {
-        res.status(500).json({ error: "data length must be below 3" });
+        res.status(500).json({ error: "rampungan fill data length must be below 3" });
         return res.end();
       }
 
       try {
-        // Get downloadable url using signed url method
+        const chosenListPegawai = listPegawai[iPegawai];
+        const pegawai = listPegawai[iPegawai].pegawai;
+
         const urlOptions = {
           version: "v4" as "v4",
           action: "read" as "read",
           expires: Date.now() + 1000 * 60 * 2, // 2 minutes
         };
 
-        const fontPath = "fonts/calibri.ttf";
-        const [urlFont] = await storage.bucket().file(fontPath).getSignedUrl(urlOptions);
-
-        const font = await fetch(urlFont).then((res) => res.arrayBuffer());
-
+        // Get downloadable url using signed url method
         const [url] = await storage.bucket().file("template/SPD_Template.pdf").getSignedUrl(urlOptions);
         const formPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
-        // Fill form
         const pdfDoc = await PDFDocument.load(formPdfBytes);
-        pdfDoc.registerFontkit(fontkit);
 
+        const fontPath = "fonts/calibri.ttf";
+        const [urlFont] = await storage.bucket().file(fontPath).getSignedUrl(urlOptions);
+        const font = await fetch(urlFont).then((res) => res.arrayBuffer());
+        pdfDoc.registerFontkit(fontkit);
         const calibriFont = await pdfDoc.embedFont(font);
 
-        const chosenListPegawai = listPegawai[iPegawai];
-        const pegawai = listPegawai[iPegawai].pegawai;
-
+        // Fill form
         let pdfBytes = pdfDoc.getForm();
         pdfBytes = await fillCover(
           pdfBytes,
@@ -116,18 +114,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         // READ ME !
         // This code is for testing document in local, delete later!
-        fs.writeFile(Math.random() + ".pdf", Buffer.from(mergedPdfFile), () => {});
+        // fs.writeFile(Math.random() + ".pdf", Buffer.from(mergedPdfFile), () => {});
 
         // Save doc in google storage
-        // await fileRef.save(mergedPdfFile as Buffer);
+        await fileRef.save(mergedPdfFile as Buffer);
 
         // Update link in database
-        // await suratTugasRef.update({
-        //   downloadUrl: {
-        //     ...downloadUrl,
-        //     suratPenugasan: { ...downloadUrl?.suratPenugasan, [uid]: destination },
-        //   },
-        // });
+        await suratTugasRef.update({
+          downloadUrl: {
+            ...downloadUrl,
+            suratPenugasan: { ...downloadUrl?.suratPenugasan, [uid]: destination },
+          },
+        });
       } catch (e) {
         console.error(e);
       }
