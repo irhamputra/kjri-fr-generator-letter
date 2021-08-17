@@ -24,45 +24,45 @@ async function fillCover(
   const { suratTugas, jaldis, pegawaiId } = data;
   const { listPegawai = [], pembuatKomitmen, nomorSurat } = suratTugas;
 
-  const { pegawai, durasi, destinasi } = listPegawai.filter(({ pegawai }) => pegawai.uid === pegawaiId)[0];
+  const { pegawai, durasi, destinasi = [] } = listPegawai.filter(({ pegawai }) => pegawai.uid === pegawaiId)[0];
 
-  if (pembuatKomitmen) {
-    const formValues: FormValues[] = [
-      { fieldName: "nama_pejabat_komitmen__spd", value: pembuatKomitmen.name },
-      { fieldName: "nama_nip_spd", value: pegawai.displayName + " / " + pegawai.nip },
-      { fieldName: "pangkat_golongan_spd", value: pegawai.pangkat },
-      { fieldName: "jabatan_instansi_spd", value: pegawai.jabatan },
-      { fieldName: "gol_jaldis_spd", value: jaldis.golongan },
-      { fieldName: "hari_spd", value: durasi.toString() },
-      {
-        fieldName: "tanggal_berangkat_spd",
-        value: destinasi[0]?.tanggalPergi ? formattedDayjs(destinasi[0].tanggalPergi) : "",
-      },
-      { fieldName: "tanggal_dikeluarkan_spd", value: formattedDayjs(new Date()) },
-      { fieldName: "tempat_tujuan_spd", value: destinasi.map(({ tibaDi }) => tibaDi).toString() },
-      {
-        fieldName: "tanggal_pulang_spd",
-        value: dayjs(destinasi[0].tanggalPergi)
+  const formValues: FormValues[] = [
+    { fieldName: "nama_pejabat_komitmen__spd", value: pembuatKomitmen?.name },
+    { fieldName: "nama_nip_spd", value: pegawai.displayName + " / " + pegawai.nip },
+    { fieldName: "pangkat_golongan_spd", value: pegawai.pangkat },
+    { fieldName: "jabatan_instansi_spd", value: pegawai.jabatan },
+    { fieldName: "gol_jaldis_spd", value: jaldis.golongan },
+    { fieldName: "hari_spd", value: durasi.toString() },
+    {
+      fieldName: "tanggal_berangkat_spd",
+      value: destinasi[0]?.tanggalPergi ? formattedDayjs(destinasi[0].tanggalPergi) : "",
+    },
+    { fieldName: "tanggal_dikeluarkan_spd", value: formattedDayjs(new Date()) },
+    { fieldName: "tempat_tujuan_spd", value: destinasi.map(({ tibaDi }) => tibaDi).toString() },
+    {
+      fieldName: "tanggal_pulang_spd",
+      value:
+        destinasi[0] &&
+        dayjs(destinasi[0].tanggalPergi)
           .add(Math.round(+durasi.replace(/,/g, ".")), "day")
           .format("DD.MM.YYYY"),
-      },
-      { fieldName: "nama_pejabat_komitmen__spd", value: pembuatKomitmen.name },
-      { fieldName: "nama_pejabat_komitmen_spd", value: pembuatKomitmen.name },
-      { fieldName: "nip_spd", value: pembuatKomitmen.nip.toString() },
-      { fieldName: "nomor_spd", value: nomorSurat },
-    ];
+    },
+    { fieldName: "nama_pejabat_komitmen__spd", value: pembuatKomitmen?.name },
+    { fieldName: "nama_pejabat_komitmen_spd", value: pembuatKomitmen?.name },
+    { fieldName: "nip_spd", value: pembuatKomitmen?.nip?.toString() },
+    { fieldName: "nomor_spd", value: nomorSurat },
+  ];
 
-    fillAndSetReadOnly(form, formValues, option);
-    enableReadOnly(form, [
-      "alat_angkut_spd",
-      "nama_pengikut_spd",
-      "tanggal_lahir_spd",
-      "keterangan_spd",
-      "akun_spd",
-      "keterangan_dll_spd",
-      "kode_spd",
-    ]);
-  }
+  fillAndSetReadOnly(form, formValues, option);
+  enableReadOnly(form, [
+    "alat_angkut_spd",
+    "nama_pengikut_spd",
+    "tanggal_lahir_spd",
+    "keterangan_spd",
+    "akun_spd",
+    "keterangan_dll_spd",
+    "kode_spd",
+  ]);
 
   return form;
 }
@@ -73,7 +73,7 @@ async function fillRincian(
   option: Option
 ) {
   const { suratTugas, pegawaiId, hargaJaldis } = data;
-  const { nomorSurat, listPegawai = [], fullDayKurs = 0.84, pembuatKomitmen, tujuanDinas, keterangan } = suratTugas;
+  const { nomorSurat, listPegawai = [], fullDayKurs = 0.84, pembuatKomitmen, tujuanDinas } = suratTugas;
 
   const lampiranSPDNo = form.getTextField("no_spd_rincian");
   const tglSPD = form.getTextField("tanggal_rincian");
@@ -123,7 +123,7 @@ async function fillRincian(
     { fieldName: "NIP_penerima_rincian", value: pegawai.pegawai.nip.toString() },
     { fieldName: "tahun_spd", value: "DIPA KJRI FRANKFURT TA " + new Date().getFullYear() },
     { fieldName: "maksud_jalan_spd", value: tujuanDinas },
-    { fieldName: "keterangan_rincian", value: keterangan?.rincian },
+    { fieldName: "keterangan_rincian", value: pegawai.keterangan?.rincian },
   ];
 
   enableReadOnly(form, [
@@ -260,25 +260,24 @@ async function fillKwitansi(
 ) {
   const { listPegawai, pembuatKomitmen, tujuanSurat } = data;
 
-  let formData: FormValues[] = [];
-  if (pembuatKomitmen) {
-    formData = [
-      {
-        fieldName: "pejabat_komitmen",
-        value: pembuatKomitmen?.name,
-      },
-      { fieldName: "NIP1", value: pembuatKomitmen?.nip.toString() },
-    ];
-  }
+  let formData: FormValues[] = [
+    {
+      fieldName: "pejabat_komitmen",
+      value: pembuatKomitmen?.name,
+    },
+    { fieldName: "NIP1", value: pembuatKomitmen?.nip.toString() },
+  ];
 
   const nilaiTerbilang = +listPegawai.uangHarian.slice(1).replace(/,/g, "");
 
   const data2 = [
     {
       fieldName: "tanggal_pulang_jaldis_surat_pernyataan",
-      value: dayjs(listPegawai?.destinasi[0].tanggalPergi)
-        .add(Math.round(+listPegawai?.durasi.replace(/,/g, ".")), "day")
-        .format("DD.MM.YYYY"),
+      value:
+        listPegawai?.destinasi?.[0]?.tanggalPergi &&
+        dayjs(listPegawai?.destinasi[0].tanggalPergi)
+          .add(Math.round(+listPegawai?.durasi.replace(/,/g, ".")), "day")
+          .format("DD.MM.YYYY"),
     },
 
     { fieldName: "jumlah_uang", value: listPegawai.uangHarian },

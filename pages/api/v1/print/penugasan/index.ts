@@ -13,17 +13,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
     try {
       const { suratTugasId, uid, forceRecreate } = req.body;
-
+      console.log(forceRecreate, "FORCE RECREATE");
       const suratTugasRef = db.collection("SuratTugas").doc(suratTugasId as string);
       const snapshot = await suratTugasRef.get();
       const suratTugas = snapshot.data() as SuratTugasRes;
       const { listPegawai = [], pembuatKomitmen, downloadUrl, nomorSurat } = suratTugas;
 
-      const destination = `penugasan/${nomorSurat.replace(/\//g, "_")}.pdf`;
+      // uid = User Unique Id
+      const destination = `penugasan/${nomorSurat.replace(/\//g, "_")}_${uid}.pdf`;
       const fileRef = storage.bucket().file(destination);
 
       // Skip pdf creation if it already has existing pdf
       if (downloadUrl?.suratPenugasan?.[uid] && !forceRecreate) {
+        console.log("File available, it will be downloaded...");
         const signedUrls = await fileRef.getSignedUrl({
           action: "read",
           expires: Date.now() + 15 * 60 * 1000, // 15 minutes,
