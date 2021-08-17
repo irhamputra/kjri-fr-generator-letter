@@ -219,7 +219,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
               <div className="mt-3">
                 <div className="d-flex justify-content-between">
                   <div className="d-flex">
-                    <button onClick={() => onClickBack()} className="btn btn-outline-dark ms-2 btn" type="button">
+                    <button onClick={() => onClickBack()} className="btn btn-outline-dark btn" type="button">
                       Kembali ke list
                     </button>
                   </div>

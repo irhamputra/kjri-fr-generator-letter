@@ -48,12 +48,6 @@ const ListSurat: NextPage = () => {
         Cell: ({ value }: { value: Pick<SuratTugasRes, "listPegawai" | "suratTugasId" | "downloadUrl"> }) => {
           const listPegawai = value.listPegawai?.map(({ pegawai }) => pegawai) as Pegawai[];
           return (
-            // <div style={{ display: "flex" }}>
-            //   <Link href={`/layanan/penugasan/${value}?edit=true`} passHref>
-            //     <a>Edit</a>
-            //   </Link>
-            //   <DeleteAction messageId={value} />
-            // </div>
             <div style={{ display: "flex" }}>
               <Link href={`/layanan/penugasan/${value.suratTugasId}`} passHref>
                 <a>
@@ -67,10 +61,6 @@ const ListSurat: NextPage = () => {
                 pegawai={listPegawai}
                 downloadUrl={value.downloadUrl}
               />
-
-              {/* <button className="btn btn-outline-primary" onClick={() => handlePrint(value)}>
-              <Printer size={25} />
-            </button> */}
             </div>
           );
         },
@@ -78,6 +68,8 @@ const ListSurat: NextPage = () => {
     ],
     []
   );
+
+  if (suratTugasLoading) return <p>Loading...</p>;
 
   const data = listSuratTugas?.map?.(
     ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl }: SuratTugasRes, index: number) => ({
@@ -88,10 +80,8 @@ const ListSurat: NextPage = () => {
     })
   );
 
-  if (suratTugasLoading) return <p>Loading...</p>;
-
   return (
-    <div className="row">
+    <div className="row mb-5">
       <div className="d-flex align-items-center mb-3" style={{ marginTop: "6rem" }}>
         <h4 className="m-0" style={{ flex: "1 1" }}>
           ST yang telah dibuat
@@ -130,51 +120,6 @@ const ListSurat: NextPage = () => {
         />
       </div>
     </div>
-  );
-};
-
-const DeleteAction = ({ messageId }: PropsWithChildren<{ messageId: string; pegawai: Pegawai[] }>): JSX.Element => {
-  const [open, setOpen] = React.useState(false);
-  const { mutateAsync } = useDeleteSPDMutation();
-
-  return (
-    <>
-      <div
-        style={{ marginLeft: 24, cursor: "pointer" }}
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        <a href="#">Delete</a>
-      </div>
-      <Modal isOpen={open} onRequestClose={() => setOpen(false)} contentLabel="Example Modal" style={customStyles}>
-        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Hapus SPPD?</h5>
-            </div>
-            <div className="modal-body">
-              <p>Kamu tidak akan bisa mengembalikan surat yang telah dihapus.</p>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={async () => {
-                  await mutateAsync(messageId);
-                  setOpen(false);
-                }}
-              >
-                Hapus
-              </button>
-              <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => setOpen(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </>
   );
 };
 
@@ -228,9 +173,9 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
                 <div style={{ flex: "1 1" }}>Surat Tugas</div>
                 <div style={{ flex: "1 1" }}>
                   {!isLoadingSuratTugas ? (
-                    <a href="#" onClick={handleSuratTugas}>
+                    <span style={{ cursor: "pointer" }} onClick={handleSuratTugas}>
                       Download
-                    </a>
+                    </span>
                   ) : (
                     <span>Downloading...</span>
                   )}
@@ -240,7 +185,7 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
                 <h5>Surat Penugasan</h5>
               </div>
 
-              {pegawai.map(({ uid, displayName }) => {
+              {pegawai?.map(({ uid, displayName }) => {
                 const canRecreate = downloadUrl?.suratPenugasan?.[uid];
 
                 return (

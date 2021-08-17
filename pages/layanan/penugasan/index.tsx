@@ -28,7 +28,14 @@ const Penugasan: NextPage = () => {
 
       <h3 style={{ marginBottom: 24 }}>Surat Penugasan Perjalanan Dinas (SPD)</h3>
 
-      <div style={{ background: "#f8f8f8", borderRadius: 4 }} className="p-3">
+      <div
+        style={{
+          background: "#f8f8f8",
+          borderRadius: 4,
+          width: "100%",
+        }}
+        className="p-3"
+      >
         <Stepper data={options} activeIndex={activeIndex} />
       </div>
       <div className="row p-3 mb-5">

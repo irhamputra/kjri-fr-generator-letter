@@ -34,7 +34,7 @@ const SelectComponent = ({
   // reconstruct option from value
   const index = matcher
     ? matcher(options)
-    : options?.findIndex((valueProp: { value: string }) => valueProp.value === value);
+    : options?.findIndex?.((valueProp: { value: string }) => valueProp.value === value);
 
   const _value = index !== -1 ? options?.[index] : null;
 
@@ -72,7 +72,7 @@ const SelectStaff = ({ placeholder, form, field, value, options }: React.PropsWi
   // reconstruct option from value
   const optionStaff = options.map(({ displayName, ...rest }: { displayName: string }) => ({
     label: displayName,
-    value: { displayName, ...rest } as unknown as string,
+    value: ({ displayName, ...rest } as unknown) as string,
   }));
 
   const SingleValue = (props: SingleValueProps<any>) => {

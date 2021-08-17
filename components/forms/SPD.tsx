@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormRampunganFillInitialValues } from "../../typings/RampunganFill";
 import { createRampungan } from "../../utils/createHelper";
 import FormRampunganFill from "./FormRampunganFill";
@@ -71,19 +71,6 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
   });
 
   const setSuratStaff = (data: ForumSuratStaffInitialValues) => setValues((val) => ({ ...val, suratStaff: data }));
-
-  // TODO : Edit?
-  // const { data: editedData = {}, isFetched } = useMyQuery(
-  //   ["fetchSingleSurat", editId],
-  //   async () => {
-  //     const { data } = await axios.get(`/api/v1/surat-tugas/${editId}`);
-
-  //     return data;
-  //   },
-  //   {
-  //     enabled: !!editId,
-  //   }
-  // );
 
   const { countToUER } = useCountUangHarianSPD();
 

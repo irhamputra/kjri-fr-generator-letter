@@ -19,7 +19,7 @@ const SuratTugas: NextPage = () => {
   const query = queryClient.getQueryData<Auth>("auth");
 
   const { data, isLoading } = useMyQuery(
-    "fetchSuratTugas",
+    "fetchListSuratTugas",
     async () => {
       const { data } = await axios.get("/api/v1/surat-tugas");
 
@@ -56,28 +56,37 @@ const SuratTugas: NextPage = () => {
 
   const { replace } = useRouter();
 
-  const { handleChange, handleSubmit, values, setFieldValue, errors, touched, resetForm, isSubmitting, ...restFormik } =
-    useFormik({
-      initialValues,
-      validationSchema: object().shape(createSchema(initialValues)),
-      onSubmit: async (values, { setSubmitting }) => {
-        setSubmitting(true);
-        try {
-          await axios.post("/api/v1/surat-tugas", {
-            suratTugasId: v4(),
-            ...values,
-          });
-          toast.success("Surat Tugas berhasil dibuat");
-        } catch (e) {
-          toast.error("Terjadi masalah teknis");
-          throw new Error(e.message);
-        }
+  const {
+    handleChange,
+    handleSubmit,
+    values,
+    setFieldValue,
+    errors,
+    touched,
+    resetForm,
+    isSubmitting,
+    ...restFormik
+  } = useFormik({
+    initialValues,
+    validationSchema: object().shape(createSchema(initialValues)),
+    onSubmit: async (values, { setSubmitting }) => {
+      setSubmitting(true);
+      try {
+        await axios.post("/api/v1/surat-tugas", {
+          suratTugasId: v4(),
+          ...values,
+        });
+        toast.success("Surat Tugas berhasil dibuat");
+      } catch (e) {
+        toast.error("Terjadi masalah teknis");
+        throw new Error(e.message);
+      }
 
-        await replace("/layanan/penugasan");
+      await replace("/layanan/penugasan");
 
-        setSubmitting(false);
-      },
-    });
+      setSubmitting(false);
+    },
+  });
 
   if (isLoading) return <h4>Loading...</h4>;
 

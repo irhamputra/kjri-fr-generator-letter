@@ -11,7 +11,7 @@ const useQuerySuratTugas = () => {
     async () => {
       const { data } = await axios.get(`/api/v1/penugasan${!isList ? "/create" : ""}`);
 
-      return data;
+      return data ?? null;
     },
     {
       enabled: true,
