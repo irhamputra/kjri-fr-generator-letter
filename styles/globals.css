@@ -30,6 +30,10 @@ a {
   position: relative;
 }
 
+.reactDateWrapper .react-datepicker-wrapper {
+  width: 100%;
+}
+
 .reactDateWrapper .react-datepicker-wrapper .react-datepicker__input-container input {
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
