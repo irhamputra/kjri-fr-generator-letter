@@ -7,6 +7,7 @@ export type FormKeteranganValues = {
   data: {
     nama: string;
     nip: string;
+    uid: string;
     rincian: string;
   }[];
 };

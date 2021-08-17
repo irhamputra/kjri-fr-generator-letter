@@ -7,6 +7,7 @@ import { Trash as TrashIcon, Plus as PlusIcon, ArrowRight } from "react-bootstra
 import useQueryUsers from "../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
 import useCountUangHarianSPD from "../../hooks/useCountUangHarianSPD";
+import { Pegawai } from "../../typings/Pegawai";
 
 export type ForumSuratStaffInitialValues = {
   nomorSurat: string;

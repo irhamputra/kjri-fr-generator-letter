@@ -11,6 +11,7 @@ import useCountUangHarianSPD from "../../hooks/useCountUangHarianSPD";
 import { useFormik } from "formik";
 import FormKeterangan, { FormKeteranganValues } from "./FormKeterangan";
 import { SuratTugasRes } from "../../typings/SuratTugas";
+import { Pegawai } from "../../typings/Pegawai";
 
 const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ onPageIndexChange }) => {
   const [activePageIndex, setPageIndex] = useState(0);
@@ -44,10 +45,11 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
           nomorSurat: values.suratStaff.nomorSurat,
           fullDayKurs,
           listPegawai: namaPegawai.map((v) => {
-            const indexRampungan = data.findIndex(({ nip: nipR }) => nipR === v.pegawai.nip);
+            const indexRampungan = data.findIndex(({ uid: id }) => id === v.pegawai.uid);
             const rampungan = data[indexRampungan].rampungan;
-            const keterangan = val.keterangan.data.filter(({ nip }) => nip === v.pegawai.nip)[0];
+            const keterangan = val.keterangan.data.filter(({ uid: id }) => id === v.pegawai.uid)[0];
 
+            // Only put necessary code here
             return {
               ...v,
               uangHarian: countToUER(v.pegawai?.golongan, v.durasi, fullDayKurs),
@@ -95,17 +97,19 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
         <FormSuratStaff
           initialValues={values.suratStaff}
           onSave={(val) => {
-            let rampunganData: { nama: string; nip: string; rampungan: any }[] = [];
-            let keteranganData: { nama: string; nip: string; rincian: "" }[] = [];
+            let rampunganData: { nama: string; nip: string; rampungan: any; uid: string }[] = [];
+            let keteranganData: { nama: string; nip: string; rincian: ""; uid: string }[] = [];
 
-            val.namaPegawai?.forEach(({ pegawai }: { pegawai: any }) => {
+            val.namaPegawai?.forEach(({ pegawai }: { pegawai: Pegawai }) => {
               rampunganData.push({
                 nama: pegawai.displayName,
                 nip: pegawai.nip,
+                uid: pegawai.uid,
                 rampungan: [createRampungan("Frankfurt")],
               });
               keteranganData.push({
                 nama: pegawai.displayName,
+                uid: pegawai.uid,
                 nip: pegawai.nip,
                 rincian: "",
               });
