@@ -12,9 +12,11 @@ import { useFormik } from "formik";
 import FormKeterangan, { FormKeteranganValues } from "./FormKeterangan";
 import { SuratTugasRes } from "../../typings/SuratTugas";
 import { Pegawai } from "../../typings/Pegawai";
+import { useRouter } from "next/router";
 
 const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ onPageIndexChange }) => {
   const [activePageIndex, setPageIndex] = useState(0);
+  const { push } = useRouter();
 
   const { setValues, setFieldValue, values, handleSubmit } = useFormik<{
     suratStaff: ForumSuratStaffInitialValues;
@@ -38,7 +40,6 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
     },
     onSubmit: async (val) => {
       const { data, ...restVal } = val.rampunganFill;
-
       const { namaPegawai, fullDayKurs } = val.suratStaff;
       try {
         const newValues: Omit<SuratTugasRes, "tujuanDinas" | "suratTugasId"> = {
@@ -63,6 +64,7 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
         toast(res.data?.message);
+        push("/layanan/penugasan/list");
       } catch (e) {
         toast.error(e.message);
         throw new Error(e.message);
