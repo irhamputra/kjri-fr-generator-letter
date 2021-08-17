@@ -14,14 +14,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { suratTugasId, uid, forceRecreate } = req.body;
 
-      const destination = `penugasan/${suratTugasId}-${uid}.pdf`;
-      const fileRef = storage.bucket().file(destination);
       const suratTugasRef = db.collection("SuratTugas").doc(suratTugasId as string);
       const snapshot = await suratTugasRef.get();
-
       const suratTugas = snapshot.data() as SuratTugasRes;
       const { listPegawai = [], pembuatKomitmen, downloadUrl, nomorSurat } = suratTugas;
 
+      const destination = `penugasan/${nomorSurat.replace(/\//g, "_")}.pdf`;
+      const fileRef = storage.bucket().file(destination);
+
+      // Skip pdf creation if it already has existing pdf
       if (downloadUrl?.suratPenugasan?.[uid] && !forceRecreate) {
         const signedUrls = await fileRef.getSignedUrl({
           action: "read",
@@ -66,6 +67,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         const pdfDoc = await PDFDocument.load(formPdfBytes);
 
+        // Embed font in pdf
         const fontPath = "fonts/calibri.ttf";
         const [urlFont] = await storage.bucket().file(fontPath).getSignedUrl(urlOptions);
         const font = await fetch(urlFont).then((res) => res.arrayBuffer());
