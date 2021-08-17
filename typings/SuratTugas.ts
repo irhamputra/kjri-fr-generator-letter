@@ -18,10 +18,6 @@ export interface SuratTugasRes {
     nip: string;
   };
 
-  keterangan?: {
-    rincian: string;
-  };
-
   downloadUrl?: {
     suratPenugasan: {
       [k in string]: string;
@@ -30,4 +26,12 @@ export interface SuratTugasRes {
   };
 }
 
-export type ListPegawai = { uangHarian: string; durasi: string; pegawai: Pegawai; destinasi: RampunganFill[] };
+export type ListPegawai = {
+  uangHarian: string;
+  durasi: string;
+  pegawai: Pegawai;
+  destinasi: RampunganFill[];
+  keterangan: {
+    rincian: string;
+  };
+};

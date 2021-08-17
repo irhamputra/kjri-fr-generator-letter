@@ -106,7 +106,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         );
         pdfBytes = await fillKwitansi(
           pdfBytes,
-          { listPegawai: chosenListPegawai, pembuatKomitmen },
+          { listPegawai: chosenListPegawai, pembuatKomitmen, tujuanSurat: suratTugas.tujuanDinas },
           {
             font: calibriFont,
           }

@@ -1,7 +1,6 @@
 import { Field, FieldArray, Form, Formik } from "formik";
-import { useRouter } from "next/router";
 import React from "react";
-import { GeoFill } from "react-bootstrap-icons";
+import { ArrowRight, GeoFill } from "react-bootstrap-icons";
 import { object } from "yup";
 import StepperDown from "../../components/StepperDown";
 import { FormRampunganFillInitialValues } from "../../typings/RampunganFill";
@@ -20,7 +19,6 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
   onClickBack,
 }) => {
   const validationSchema = object();
-  const { push } = useRouter();
   return (
     <Formik
       initialValues={initialValues as any}
@@ -30,7 +28,6 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
         setSubmitting(true);
         onSave(val);
         setSubmitting(false);
-        await push("/layanan/penugasan/list");
       }}
     >
       {({
@@ -46,175 +43,179 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
           <>
             <Form>
               <div className="mb-2">
-                <label className="form-label" style={{ fontWeight: "bold" }}>
-                  Pembuat Komitmen
-                </label>
+                <div className="mb-4">
+                  <h4 className="mb-4">Pembuat Komitmen</h4>
+                  <div className="mb-2">
+                    <label className="form-label">Pembuat Komitmen</label>
+                    <Field
+                      className="form-control"
+                      value={values.pembuatKomitmenName}
+                      name="pembuatKomitmenName"
+                      placeholder="Masukan namat"
+                    />
+                    {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
+                  </div>
+                  <div className="mb-2">
+                    <label className="form-label">NIP Pembuat Komitmen</label>
 
-                <Field
-                  className="form-control"
-                  value={values.pembuatKomitmenName}
-                  name="pembuatKomitmenName"
-                  placeholder="Masukan namat"
-                />
-                {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
+                    <Field
+                      className="form-control"
+                      value={values.pembuatKomitmenNIP}
+                      name="pembuatKomitmenNIP"
+                      placeholder="Masukan nip"
+                    />
+                    {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
+                  </div>
+                </div>
               </div>
+
               <div className="mb-4">
-                <label className="form-label" style={{ fontWeight: "bold" }}>
-                  NIP
-                </label>
+                <h4 className="mb-4">Rincian Destinasi</h4>
+                <FieldArray
+                  name="data"
+                  render={(arrayHelpers) =>
+                    values.data.map((_, index) => {
+                      const { nama, nip, rampungan } = _;
+                      const lastRampungan = rampungan[rampungan.length - 1];
+                      return (
+                        <>
+                          <div className="p-3 mb-3" style={{ borderRadius: 8, border: "1px solid #e2e2e2" }}>
+                            <div className="mb-3">
+                              <h4>{nama}</h4>
+                              <span>NIP : {nip}</span>
+                            </div>
+                            <FieldArray
+                              name={`data[${index}].rampungan`}
+                              render={(arrayHelpr) => {
+                                return (
+                                  <>
+                                    {rampungan?.map((val, idx) => {
+                                      return (
+                                        <div>
+                                          <StepperDown>
+                                            <div className="row mb-3">
+                                              <div className="col-sm-4">
+                                                <label className="form-label" style={{ fontWeight: "bold" }}>
+                                                  Berangkat dari{" "}
+                                                  <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
+                                                    (Depart from)
+                                                  </span>
+                                                </label>
 
-                <Field
-                  className="form-control"
-                  value={values.pembuatKomitmenNIP}
-                  name="pembuatKomitmenNIP"
-                  placeholder="Masukan nip"
-                />
-                {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
-              </div>
+                                                <Field
+                                                  className="form-control"
+                                                  disabled
+                                                  value={val.pergiDari}
+                                                  name={`data[${index}].rampungan[${idx}].pergiDari`}
+                                                  placeholder="Masukan tempat"
+                                                />
+                                                {errors.pergiDari && touched.pergiDari && (
+                                                  <small className="text-danger">{errors.pergiDari}</small>
+                                                )}
+                                              </div>
+                                              <div className="col-sm-4">
+                                                <label className="form-label" style={{ fontWeight: "bold" }}>
+                                                  Tanggal Pergi{" "}
+                                                  <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
+                                                    (Date)
+                                                  </span>
+                                                </label>
 
-              <FieldArray
-                name="data"
-                render={(arrayHelpers) =>
-                  values.data.map((_, index) => {
-                    const { nama, nip, rampungan } = _;
-                    const lastRampungan = rampungan[rampungan.length - 1];
-                    return (
-                      <>
-                        <div className="p-3 mb-3" style={{ borderRadius: 8, border: "1px solid #e2e2e2" }}>
-                          <div className="mb-3">
-                            <h4>{nama}</h4>
-                            <span>NIP : {nip}</span>
-                          </div>
-                          <FieldArray
-                            name={`data[${index}].rampungan`}
-                            render={(arrayHelpr) => {
-                              return (
-                                <>
-                                  {rampungan?.map((val, idx) => {
-                                    return (
-                                      <div>
-                                        <StepperDown>
-                                          <div className="row mb-3">
-                                            <div className="col-sm-4">
-                                              <label className="form-label" style={{ fontWeight: "bold" }}>
-                                                Berangkat dari{" "}
-                                                <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
-                                                  (Depart from)
-                                                </span>
-                                              </label>
-
-                                              <Field
-                                                className="form-control"
-                                                disabled
-                                                value={val.pergiDari}
-                                                name={`data[${index}].rampungan[${idx}].pergiDari`}
-                                                placeholder="Masukan tempat"
-                                              />
-                                              {errors.pergiDari && touched.pergiDari && (
-                                                <small className="text-danger">{errors.pergiDari}</small>
-                                              )}
+                                                <Field
+                                                  className="form-control"
+                                                  name={`data[${index}].rampungan[${idx}].tanggalPergi`}
+                                                  component={DatePickerComponent}
+                                                  value={val.tanggalPergi}
+                                                  placeholder="Pilih Surat"
+                                                />
+                                                {errors.tanggalPergi && touched.tanggalPergi && (
+                                                  <small className="text-danger">{errors.tanggalPergi}</small>
+                                                )}
+                                              </div>
                                             </div>
-                                            <div className="col-sm-4">
-                                              <label className="form-label" style={{ fontWeight: "bold" }}>
-                                                Tanggal Pergi{" "}
-                                                <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
-                                                  (Date)
-                                                </span>
-                                              </label>
+                                          </StepperDown>
+                                          <StepperDown Icon={<GeoFill />} isLast>
+                                            <div className="row mb-3">
+                                              <div className="col-sm-4">
+                                                <label className="form-label" style={{ fontWeight: "bold" }}>
+                                                  Tiba di{" "}
+                                                  <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
+                                                    (Arrive in)
+                                                  </span>
+                                                </label>
 
-                                              <Field
-                                                className="form-control"
-                                                name={`data[${index}].rampungan[${idx}].tanggalPergi`}
-                                                component={DatePickerComponent}
-                                                value={val.tanggalPergi}
-                                                placeholder="Pilih Surat"
-                                              />
-                                              {errors.tanggalPergi && touched.tanggalPergi && (
-                                                <small className="text-danger">{errors.tanggalPergi}</small>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </StepperDown>
-                                        <StepperDown Icon={<GeoFill />} isLast>
-                                          <div className="row mb-3">
-                                            <div className="col-sm-4">
-                                              <label className="form-label" style={{ fontWeight: "bold" }}>
-                                                Tiba di{" "}
-                                                <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
-                                                  (Arrive in)
-                                                </span>
-                                              </label>
+                                                <Field
+                                                  className="form-control"
+                                                  disabled={idx !== rampungan.length - 1}
+                                                  name={`data[${index}].rampungan[${idx}].tibaDi`}
+                                                  value={val.tibaDi}
+                                                  placeholder="Masukan tempat"
+                                                />
+                                                {errors.tibaDi && touched.tibaDi && (
+                                                  <small className="text-danger">{errors.tibaDi}</small>
+                                                )}
+                                              </div>
+                                              <div className="col-sm-4">
+                                                <label className="form-label" style={{ fontWeight: "bold" }}>
+                                                  Tanggal Tiba{" "}
+                                                  <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
+                                                    (Date)
+                                                  </span>
+                                                </label>
 
-                                              <Field
-                                                className="form-control"
-                                                disabled={idx !== rampungan.length - 1}
-                                                name={`data[${index}].rampungan[${idx}].tibaDi`}
-                                                value={val.tibaDi}
-                                                placeholder="Masukan tempat"
-                                              />
-                                              {errors.tibaDi && touched.tibaDi && (
-                                                <small className="text-danger">{errors.tibaDi}</small>
-                                              )}
+                                                <Field
+                                                  className="form-control"
+                                                  value={val.tanggalTiba}
+                                                  component={DatePickerComponent}
+                                                  name={`data[${index}].rampungan[${idx}].tanggalTiba`}
+                                                  placeholder="Pilih Surat"
+                                                />
+                                                {errors.tanggalTiba && touched.tanggalTiba && (
+                                                  <small className="text-danger">{errors.tanggalTiba}</small>
+                                                )}
+                                              </div>
                                             </div>
-                                            <div className="col-sm-4">
-                                              <label className="form-label" style={{ fontWeight: "bold" }}>
-                                                Tanggal Tiba{" "}
-                                                <span style={{ fontStyle: "italic", fontWeight: "normal" }}>
-                                                  (Date)
-                                                </span>
-                                              </label>
+                                          </StepperDown>
+                                        </div>
+                                      );
+                                    })}
+                                    <div style={{ marginLeft: 56 }} className="d-flex">
+                                      {rampungan.length < 3 && (
+                                        <button
+                                          type="button"
+                                          className="btn btn-primary"
+                                          style={{ marginRight: 16 }}
+                                          onClick={() =>
+                                            arrayHelpr.push(
+                                              createRampungan(lastRampungan.tibaDi, lastRampungan.tanggalTiba)
+                                            )
+                                          }
+                                          disabled={!lastRampungan?.tibaDi}
+                                        >
+                                          Tambah destinasi
+                                        </button>
+                                      )}
 
-                                              <Field
-                                                className="form-control"
-                                                value={val.tanggalTiba}
-                                                component={DatePickerComponent}
-                                                name={`data[${index}].rampungan[${idx}].tanggalTiba`}
-                                                placeholder="Pilih Surat"
-                                              />
-                                              {errors.tanggalTiba && touched.tanggalTiba && (
-                                                <small className="text-danger">{errors.tanggalTiba}</small>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </StepperDown>
-                                      </div>
-                                    );
-                                  })}
-                                  <div style={{ marginLeft: 56 }} className="d-flex">
-                                    {rampungan.length < 3 && (
                                       <button
                                         type="button"
-                                        className="btn btn-primary"
-                                        style={{ marginRight: 16 }}
-                                        onClick={() =>
-                                          arrayHelpr.push(
-                                            createRampungan(lastRampungan.tibaDi, lastRampungan.tanggalTiba)
-                                          )
-                                        }
-                                        disabled={!lastRampungan?.tibaDi}
+                                        className="btn btn-outline-dark"
+                                        onClick={() => arrayHelpr.pop()}
                                       >
-                                        Tambah destinasi
+                                        Hapus
                                       </button>
-                                    )}
+                                    </div>
+                                  </>
+                                );
+                              }}
+                            />
+                          </div>
+                        </>
+                      );
+                    })
+                  }
+                />
+              </div>
 
-                                    <button
-                                      type="button"
-                                      className="btn btn-outline-dark"
-                                      onClick={() => arrayHelpr.pop()}
-                                    >
-                                      Hapus
-                                    </button>
-                                  </div>
-                                </>
-                              );
-                            }}
-                          />
-                        </div>
-                      </>
-                    );
-                  })
-                }
-              />
               <div className="mt-3">
                 <div className="d-flex justify-content-between">
                   <div className="d-flex">
@@ -223,7 +224,8 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
                     </button>
                   </div>
                   <button className="btn btn-dark btn" type="submit">
-                    Simpan Surat
+                    Selanjutnya
+                    <ArrowRight style={{ marginLeft: 4 }} />
                   </button>
                 </div>
               </div>

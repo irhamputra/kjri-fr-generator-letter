@@ -255,10 +255,10 @@ async function fillPernyataan(form: PDFForm, data: { pegawai: Pegawai; nomorSura
 
 async function fillKwitansi(
   form: PDFForm,
-  data: { listPegawai: ListPegawai; pembuatKomitmen?: { name: string; nip: string } },
+  data: { listPegawai: ListPegawai; tujuanSurat: string; pembuatKomitmen?: { name: string; nip: string } },
   option: Option
 ) {
-  const { listPegawai, pembuatKomitmen } = data;
+  const { listPegawai, pembuatKomitmen, tujuanSurat } = data;
 
   let formData: FormValues[] = [];
   if (pembuatKomitmen) {
@@ -285,11 +285,12 @@ async function fillKwitansi(
     { fieldName: "terbilang", value: terbilangWithKoma(nilaiTerbilang) + " Euro" },
     { fieldName: "nama_penerima", value: listPegawai.pegawai.displayName },
     { fieldName: "datum", value: formattedDayjs(new Date()) },
+    { fieldName: "info_pembayaran", value: tujuanSurat },
   ];
 
   formData = [...formData, ...data2];
   fillAndSetReadOnly(form, formData, option);
-  enableReadOnly(form, ["TA", "no_buk", "mata_anggaran", "info_pembayaran", "NIP2"]);
+  enableReadOnly(form, ["TA", "no_buk", "mata_anggaran", "NIP2"]);
 
   return form;
 }

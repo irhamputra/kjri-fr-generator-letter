@@ -62,6 +62,7 @@ const FormSuratStaff: React.FC<{
         return (
           <Form>
             <div className="mb-3">
+              <h4 className="mb-4">Informasi Penugasan</h4>
               <label className="form-label">Nomor Surat</label>
               {initialValues?.nomorSurat && initialValues?.tujuanDinas ? (
                 <h5>{initialValues.nomorSurat + " - " + initialValues.tujuanDinas}</h5>
