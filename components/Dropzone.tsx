@@ -2,7 +2,7 @@ import * as React from "react";
 import { useDropzone } from "react-dropzone";
 import { FormikErrors } from "formik";
 import type { useSuratKeluarFormValues } from "../hooks/form/useSuratKeluarForm";
-import { FilePdf } from "react-bootstrap-icons";
+import toast from "react-hot-toast";
 
 const baseStyle: React.CSSProperties = {
   flex: 1,
@@ -38,6 +38,7 @@ const Dropzone: React.FC<{
         onSetFieldValue("hasFile", true);
         onSetFieldValue("url", acceptedFiles[0].name);
         onSetFieldValue("file", formData);
+        toast.success("Surat telah diganti, klik Edit Surat untuk menyimpan perubahan");
       }
     }
   }, []);
@@ -49,15 +50,38 @@ const Dropzone: React.FC<{
     disabled,
     maxFiles: 1,
   });
+  const [hover, setHover] = React.useState(false);
+  const fileName = path.split("/");
 
   return (
     <section>
-      <div {...getRootProps({ style: baseStyle })}>
+      <div {...getRootProps({ style: { ...baseStyle, position: "relative" } })}>
         <input {...getInputProps()} />
         {!!path ? (
           <>
-            <FilePdf height={120} width={120} style={{ marginBottom: 32, display: "block" }} />
-            <span>{path}</span>
+            <div
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              style={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: `rgba(0,0,0,${hover ? ".3" : 0})`,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span className="text-white" style={{ display: hover ? "block" : "none" }}>
+                Klik atau drag 'n drop untuk mengganti file
+              </span>
+            </div>
+            <img src="/images/PDF_file_icon.svg" className="mb-4" width={120} />
+            <span style={{ color: "var(--bs-body-color)", fontWeight: "bold" }}>{fileName[fileName.length - 1]}</span>
           </>
         ) : (
           <span>"Klik box ini atau drag 'n drop file yang akan di upload"</span>
