@@ -7,8 +7,8 @@ import { useState } from "react";
 const useDownloadSuratTugas = () => {
   return useMutation(
     "downloadSuratTugas",
-    async (suratTugasId: string) => {
-      const { data } = await axios.post(`/api/v1/print/surat-tugas`, { id: suratTugasId });
+    async ({ suratTugasId, forceRecreate }: { suratTugasId: string; forceRecreate: boolean }) => {
+      const { data } = await axios.post(`/api/v1/print/surat-tugas`, { id: suratTugasId, forceRecreate });
       return { ...data, suratTugasId };
     },
     {

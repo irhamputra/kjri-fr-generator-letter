@@ -16,6 +16,7 @@ import fs from "fs";
 import { RichTextValue } from "../typings/Common";
 import { PegawaiSuratTugas } from "../typings/Pegawai";
 import "dayjs/locale/id";
+import { storage } from "./firebase";
 
 type Modify<T, TData> = T & TData;
 
@@ -87,7 +88,7 @@ const tabStop2 = [
   },
 ];
 
-function generateSuratTugas({
+async function generateSuratTugas({
   nomorSurat,
   pegawai = [],
   waktuPelaksanaan,
@@ -96,8 +97,18 @@ function generateSuratTugas({
   textTengah,
   textPenutup,
 }: GeneratePegawaiProps) {
+  const urlOptions = {
+    version: "v4" as "v4",
+    action: "read" as "read",
+    expires: Date.now() + 1000 * 60 * 2, // 2 minutes
+  };
+
+  // Get downloadable url using signed url method
+  const [url] = await storage.bucket().file("template/garuda.png").getSignedUrl(urlOptions);
+  const imageFetch = await fetch(url).then((res) => res.arrayBuffer());
+
   const image = new ImageRun({
-    data: fs.readFileSync("./public/doc.png"),
+    data: imageFetch,
     transformation: {
       width: 100,
       height: 100,
@@ -224,11 +235,11 @@ function generateSuratTugas({
 function createList(
   number: string | number,
   {
-    displayName,
-    nip,
-    pangkat,
-    golongan,
-    jabatan,
+    displayName = "",
+    nip = "",
+    pangkat = "",
+    golongan = "",
+    jabatan = "",
   }: { displayName?: string; nip: string | number; pangkat: string; golongan: string; jabatan: string }
 ) {
   return [

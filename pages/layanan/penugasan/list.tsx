@@ -137,8 +137,8 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
     downloadUid,
   } = useDownloadSuratPenugasan();
 
-  const handleSuratTugas = async () => {
-    await mutateSuratTugas(suratTugasId);
+  const handleSuratTugas = async (forceRecreate: boolean = false) => {
+    await mutateSuratTugas({ suratTugasId, forceRecreate });
   };
 
   const handleSuratPenugasan = async (suratTugasId: string, uid: string, forceRecreate: boolean) => {
@@ -173,9 +173,16 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
                 <div style={{ flex: "1 1" }}>Surat Tugas</div>
                 <div style={{ flex: "1 1" }}>
                   {!isLoadingSuratTugas ? (
-                    <span style={{ cursor: "pointer" }} onClick={handleSuratTugas}>
-                      Download
-                    </span>
+                    <div className="d-flex">
+                      <span style={{ cursor: "pointer" }} onClick={() => handleSuratTugas()}>
+                        Download
+                      </span>
+                      {downloadUrl?.suratTugas && (
+                        <a href="#" style={{ marginLeft: 16 }} onClick={() => handleSuratTugas(true)}>
+                          Buat Ulang
+                        </a>
+                      )}
+                    </div>
                   ) : (
                     <span>Downloading...</span>
                   )}
