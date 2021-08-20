@@ -14,8 +14,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
   if (req.method === "POST" || req.method === "PUT") {
     try {
-      const uid = v4();
-
       const data = await new Promise((resolve, reject) => {
         const form = formidable();
         form.parse(req, (err: any, fields: any, files: any) => {
@@ -23,11 +21,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           resolve({ err, fields, files });
         });
       });
-      const { files } = data as any;
+      const { files, fields } = data as any;
+      console.log(files, fields, "UTSADS");
       const file = files.file;
-      const ext = file.name.split(".").pop();
       const storageRef = storage.bucket();
-      const dest = `surat-keluar/${uid}.${ext}`;
+      const nomorSurat = (fields.nomorSurat as string).replace(/[/\\?%*:|"<>\s]/g, "_");
+      const fileName = (file.name as string).replace(/[/\\?%*:|"<>\s]/g, "_");
+      const dest = `surat-keluar/${nomorSurat}_${fileName}`;
       // const fileRef = storageRef.file(`surat-keluar/${uid}.${ext}`);
       const upload = await storageRef.upload(file.path, {
         destination: dest,
