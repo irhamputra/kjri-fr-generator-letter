@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { FormikErrors } from "formik";
 import type { useSuratKeluarFormValues } from "../hooks/form/useSuratKeluarForm";
 import toast from "react-hot-toast";
+import { Trash } from "react-bootstrap-icons";
 
 const baseStyle: React.CSSProperties = {
   flex: 1,
@@ -50,43 +51,42 @@ const Dropzone: React.FC<{
     disabled,
     maxFiles: 1,
   });
-  const [hover, setHover] = React.useState(false);
   const fileName = path.split("/");
 
   return (
     <section>
-      <div {...getRootProps({ style: { ...baseStyle, position: "relative" } })}>
-        <input {...getInputProps()} />
-        {!!path ? (
-          <>
-            <div
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
-              style={{
-                position: "absolute",
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background: `rgba(0,0,0,${hover ? ".3" : 0})`,
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+      {!!path ? (
+        <div className="d-flex flex-column justify-content-center align-items-center position-relative p-3">
+          <div
+            style={{
+              position: "absolute",
+              right: 16,
+              top: 16,
+            }}
+          >
+            <button
+              type="button"
+              className="btn btn btn-outline-danger"
+              onClick={async () => {
+                if (onSetFieldValue) {
+                  onSetFieldValue("hasFile", false);
+                  onSetFieldValue("url", "");
+                  onSetFieldValue("file", undefined);
+                }
               }}
             >
-              <span className="text-white" style={{ display: hover ? "block" : "none" }}>
-                Klik atau drag 'n drop untuk mengganti file
-              </span>
-            </div>
-            <img src="/images/PDF_file_icon.svg" className="mb-4" width={120} />
-            <span style={{ color: "var(--bs-body-color)", fontWeight: "bold" }}>{fileName[fileName.length - 1]}</span>
-          </>
-        ) : (
+              <Trash size={20} />
+            </button>
+          </div>
+          <img src="/images/PDF_file_icon.svg" className="mb-4" width={120} />
+          <span style={{ color: "var(--bs-body-color)", fontWeight: "bold" }}>{fileName[fileName.length - 1]}</span>
+        </div>
+      ) : (
+        <div {...getRootProps({ style: { ...baseStyle, position: "relative" } })}>
+          <input {...getInputProps()} />
           <span>"Klik box ini atau drag 'n drop file yang akan di upload"</span>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 };
