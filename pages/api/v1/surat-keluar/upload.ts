@@ -22,7 +22,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
       });
       const { files, fields } = data as any;
-      console.log(files, fields, "UTSADS");
       const file = files.file;
       const storageRef = storage.bucket();
       const nomorSurat = (fields.nomorSurat as string).replace(/[/\\?%*:|"<>\s]/g, "_");
