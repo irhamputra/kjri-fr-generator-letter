@@ -14,7 +14,7 @@ const Penugasan: NextPage = () => {
   const options = [
     { number: 1, text: "Nomor Surat dan Staff" },
     { number: 2, text: "Destinasi" },
-    { number: 3, text: "Selesai" },
+    { number: 3, text: "Keterangan" },
   ];
 
   if (!query?.isAdmin) throw new Error("Invalid permission");

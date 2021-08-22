@@ -5,6 +5,7 @@ import useBreakpoint from "../../hooks/useBreakpoints";
 import Navigation from "../Navigation";
 import Sidebar from "../Sidebar";
 import styles from "../../styles/Home.module.css";
+import { AppStateProvider } from "../../contexts/app-state-context";
 
 const DashboardLayout: React.FC = ({ children }) => {
   const { is } = useBreakpoint();
@@ -30,7 +31,7 @@ const DashboardLayout: React.FC = ({ children }) => {
   });
 
   return (
-    <>
+    <AppStateProvider>
       {!is(["sm", "xs"]) && <Sidebar />}
       <div className="col p-0 mb-5" style={{ marginLeft: "16.6666666667%" }}>
         <Navigation />
@@ -57,7 +58,7 @@ const DashboardLayout: React.FC = ({ children }) => {
           </div>
         </div>
       </div>
-    </>
+    </AppStateProvider>
   );
 };
 

@@ -3,29 +3,29 @@ import { db, storage } from "../../../../../utils/firebase";
 import { cors } from "../../../../../utils/middlewares";
 import { SuratTugasRes } from "../../../../../typings/SuratTugas";
 import { PDFDocument } from "pdf-lib";
-import {
-  createKwitansiFill,
-  createPernyataanFill,
-  createRampunganFill,
-  createRincianFill,
-} from "../../../../../utils/pdfLib";
+import { fillKwitansi, fillPernyataan, fillRampungan, fillRincian, fillCover } from "../../../../../utils/pdfLib";
 import fs from "fs";
+import { JalDis } from "../../../../../typings/Jaldis";
+import fontkit from "@pdf-lib/fontkit";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "POST") {
     try {
       const { suratTugasId, uid, forceRecreate } = req.body;
-
-      const destination = `penugasan/${suratTugasId}-${uid}.pdf`;
-      const fileRef = storage.bucket().file(destination);
+      console.log(forceRecreate, "FORCE RECREATE");
       const suratTugasRef = db.collection("SuratTugas").doc(suratTugasId as string);
       const snapshot = await suratTugasRef.get();
-
       const suratTugas = snapshot.data() as SuratTugasRes;
       const { listPegawai = [], pembuatKomitmen, downloadUrl, nomorSurat } = suratTugas;
 
+      // uid = User Unique Id
+      const destination = `penugasan/${nomorSurat.replace(/\//g, "_")}_${uid}.pdf`;
+      const fileRef = storage.bucket().file(destination);
+
+      // Skip pdf creation if it already has existing pdf
       if (downloadUrl?.suratPenugasan?.[uid] && !forceRecreate) {
+        console.log("File available, it will be downloaded...");
         const signedUrls = await fileRef.getSignedUrl({
           action: "read",
           expires: Date.now() + 15 * 60 * 1000, // 15 minutes,
@@ -46,44 +46,84 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         .limit(1)
         .where("golongan", "==", listPegawai[iPegawai].pegawai.golongan)
         .get();
-      const jaldisSnap = jaldis.docs[0].data();
+      const jaldisSnap = jaldis.docs[0].data() as JalDis;
 
       if (rampungan.length > 3) {
-        res.status(500).json({ error: "data length must be below 3" });
+        res.status(500).json({ error: "rampungan fill data length must be below 3" });
         return res.end();
       }
 
       try {
-        const mergedPdf = await PDFDocument.create();
+        const chosenListPegawai = listPegawai[iPegawai];
+        const pegawai = listPegawai[iPegawai].pegawai;
 
-        const pdfBytes = await createRampunganFill(pembuatKomitmen, rampungan);
-        const rincianPdf = await createRincianFill(suratTugas, uid, jaldisSnap?.harga);
-        const pernyataanFill = await createPernyataanFill(listPegawai[iPegawai].pegawai, nomorSurat);
-        const kwitansiPdf = await createKwitansiFill(pembuatKomitmen);
+        const urlOptions = {
+          version: "v4" as "v4",
+          action: "read" as "read",
+          expires: Date.now() + 1000 * 60 * 2, // 2 minutes
+        };
 
-        const copyA = await PDFDocument.load(pdfBytes);
-        const copyB = await PDFDocument.load(rincianPdf);
-        const copyC = await PDFDocument.load(pernyataanFill);
-        const copyD = await PDFDocument.load(kwitansiPdf);
+        // Get downloadable url using signed url method
+        const [url] = await storage.bucket().file("template/SPD_Template.pdf").getSignedUrl(urlOptions);
+        const formPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
-        const copiedPagesA = await mergedPdf.copyPages(copyA, copyA.getPageIndices());
-        copiedPagesA.forEach((page) => mergedPdf.addPage(page));
+        const pdfDoc = await PDFDocument.load(formPdfBytes);
 
-        const copiedPagesB = await mergedPdf.copyPages(copyB, copyB.getPageIndices());
-        copiedPagesB.forEach((page) => mergedPdf.addPage(page));
+        // Embed font in pdf
+        const fontPath = "fonts/calibri.ttf";
+        const [urlFont] = await storage.bucket().file(fontPath).getSignedUrl(urlOptions);
+        const font = await fetch(urlFont).then((res) => res.arrayBuffer());
+        pdfDoc.registerFontkit(fontkit);
+        const calibriFont = await pdfDoc.embedFont(font);
 
-        const copiedPagesC = await mergedPdf.copyPages(copyC, copyC.getPageIndices());
-        copiedPagesC.forEach((page) => mergedPdf.addPage(page));
+        // Fill form
+        let pdfBytes = pdfDoc.getForm();
+        pdfBytes = await fillCover(
+          pdfBytes,
+          { suratTugas, jaldis: jaldisSnap, pegawaiId: uid },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillRampungan(
+          pdfBytes,
+          { pegawai, pembuatKomitmen, rampungan },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillRincian(
+          pdfBytes,
+          { suratTugas, pegawaiId: uid, hargaJaldis: jaldisSnap?.harga },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillPernyataan(
+          pdfBytes,
+          { pegawai, nomorSuratTugas: nomorSurat },
+          {
+            font: calibriFont,
+          }
+        );
+        pdfBytes = await fillKwitansi(
+          pdfBytes,
+          { listPegawai: chosenListPegawai, pembuatKomitmen, tujuanSurat: suratTugas.tujuanDinas },
+          {
+            font: calibriFont,
+          }
+        );
 
-        const copiedPagesD = await mergedPdf.copyPages(copyD, copyD.getPageIndices());
-        copiedPagesD.forEach((page) => mergedPdf.addPage(page));
+        const mergedPdfFile = await pdfDoc.save();
 
-        const mergedPdfFile = await mergedPdf.save();
+        // READ ME !
+        // This code is for testing document in local, delete later!
+        // fs.writeFile(Math.random() + ".pdf", Buffer.from(mergedPdfFile), () => {});
 
-        fs.writeFile(Math.random() + ".pdf", Buffer.from(mergedPdfFile), () => {});
-
+        // Save doc in google storage
         await fileRef.save(mergedPdfFile as Buffer);
 
+        // Update link in database
         await suratTugasRef.update({
           downloadUrl: {
             ...downloadUrl,

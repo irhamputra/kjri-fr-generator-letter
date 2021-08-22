@@ -10,13 +10,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     try {
-      const { id } = req.body;
+      const { id, forceRecreate } = req.body;
       const storageRef = storage.bucket();
       const suratTugasRef = db.collection("SuratTugas").doc(id as string);
       const snapshot = await suratTugasRef.get();
-
-      const destination = `surat-tugas/${id}.docx`
-      const fileRef = storageRef.file(destination);
 
       const {
         nomorSurat,
@@ -27,8 +24,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         downloadUrl,
       } = snapshot.data() as SuratTugasRes;
 
-      if (downloadUrl?.suratTugas) {
-
+      if (downloadUrl?.suratTugas && !forceRecreate) {
+        const fileRef = storageRef.file(downloadUrl?.suratTugas);
         const signedUrls = await fileRef.getSignedUrl({
           action: "read",
           expires: Date.now() + 15 * 60 * 1000, // 15 minutes,
@@ -43,24 +40,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
+      const destination = `surat-tugas/${nomorSurat.replace(/\//g, "_")}.docx`;
+      const fileRef = storageRef.file(destination);
+
       const pegawai = listPegawai.map(({ pegawai: p }) => p);
       const day = listPegawai.map(({ durasi }) => durasi);
 
       const maxDay = day.sort()[day.length - 1];
-      const docx = generateSuratTugas({
+      const docx = await generateSuratTugas({
         nomorSurat,
         pegawai,
         textPembuka,
         textPenutup,
-        waktuPelaksanaan: maxDay,
-        waktuPerjalanan: maxDay,
+        waktuPelaksanaan: +maxDay,
+        waktuPerjalanan: +maxDay,
         textTengah,
       });
 
       await Packer.toBuffer(docx).then(async (buffer) => {
         await fileRef.save(buffer, { resumable: false });
       });
-
 
       await suratTugasRef.update({
         downloadUrl: {

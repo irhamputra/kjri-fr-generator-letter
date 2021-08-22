@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SelectArsip } from "../Select";
 import { useQuerySuratKeluarById } from "../../hooks/query/useQuerySuratKeluar";
 import capitalizeFirstLetter from "../../utils/capitalize";
@@ -8,6 +8,7 @@ import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useRouter } from "next/router";
 import Dropzone from "../Dropzone";
+import { useAppState } from "../../contexts/app-state-context";
 
 type SuratKeluarInitialValue = useSuratKeluarFormValues;
 
@@ -45,7 +46,10 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     resetForm,
     handleNomorSurat,
     disableGenerateNomor,
+    dirty,
   } = useSuratKeluarForm(initialValues, backUrl as string);
+
+  const { dispatch } = useAppState();
 
   const onChangeEditArsip = (arsipValue: string) => {
     const [generatedNumber, value, ...restValues] = nomorSurat.split("/").filter((value: string) => value.length !== 2);
@@ -62,6 +66,10 @@ const SuratKeluarForm: React.FC<{ editId?: string; backUrl?: string }> = ({ edit
     setFieldValue("arsipId", arsipValue);
     setFieldValue("nomorSurat", generateEditedNomorSurat);
   };
+
+  useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
 
   if (isLoading) return <h4>Loading...</h4>;
 

@@ -7,6 +7,7 @@ import { Trash as TrashIcon, Plus as PlusIcon, ArrowRight } from "react-bootstra
 import useQueryUsers from "../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
 import useCountUangHarianSPD from "../../hooks/useCountUangHarianSPD";
+import { Pegawai } from "../../typings/Pegawai";
 
 export type ForumSuratStaffInitialValues = {
   nomorSurat: string;
@@ -61,6 +62,7 @@ const FormSuratStaff: React.FC<{
         return (
           <Form>
             <div className="mb-3">
+              <h4 className="mb-4">Informasi Penugasan</h4>
               <label className="form-label">Nomor Surat</label>
               {initialValues?.nomorSurat && initialValues?.tujuanDinas ? (
                 <h5>{initialValues.nomorSurat + " - " + initialValues.tujuanDinas}</h5>

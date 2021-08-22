@@ -44,21 +44,24 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       setSubmitting(true);
-      const { file, ...rest } = values;
+      let { file, ...rest } = values;
+
+      // Append nomorSurat for file naming purpose
 
       try {
+        let url = "";
         if (file) {
-          const {
-            data: { url },
-          } = await axios.post("/api/v1/surat-keluar/upload", file, {
+          file.append("nomorSurat", rest.nomorSurat);
+          const { data } = await axios.post("/api/v1/surat-keluar/upload", file, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           });
-
-          await updateSuratKeluar({ ...rest, url });
-          await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
+          url = data.url;
         }
+
+        await updateSuratKeluar({ ...rest, url });
+        await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
       } catch (e) {
         toast.error("Gagal membuat surat keluar!");
         throw new Error(e.message);
@@ -141,8 +144,9 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
       suratKeputusan = "SK-FRA";
     }
 
-    const nomorSurat = `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${jenisSurat ? `${jenisSurat}/` : ""
-      }${arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`;
+    const nomorSurat = `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
+      jenisSurat ? `${jenisSurat}/` : ""
+    }${arsipId}/${thisMonth}/${thisYear}${suffixFRA ? "/FRA" : ""}`;
 
     return nomorSurat;
   };

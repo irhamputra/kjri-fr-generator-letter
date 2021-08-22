@@ -20,5 +20,6 @@ export type RampunganFillReqBody = {
 export type FormRampunganFillData = {
   nama: string;
   nip: string;
+  uid: string;
   rampungan: RampunganFill[];
 };
