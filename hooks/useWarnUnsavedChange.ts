@@ -39,9 +39,12 @@ const useWarnUnsavedChange = (dirty: boolean, onFinished?: () => void) => {
     };
   }, [state.isEditing]);
 
+  // Call onfinished after state change
+  // This code wrote in intention to fix unsaved change dialogue still appear when calling router.push after submit
+  // Due to behaviour of react state life cycle, we can't change and use state immediately after changing it causing handleWindowClose to use old value.
   useEffect(() => {
-    console.log(state.isEditing);
     if (status === "finished" && !state.isEditing) if (onFinished) onFinished();
+    setStatus("editing");
   }, [status]);
 
   return { finishEditing };
