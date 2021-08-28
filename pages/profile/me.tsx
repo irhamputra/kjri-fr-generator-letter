@@ -1,11 +1,12 @@
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { object } from "yup";
 import useEditUser from "../../hooks/mutation/useUserMutation";
 import createSchema from "../../utils/validation/schema";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
+import { useAppState } from "../../contexts/app-state-context";
 
 const MyProfile = () => {
   const { back } = useRouter();
@@ -17,9 +18,10 @@ const MyProfile = () => {
     nip: query?.nip ?? "",
   };
 
+  const { dispatch } = useAppState();
   const { mutateAsync, isLoading } = useEditUser();
 
-  const { handleChange, handleSubmit, values, errors, touched } = useFormik({
+  const { handleChange, handleSubmit, values, errors, touched, dirty } = useFormik({
     enableReinitialize: true,
     initialValues,
     validationSchema: object().shape(createSchema(initialValues) ?? {}),
@@ -28,11 +30,17 @@ const MyProfile = () => {
       const nip = nipVal === "" ? "-" : nipVal;
       setSubmitting(true);
       await mutateAsync({ nip, ...rest });
+
+      dispatch({ type: "setIsEditing", payload: false });
       resetForm();
       setSubmitting(false);
       back();
     },
   });
+
+  useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
 
   if (isLoading) return <div>Updating...</div>;
 

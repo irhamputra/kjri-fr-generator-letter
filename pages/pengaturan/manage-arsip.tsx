@@ -9,6 +9,7 @@ import useQueryArsip from "../../hooks/query/useQueryArsip";
 import { Trash } from "react-bootstrap-icons";
 import useDeleteArsipMutatition from "../../hooks/mutation/useDeleteArsipMutatition";
 import useCreateArsipMutation from "../../hooks/mutation/useCreateArsipMutation";
+import { useAppState } from "../../contexts/app-state-context";
 
 const ManageArsip: NextPage = () => {
   const initialValues = {
@@ -19,8 +20,9 @@ const ManageArsip: NextPage = () => {
   const { isLoading, data } = useQueryArsip();
   const { mutateAsync: createArsip } = useCreateArsipMutation();
   const { mutateAsync: deleteArsip } = useDeleteArsipMutatition();
+  const { dispatch } = useAppState();
 
-  const { handleChange, values, touched, errors, handleSubmit, isSubmitting } = useFormik({
+  const { handleChange, values, touched, errors, handleSubmit, isSubmitting, dirty } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -33,10 +35,15 @@ const ManageArsip: NextPage = () => {
         throw new Error(e.message);
       }
 
+      dispatch({ type: "setIsEditing", payload: false });
       resetForm();
       setSubmitting(false);
     },
   });
+
+  React.useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
 
   if (isLoading) return <h4>Loading...</h4>;
 

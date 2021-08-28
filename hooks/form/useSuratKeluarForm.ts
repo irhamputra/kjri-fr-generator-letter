@@ -2,10 +2,12 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import { v4 } from "uuid";
 import { object } from "yup";
+import { useAppState } from "../../contexts/app-state-context";
 import createSchema from "../../utils/validation/schema";
 import useUpdateSuratKeluarMutation from "../mutation/useUpdateSuratKeluarMutation";
 import useQueryJenisSurat from "../query/useQueryJenisSurat";
@@ -37,8 +39,9 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
   const { data: statsData, isFetching: isFetchingStats } = useQuerySuratKeluarStats();
   const queryClient = useQueryClient();
   const { push } = useRouter();
+  const { dispatch } = useAppState();
 
-  const { values, setFieldValue, ...restFormik } = useFormik({
+  const { values, setFieldValue, dirty, ...restFormik } = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema: object().shape(createSchema(initialValues)),
@@ -62,6 +65,7 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
 
         await updateSuratKeluar({ ...rest, url });
         await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
+        dispatch({ type: "setIsEditing", payload: false });
       } catch (e) {
         toast.error("Gagal membuat surat keluar!");
         throw new Error(e.message);
@@ -150,6 +154,36 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
 
     return nomorSurat;
   };
+
+  const router = useRouter();
+
+  useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
+
+  const warningText = "You have unsaved changes - are you sure you wish to leave this page?";
+
+  const handleWindowClose = (e: BeforeUnloadEvent) => {
+    if (!dirty) return;
+    e.preventDefault();
+    return (e.returnValue = warningText);
+  };
+
+  const handleBrowseAway = () => {
+    if (!dirty) return;
+    if (window.confirm(warningText)) return;
+    router.events.emit("routeChangeError");
+    throw "routeChange aborted.";
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleWindowClose);
+    router.events.on("routeChangeStart", handleBrowseAway);
+    return () => {
+      window.removeEventListener("beforeunload", handleWindowClose);
+      router.events.off("routeChangeStart", handleBrowseAway);
+    };
+  }, [dirty]);
 
   return {
     handleNomorSurat,

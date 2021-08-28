@@ -2,20 +2,25 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { NextSeo } from "next-seo";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { object } from "yup";
 import { ImageDropzone } from "../../components/Dropzone";
+import { useAppState } from "../../contexts/app-state-context";
 import { useFetchBackground, useUpdateBackground } from "../../hooks/mutation/useMediaMutation";
 import createSchema from "../../utils/validation/schema";
 
 const ManageMedia = () => {
   const { data } = useFetchBackground();
-  const { push } = useRouter();
   const initialValues = {
     background: "",
     backgroundUrl: data?.url,
   };
-  const { setFieldValue, values, resetForm, isSubmitting, handleSubmit } = useFormik({
+
+  const { push } = useRouter();
+  const { mutateAsync } = useUpdateBackground();
+  const { dispatch } = useAppState();
+
+  const { setFieldValue, values, resetForm, isSubmitting, handleSubmit, dirty } = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema: object().shape(createSchema(initialValues)),
@@ -25,13 +30,17 @@ const ManageMedia = () => {
         data: { url },
       } = await axios.post("/api/v1/media/background/upload", values.background);
       await mutateAsync({ url });
+      dispatch({ type: "setIsEditing", payload: false });
       push("/pengaturan");
       resetForm();
       setSubmitting(false);
     },
   });
 
-  const { mutateAsync } = useUpdateBackground();
+  useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
+
   return (
     <section style={{ marginTop: "6rem" }}>
       <NextSeo

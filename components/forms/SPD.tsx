@@ -13,12 +13,14 @@ import FormKeterangan, { FormKeteranganValues } from "./FormKeterangan";
 import { SuratTugasRes } from "../../typings/SuratTugas";
 import { Pegawai } from "../../typings/Pegawai";
 import { useRouter } from "next/router";
+import { useAppState } from "../../contexts/app-state-context";
 
 const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ onPageIndexChange }) => {
   const [activePageIndex, setPageIndex] = useState(0);
   const { push } = useRouter();
+  const { dispatch } = useAppState();
 
-  const { setValues, setFieldValue, values, handleSubmit } = useFormik<{
+  const { setValues, setFieldValue, values, handleSubmit, dirty } = useFormik<{
     suratStaff: ForumSuratStaffInitialValues;
     rampunganFill: FormRampunganFillInitialValues;
     keterangan: FormKeteranganValues;
@@ -63,6 +65,7 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
           ...restVal,
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
+        dispatch({ type: "setIsEditing", payload: false });
         toast(res.data?.message);
         push("/layanan/penugasan/list");
       } catch (e) {
@@ -79,6 +82,10 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
   useEffect(() => {
     onPageIndexChange(activePageIndex);
   }, [activePageIndex]);
+
+  useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
 
   switch (activePageIndex) {
     case 0:

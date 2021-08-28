@@ -13,10 +13,12 @@ import { v4 } from "uuid";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useMyQuery } from "../../hooks/useMyQuery";
 import RichTextField from "../../components/rich-text-field/RichTextField";
+import { useAppState } from "../../contexts/app-state-context";
 
 const SuratTugas: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
+  const { dispatch } = useAppState();
 
   const { data, isLoading } = useMyQuery(
     "fetchListSuratTugas",
@@ -65,6 +67,7 @@ const SuratTugas: NextPage = () => {
     touched,
     resetForm,
     isSubmitting,
+    dirty,
     ...restFormik
   } = useFormik({
     initialValues,
@@ -83,10 +86,14 @@ const SuratTugas: NextPage = () => {
       }
 
       await replace("/layanan/penugasan");
-
+      dispatch({ type: "setIsEditing", payload: false });
       setSubmitting(false);
     },
   });
+
+  React.useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
 
   if (isLoading) return <h4>Loading...</h4>;
 
@@ -119,6 +126,7 @@ const SuratTugas: NextPage = () => {
               touched,
               resetForm,
               isSubmitting,
+              dirty,
               ...restFormik,
             }}
           >

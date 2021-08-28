@@ -3,6 +3,8 @@ import { useFormik } from "formik";
 import { toast } from "react-hot-toast";
 import useValidation from "./../useValidation";
 import useEditUserById from "../mutation/useUserMutationById";
+import { useEffect } from "react";
+import { useAppState } from "../../contexts/app-state-context";
 
 interface UseManageUserFormValues {
   displayName: string;
@@ -19,8 +21,8 @@ const useManageUserForm = (initialValues: UseManageUserFormValues, userId: strin
   const { push } = useRouter();
   const validationSchema = useValidation<UseManageUserFormValues>(initialValues);
   const { mutateAsync } = useEditUserById<UseManageUserFormValues>(userId);
-
-  return useFormik<UseManageUserFormValues>({
+  const { dispatch } = useAppState();
+  const { dirty, ...rest } = useFormik<UseManageUserFormValues>({
     initialValues,
     validationSchema,
     enableReinitialize: true,
@@ -37,6 +39,12 @@ const useManageUserForm = (initialValues: UseManageUserFormValues, userId: strin
       setSubmitting(false);
     },
   });
+
+  useEffect(() => {
+    dispatch({ type: "setIsEditing", payload: dirty });
+  }, [dirty]);
+
+  return { dirty, ...rest };
 };
 
 export default useManageUserForm;

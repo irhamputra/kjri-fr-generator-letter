@@ -19,7 +19,6 @@ const useAuthForm = (initialValues: UseAuthFormValues, type: "login" | "register
   const { replace } = useRouter();
   const validationSchema = useValidation<UseAuthFormValues>(initialValues);
   const { mutateAsync } = useAuthMutation<UseAuthFormValues>(type);
-
   return useFormik<UseAuthFormValues>({
     initialValues,
     validationSchema,
@@ -46,7 +45,6 @@ const useAuthForm = (initialValues: UseAuthFormValues, type: "login" | "register
       if (type === "register") {
         resetForm();
       }
-
       setSubmitting(false);
     },
   });
