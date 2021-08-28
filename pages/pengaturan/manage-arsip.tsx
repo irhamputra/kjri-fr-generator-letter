@@ -9,8 +9,7 @@ import useQueryArsip from "../../hooks/query/useQueryArsip";
 import { Trash } from "react-bootstrap-icons";
 import useDeleteArsipMutatition from "../../hooks/mutation/useDeleteArsipMutatition";
 import useCreateArsipMutation from "../../hooks/mutation/useCreateArsipMutation";
-import { useAppState } from "../../contexts/app-state-context";
-
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 const ManageArsip: NextPage = () => {
   const initialValues = {
     jenisArsip: "",
@@ -20,7 +19,6 @@ const ManageArsip: NextPage = () => {
   const { isLoading, data } = useQueryArsip();
   const { mutateAsync: createArsip } = useCreateArsipMutation();
   const { mutateAsync: deleteArsip } = useDeleteArsipMutatition();
-  const { dispatch } = useAppState();
 
   const { handleChange, values, touched, errors, handleSubmit, isSubmitting, dirty } = useFormik({
     initialValues,
@@ -35,15 +33,13 @@ const ManageArsip: NextPage = () => {
         throw new Error(e.message);
       }
 
-      dispatch({ type: "setIsEditing", payload: false });
       resetForm();
+      finishEditing();
       setSubmitting(false);
     },
   });
 
-  React.useEffect(() => {
-    dispatch({ type: "setIsEditing", payload: dirty });
-  }, [dirty]);
+  const { finishEditing } = useWarnUnsavedChange(dirty);
 
   if (isLoading) return <h4>Loading...</h4>;
 

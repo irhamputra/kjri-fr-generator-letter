@@ -13,12 +13,11 @@ import FormKeterangan, { FormKeteranganValues } from "./FormKeterangan";
 import { SuratTugasRes } from "../../typings/SuratTugas";
 import { Pegawai } from "../../typings/Pegawai";
 import { useRouter } from "next/router";
-import { useAppState } from "../../contexts/app-state-context";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 
 const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ onPageIndexChange }) => {
   const [activePageIndex, setPageIndex] = useState(0);
   const { push } = useRouter();
-  const { dispatch } = useAppState();
 
   const { setValues, setFieldValue, values, handleSubmit, dirty } = useFormik<{
     suratStaff: ForumSuratStaffInitialValues;
@@ -65,8 +64,8 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
           ...restVal,
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
-        dispatch({ type: "setIsEditing", payload: false });
         toast(res.data?.message);
+        finishEditing();
         push("/layanan/penugasan/list");
       } catch (e) {
         toast.error(e.message);
@@ -75,6 +74,8 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
     },
   });
 
+  const { finishEditing } = useWarnUnsavedChange(dirty);
+
   const setSuratStaff = (data: ForumSuratStaffInitialValues) => setValues((val) => ({ ...val, suratStaff: data }));
 
   const { countToUER } = useCountUangHarianSPD();
@@ -82,10 +83,6 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
   useEffect(() => {
     onPageIndexChange(activePageIndex);
   }, [activePageIndex]);
-
-  useEffect(() => {
-    dispatch({ type: "setIsEditing", payload: dirty });
-  }, [dirty]);
 
   switch (activePageIndex) {
     case 0:

@@ -14,11 +14,11 @@ import { Auth } from "../../typings/AuthQueryClient";
 import { useMyQuery } from "../../hooks/useMyQuery";
 import RichTextField from "../../components/rich-text-field/RichTextField";
 import { useAppState } from "../../contexts/app-state-context";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 
 const SuratTugas: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
-  const { dispatch } = useAppState();
 
   const { data, isLoading } = useMyQuery(
     "fetchListSuratTugas",
@@ -85,15 +85,14 @@ const SuratTugas: NextPage = () => {
         throw new Error(e.message);
       }
 
-      await replace("/layanan/penugasan");
-      dispatch({ type: "setIsEditing", payload: false });
       setSubmitting(false);
+      finishEditing();
     },
   });
 
-  React.useEffect(() => {
-    dispatch({ type: "setIsEditing", payload: dirty });
-  }, [dirty]);
+  const { finishEditing } = useWarnUnsavedChange(dirty, async () => {
+    await replace("/layanan/penugasan");
+  });
 
   if (isLoading) return <h4>Loading...</h4>;
 

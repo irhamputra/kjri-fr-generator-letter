@@ -1,12 +1,12 @@
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { object } from "yup";
 import useEditUser from "../../hooks/mutation/useUserMutation";
 import createSchema from "../../utils/validation/schema";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
-import { useAppState } from "../../contexts/app-state-context";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 
 const MyProfile = () => {
   const { back } = useRouter();
@@ -18,7 +18,6 @@ const MyProfile = () => {
     nip: query?.nip ?? "",
   };
 
-  const { dispatch } = useAppState();
   const { mutateAsync, isLoading } = useEditUser();
 
   const { handleChange, handleSubmit, values, errors, touched, dirty } = useFormik({
@@ -30,17 +29,15 @@ const MyProfile = () => {
       const nip = nipVal === "" ? "-" : nipVal;
       setSubmitting(true);
       await mutateAsync({ nip, ...rest });
-
-      dispatch({ type: "setIsEditing", payload: false });
       resetForm();
       setSubmitting(false);
-      back();
+      finishEditing();
     },
   });
 
-  useEffect(() => {
-    dispatch({ type: "setIsEditing", payload: dirty });
-  }, [dirty]);
+  const { finishEditing } = useWarnUnsavedChange(dirty, () => {
+    back();
+  });
 
   if (isLoading) return <div>Updating...</div>;
 
