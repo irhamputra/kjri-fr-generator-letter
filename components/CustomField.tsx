@@ -3,6 +3,7 @@ import Select, { ActionMeta, components, SingleValueProps } from "react-select";
 import { FieldAttributes } from "formik";
 import DatePicker from "react-datepicker";
 import { Calendar } from "react-bootstrap-icons";
+import dayjs from "dayjs";
 
 interface InputProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   endText: string;
@@ -72,7 +73,7 @@ const SelectStaff = ({ placeholder, form, field, value, options }: React.PropsWi
   // reconstruct option from value
   const optionStaff = options.map(({ displayName, ...rest }: { displayName: string }) => ({
     label: displayName,
-    value: ({ displayName, ...rest } as unknown) as string,
+    value: { displayName, ...rest } as unknown as string,
   }));
 
   const SingleValue = (props: SingleValueProps<any>) => {
@@ -109,9 +110,16 @@ const SelectStaff = ({ placeholder, form, field, value, options }: React.PropsWi
 const DatePickerComponent = ({ form, field, value }: FieldAttributes<any>) => {
   const { setFieldValue } = form;
   const { name } = field;
+  const minDate = dayjs(new Date()).subtract(0, "day").toDate();
+
   return (
     <div className="reactDateWrapper">
-      <DatePicker selected={value} onChange={(val) => setFieldValue(name, val)} dateFormat="dd.MM.yyyy" />
+      <DatePicker
+        minDate={minDate}
+        selected={value}
+        onChange={(val) => setFieldValue(name, val)}
+        dateFormat="dd.MM.yyyy"
+      />
       <Calendar className="icon" />
     </div>
   );

@@ -177,11 +177,6 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
                       <span style={{ cursor: "pointer" }} onClick={() => handleSuratTugas()}>
                         Download
                       </span>
-                      {downloadUrl?.suratTugas && (
-                        <a href="#" style={{ marginLeft: 16 }} onClick={() => handleSuratTugas(true)}>
-                          Buat Ulang
-                        </a>
-                      )}
                     </div>
                   ) : (
                     <span>Downloading...</span>
@@ -203,18 +198,12 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
                         <span>Downloading...</span>
                       ) : (
                         <div className="d-flex">
-                          <a href="#" onClick={() => handleSuratPenugasan(suratTugasId, uid, false)}>
+                          <span
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSuratPenugasan(suratTugasId, uid, false)}
+                          >
                             Download
-                          </a>
-                          {canRecreate && (
-                            <a
-                              href="#"
-                              style={{ marginLeft: 16 }}
-                              onClick={() => handleSuratPenugasan(suratTugasId, uid, true)}
-                            >
-                              Buat Ulang
-                            </a>
-                          )}
+                          </span>
                         </div>
                       )}
                     </div>

@@ -565,14 +565,15 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.4.tgz#cd667bcfdd025213aafb7ca5915a932590acdcdc"
   integrity sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==
 
-"@types/react-datepicker@^3.1.8":
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/@types/react-datepicker/-/react-datepicker-3.1.8.tgz#642b0d5f2c30f53d7940b1771d5fb11b646bb7fb"
-  integrity sha512-RFEg7++xhosMq02i2lsuaUPEbZGn66U3dxtvw9LU/ZRqLkBGr9Ft2LTz6vbeYYVtaBdOr0NcQatOLnlfUaS8kw==
+"@types/react-datepicker@^4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/react-datepicker/-/react-datepicker-4.1.5.tgz#f735a27e4d1cb61a12d8f1b84bb89ff0d21f813b"
+  integrity sha512-KGejyyCiFhBXjHp4AmuzO4W4pfWV9PYFZrBTA56tsuy+jpqQ2Jdx7j44onYomeUSv2B2uqT3OCkOh+dOI8Fy3g==
   dependencies:
+    "@popperjs/core" "^2.9.2"
     "@types/react" "*"
     date-fns "^2.0.1"
-    popper.js "^1.14.1"
+    react-popper "^2.2.5"
 
 "@types/react-dom@*":
   version "17.0.9"
@@ -2746,11 +2747,6 @@ pnp-webpack-plugin@1.6.4:
   dependencies:
     ts-pnp "^1.1.6"
 
-popper.js@^1.14.1:
-  version "1.16.1"
-  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
-  integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
-
 postcss@8.2.15:
   version "8.2.15"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.2.15.tgz#9e66ccf07292817d226fc315cbbf9bc148fbca65"
@@ -2923,10 +2919,10 @@ react-bootstrap-icons@1.4.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-datepicker@^4.0.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-4.2.0.tgz#3b23dac8f8e09fc6186787601388bed5690c9fc7"
-  integrity sha512-TR6vqqnGP2DDqrAtSrLseoN4fjkcQEOChwmMITpU45TiPey8eUhvI1TiGf4PFPQ1hvZshljH48De6nJMmiTf9g==
+react-datepicker@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-4.2.1.tgz#72caf5055bc7c4eb0279c1f6d7624ded053edc4c"
+  integrity sha512-0gcvHMnX8rS1fV90PjjsB7MQdsWNU77JeVHf6bbwK9HnFxgwjVflTx40ebKmHV+leqe+f+FgUP9Nvqbe5RGyfA==
   dependencies:
     "@popperjs/core" "^2.9.2"
     classnames "^2.2.6"

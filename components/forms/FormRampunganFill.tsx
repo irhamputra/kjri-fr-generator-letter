@@ -51,7 +51,7 @@ const FormRampunganFill: React.FC<FormRampunganFillProps> = ({
                       className="form-control"
                       value={values.pembuatKomitmenName}
                       name="pembuatKomitmenName"
-                      placeholder="Masukan namat"
+                      placeholder="Masukan nama"
                     />
                     {errors.pergiDari && touched.pergiDari && <small className="text-danger">{errors.pergiDari}</small>}
                   </div>

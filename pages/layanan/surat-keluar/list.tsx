@@ -73,12 +73,12 @@ const ListSuratKeluar: NextPage = () => {
   );
 
   return (
-    <div style={{ marginTop: "6rem" }}>
+    <div style={{ marginTop: "6rem" }} className="mb-5">
       <div className="d-flex justify-content-between">
         <h4>List Surat Keluar</h4>
       </div>
 
-      <div className="col mt-3">
+      <div className="col my-3">
         <Table
           columns={columns}
           data={data}
