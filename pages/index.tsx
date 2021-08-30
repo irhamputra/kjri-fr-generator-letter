@@ -68,13 +68,16 @@ const Home: NextPage = () => {
         <button className="btn btn-dark w-100" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Mohon tunggu..." : "Login"}
         </button>
-      </form>
 
-      <Link href="/register" passHref>
-        <a>
-          <span className="small">Verifikasi Akun disini</span>
-        </a>
-      </Link>
+        <section className="text-center mb-2 mt-4">
+          <hr />
+          <Link href="/register" passHref>
+            <a>
+              <span className="small">Verifikasi Akun disini</span>
+            </a>
+          </Link>
+        </section>
+      </form>
     </div>
   );
 };

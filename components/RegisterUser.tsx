@@ -123,9 +123,9 @@ const RegisterUser: React.FC = () => {
         <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">User berhasil didaftarkan</h5>
+              <h5 className="modal-title text-center">Kode Verifikasi User</h5>
             </div>
-            <div className="modal-body">
+            <div className="modal-body text-center">
               {data?.codeId && <h2>{data.codeId}</h2>}
               <button onClick={handleCopy} className="btn btn-dark">
                 Copy Nomor Identifikasi
