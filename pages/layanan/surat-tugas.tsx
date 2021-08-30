@@ -13,6 +13,8 @@ import { v4 } from "uuid";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useMyQuery } from "../../hooks/useMyQuery";
 import RichTextField from "../../components/rich-text-field/RichTextField";
+import { useAppState } from "../../contexts/app-state-context";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 
 const SuratTugas: NextPage = () => {
   const queryClient = useQueryClient();
@@ -65,6 +67,7 @@ const SuratTugas: NextPage = () => {
     touched,
     resetForm,
     isSubmitting,
+    dirty,
     ...restFormik
   } = useFormik({
     initialValues,
@@ -82,10 +85,13 @@ const SuratTugas: NextPage = () => {
         throw new Error(e.message);
       }
 
-      await replace("/layanan/penugasan");
-
       setSubmitting(false);
+      finishEditing();
     },
+  });
+
+  const { finishEditing } = useWarnUnsavedChange(dirty, async () => {
+    await replace("/layanan/penugasan");
   });
 
   if (isLoading) return <h4>Loading...</h4>;
@@ -119,6 +125,7 @@ const SuratTugas: NextPage = () => {
               touched,
               resetForm,
               isSubmitting,
+              dirty,
               ...restFormik,
             }}
           >

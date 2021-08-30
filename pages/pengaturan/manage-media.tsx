@@ -6,16 +6,20 @@ import React from "react";
 import { object } from "yup";
 import { ImageDropzone } from "../../components/Dropzone";
 import { useFetchBackground, useUpdateBackground } from "../../hooks/mutation/useMediaMutation";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 import createSchema from "../../utils/validation/schema";
 
 const ManageMedia = () => {
   const { data } = useFetchBackground();
-  const { push } = useRouter();
   const initialValues = {
     background: "",
     backgroundUrl: data?.url,
   };
-  const { setFieldValue, values, resetForm, isSubmitting, handleSubmit } = useFormik({
+
+  const { push } = useRouter();
+  const { mutateAsync } = useUpdateBackground();
+
+  const { setFieldValue, values, resetForm, isSubmitting, handleSubmit, dirty } = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema: object().shape(createSchema(initialValues)),
@@ -25,13 +29,16 @@ const ManageMedia = () => {
         data: { url },
       } = await axios.post("/api/v1/media/background/upload", values.background);
       await mutateAsync({ url });
-      push("/pengaturan");
       resetForm();
       setSubmitting(false);
+      finishEditing();
     },
   });
 
-  const { mutateAsync } = useUpdateBackground();
+  const { finishEditing } = useWarnUnsavedChange(dirty, () => {
+    push("/pengaturan");
+  });
+
   return (
     <section style={{ marginTop: "6rem" }}>
       <NextSeo

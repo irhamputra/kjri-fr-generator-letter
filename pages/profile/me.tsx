@@ -6,6 +6,7 @@ import useEditUser from "../../hooks/mutation/useUserMutation";
 import createSchema from "../../utils/validation/schema";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 
 const MyProfile = () => {
   const { back } = useRouter();
@@ -19,7 +20,7 @@ const MyProfile = () => {
 
   const { mutateAsync, isLoading } = useEditUser();
 
-  const { handleChange, handleSubmit, values, errors, touched } = useFormik({
+  const { handleChange, handleSubmit, values, errors, touched, dirty } = useFormik({
     enableReinitialize: true,
     initialValues,
     validationSchema: object().shape(createSchema(initialValues) ?? {}),
@@ -30,8 +31,12 @@ const MyProfile = () => {
       await mutateAsync({ nip, ...rest });
       resetForm();
       setSubmitting(false);
-      back();
+      finishEditing();
     },
+  });
+
+  const { finishEditing } = useWarnUnsavedChange(dirty, () => {
+    back();
   });
 
   if (isLoading) return <div>Updating...</div>;

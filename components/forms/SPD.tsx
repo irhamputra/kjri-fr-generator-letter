@@ -13,12 +13,13 @@ import FormKeterangan, { FormKeteranganValues } from "./FormKeterangan";
 import { SuratTugasRes } from "../../typings/SuratTugas";
 import { Pegawai } from "../../typings/Pegawai";
 import { useRouter } from "next/router";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 
 const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ onPageIndexChange }) => {
   const [activePageIndex, setPageIndex] = useState(0);
   const { push } = useRouter();
 
-  const { setValues, setFieldValue, values, handleSubmit } = useFormik<{
+  const { setValues, setFieldValue, values, handleSubmit, dirty } = useFormik<{
     suratStaff: ForumSuratStaffInitialValues;
     rampunganFill: FormRampunganFillInitialValues;
     keterangan: FormKeteranganValues;
@@ -64,6 +65,7 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
         toast(res.data?.message);
+        finishEditing();
         push("/layanan/penugasan/list");
       } catch (e) {
         toast.error(e.message);
@@ -71,6 +73,8 @@ const FormSPD: React.FC<{ onPageIndexChange: (val: number) => unknown }> = ({ on
       }
     },
   });
+
+  const { finishEditing } = useWarnUnsavedChange(dirty);
 
   const setSuratStaff = (data: ForumSuratStaffInitialValues) => setValues((val) => ({ ...val, suratStaff: data }));
 

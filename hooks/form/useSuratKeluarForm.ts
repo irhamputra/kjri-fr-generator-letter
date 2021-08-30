@@ -2,6 +2,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useMutation, useQueryClient } from "react-query";
 import { v4 } from "uuid";
@@ -10,6 +11,7 @@ import createSchema from "../../utils/validation/schema";
 import useUpdateSuratKeluarMutation from "../mutation/useUpdateSuratKeluarMutation";
 import useQueryJenisSurat from "../query/useQueryJenisSurat";
 import { useQuerySuratKeluarStats } from "../query/useQuerySuratKeluar";
+import useWarnUnsavedChange from "../useWarnUnsavedChange";
 
 export interface GenerateNomorValues {
   author: string;
@@ -38,7 +40,7 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
   const queryClient = useQueryClient();
   const { push } = useRouter();
 
-  const { values, setFieldValue, ...restFormik } = useFormik({
+  const { values, setFieldValue, dirty, ...restFormik } = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema: object().shape(createSchema(initialValues)),
@@ -67,10 +69,14 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
         throw new Error(e.message);
       }
 
-      await push(backUrl ?? "/layanan/surat-keluar/list");
       resetForm();
       setSubmitting(false);
+      finishEditing();
     },
+  });
+
+  const { finishEditing } = useWarnUnsavedChange(dirty, async () => {
+    await push(backUrl ?? "/layanan/surat-keluar/list");
   });
 
   const disableGenerateNomor = !values.arsipId || !values.jenisSurat || isFetchingStats;

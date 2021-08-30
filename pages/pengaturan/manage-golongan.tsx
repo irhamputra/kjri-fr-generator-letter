@@ -9,6 +9,7 @@ import { NextSeo } from "next-seo";
 import useDeleteGolonganMutation from "../../hooks/mutation/useDeleteGolonganMutation";
 import useCreateGolonganMutation from "../../hooks/mutation/useCreateGolonganMutation";
 import type { Golongan } from "../../typings/Golongan";
+import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 
 const ManageGolongan: NextPage = () => {
   const initialValues = {
@@ -20,8 +21,7 @@ const ManageGolongan: NextPage = () => {
   const { data, isLoading } = useQueryJalDir();
   const { mutateAsync: createGolongan } = useCreateGolonganMutation();
   const { mutateAsync: deleteGolongan } = useDeleteGolonganMutation();
-
-  const { handleChange, handleSubmit, values, errors, touched } = useFormik({
+  const { handleChange, handleSubmit, values, errors, touched, dirty } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -36,8 +36,10 @@ const ManageGolongan: NextPage = () => {
 
       resetForm();
       setSubmitting(false);
+      finishEditing();
     },
   });
+  const { finishEditing } = useWarnUnsavedChange(dirty);
 
   if (isLoading) return <h4>Loading...</h4>;
 

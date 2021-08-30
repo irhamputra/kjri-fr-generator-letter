@@ -18,7 +18,7 @@ interface FormValues {
 
 async function fillCover(
   form: PDFForm,
-  data: { suratTugas: SuratTugasRes; jaldis: JalDis; pegawaiId: string },
+  data: { suratTugas: SuratTugasRes; jaldis?: JalDis; pegawaiId: string },
   option: Option
 ) {
   const { suratTugas, jaldis, pegawaiId } = data;
@@ -31,7 +31,7 @@ async function fillCover(
     { fieldName: "nama_nip_spd", value: pegawai.displayName + " / " + pegawai.nip },
     { fieldName: "pangkat_golongan_spd", value: pegawai.pangkat },
     { fieldName: "jabatan_instansi_spd", value: pegawai.jabatan },
-    { fieldName: "gol_jaldis_spd", value: jaldis.golongan },
+    { fieldName: "gol_jaldis_spd", value: jaldis?.golongan },
     { fieldName: "hari_spd", value: durasi.toString() },
     {
       fieldName: "tanggal_berangkat_spd",
@@ -69,7 +69,7 @@ async function fillCover(
 
 async function fillRincian(
   form: PDFForm,
-  data: { suratTugas: SuratTugasRes; pegawaiId: string; hargaJaldis: string },
+  data: { suratTugas: SuratTugasRes; pegawaiId: string; hargaJaldis?: string },
   option: Option
 ) {
   const { suratTugas, pegawaiId, hargaJaldis } = data;
@@ -93,8 +93,8 @@ async function fillRincian(
     halfDayDur = "1";
   }
 
-  const days = parseFloat(fullDayDur) * fullDayKurs * parseFloat(hargaJaldis);
-  const halfDay = parseFloat(halfDayDur) * 0.4 * fullDayKurs * parseFloat(hargaJaldis);
+  const days = parseFloat(fullDayDur) * fullDayKurs * parseFloat(hargaJaldis ?? "0");
+  const halfDay = parseFloat(halfDayDur) * 0.4 * fullDayKurs * parseFloat(hargaJaldis ?? "0");
 
   // use toFixed to fix additional .9999 in decimal
   // read : https://stackoverflow.com/questions/10473994/javascript-adding-decimal-numbers-issue

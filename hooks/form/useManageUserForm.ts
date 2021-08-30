@@ -3,6 +3,9 @@ import { useFormik } from "formik";
 import { toast } from "react-hot-toast";
 import useValidation from "./../useValidation";
 import useEditUserById from "../mutation/useUserMutationById";
+import { useEffect } from "react";
+import { useAppState } from "../../contexts/app-state-context";
+import useWarnUnsavedChange from "../useWarnUnsavedChange";
 
 interface UseManageUserFormValues {
   displayName: string;
@@ -19,8 +22,7 @@ const useManageUserForm = (initialValues: UseManageUserFormValues, userId: strin
   const { push } = useRouter();
   const validationSchema = useValidation<UseManageUserFormValues>(initialValues);
   const { mutateAsync } = useEditUserById<UseManageUserFormValues>(userId);
-
-  return useFormik<UseManageUserFormValues>({
+  const { dirty, ...rest } = useFormik<UseManageUserFormValues>({
     initialValues,
     validationSchema,
     enableReinitialize: true,
@@ -33,10 +35,16 @@ const useManageUserForm = (initialValues: UseManageUserFormValues, userId: strin
       }
 
       toast.success(`Update berhasil`);
-      push("/pengaturan/manage-user");
+      finishEditing();
       setSubmitting(false);
     },
   });
+
+  const { finishEditing } = useWarnUnsavedChange(dirty, () => {
+    push("/pengaturan/manage-user");
+  });
+
+  return { dirty, ...rest };
 };
 
 export default useManageUserForm;

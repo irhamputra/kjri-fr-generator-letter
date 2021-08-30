@@ -40,13 +40,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const iPegawai = listPegawai.findIndex(({ pegawai }) => pegawai.uid === uid);
+
+      console.log(iPegawai);
       const rampungan = listPegawai[iPegawai].destinasi ?? [];
       const jaldis = await db
         .collection("JalDis")
         .limit(1)
         .where("golongan", "==", listPegawai[iPegawai].pegawai.golongan)
         .get();
-      const jaldisSnap = jaldis.docs[0].data() as JalDis;
+      const jaldisDoc = jaldis.docs[0];
+      const jaldisSnap = jaldisDoc ? (jaldisDoc.data() as JalDis) : undefined;
 
       if (rampungan.length > 3) {
         res.status(500).json({ error: "rampungan fill data length must be below 3" });
