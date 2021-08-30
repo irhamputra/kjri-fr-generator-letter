@@ -55,13 +55,11 @@ const Navigation = (): JSX.Element => {
         <div className="d-flex align-items-center">
           <div
             className="d-flex p-2 align-items-center px-3"
-            style={{ borderRadius: 20, cursor: "pointer" }}
-            onClick={() => setShowMenu(true)}
             ref={setReferenceElement as LegacyRef<HTMLDivElement> | undefined}
           >
             {notification > 0 && (
               <section className="mx-3">
-                <span className="position-relative">
+                <span onClick={() => setShowMenu(true)} style={{ cursor: "pointer" }} className="position-relative">
                   <Bell size={23} />
                   <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
                     <span className="visually-hidden">New alerts</span>
@@ -70,7 +68,11 @@ const Navigation = (): JSX.Element => {
               </section>
             )}
 
-            <div className="d-flex align-items-center">
+            <div
+              onClick={() => setShowMenu(true)}
+              style={{ borderRadius: 20, cursor: "pointer" }}
+              className="d-flex align-items-center"
+            >
               <p className="ms-auto my-0 mx-3">
                 Hello, <strong>{query?.displayName || "Pegawai Baru"}</strong>
               </p>
