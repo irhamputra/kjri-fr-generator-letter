@@ -7,11 +7,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      const { id } = req.query;
-      const snapshot = await db
-        .collection("Users")
-        .doc(id as string)
-        .get();
+      const { id } = <{ id: string }>req.query;
+      const snapshot = await db.collection("Users").doc(id).get();
 
       const dataSnapshot = snapshot.data();
 
@@ -37,7 +34,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         golongan,
         jabatan,
         role,
-        pangkat
+        pangkat,
       });
 
     res.status(200).json({ message: "Update Profile", data: { displayName, email, nip, golongan, jabatan, role } });

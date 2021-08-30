@@ -32,7 +32,7 @@ const RegisterUser: React.FC = () => {
     "registerUser",
     async (values: typeof initialValues) => {
       try {
-        const { data } = await axios.post<typeof initialValues & { codeId: string }>("/api/v1/create-new-user", values);
+        const { data } = await axios.post<typeof initialValues & { codeId: string }>("/api/v1/users", values);
 
         return data;
       } catch (e) {
@@ -52,15 +52,17 @@ const RegisterUser: React.FC = () => {
   const { handleChange, handleSubmit, values, errors, touched } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSubmitting(true);
       await mutateAsync(values);
+      resetForm();
       setSubmitting(false);
     },
   });
 
   const handleCopy = () => {
     // create clipboard
+    console.log("Copy Code");
   };
 
   return (

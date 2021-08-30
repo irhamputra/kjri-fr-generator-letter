@@ -72,7 +72,7 @@ const Home: NextPage = () => {
 
       <Link href="/register" passHref>
         <a>
-          <span className="small">Register/Verifikasi Akun disini</span>
+          <span className="small">Verifikasi Akun disini</span>
         </a>
       </Link>
     </div>

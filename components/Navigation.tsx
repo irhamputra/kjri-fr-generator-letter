@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import cookie from "js-cookie";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { ChevronDown, Gear, House, List } from "react-bootstrap-icons";
+import { Bell, ChevronDown, Gear, House, List } from "react-bootstrap-icons";
 import Popup from "./Popup";
 import Link from "next/link";
 import useBreakpoint from "../hooks/useBreakpoints";
@@ -36,6 +36,12 @@ const Navigation = (): JSX.Element => {
 
   const { is } = useBreakpoint();
 
+  const notification = React.useMemo(() => {
+    return Object.entries(query).reduce((acc, [key, value]) => {
+      return key === "isAdmin" || value ? acc : acc + 1;
+    }, 0);
+  }, [query]);
+
   return (
     <>
       <nav className="bg-light d-flex fixed-top justify-content-between p-3">
@@ -53,16 +59,29 @@ const Navigation = (): JSX.Element => {
             onClick={() => setShowMenu(true)}
             ref={setReferenceElement as LegacyRef<HTMLDivElement> | undefined}
           >
-            <p className="ms-auto my-0 mx-2">
-              Hello, <strong>{query?.displayName}</strong>
-            </p>
-            <ChevronDown />
+            {notification > 0 && (
+              <section className="mx-3">
+                <span className="position-relative">
+                  <Bell size={23} />
+                  <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                    <span className="visually-hidden">New alerts</span>
+                  </span>
+                </span>
+              </section>
+            )}
+
+            <div className="d-flex align-items-center">
+              <p className="ms-auto my-0 mx-3">
+                Hello, <strong>{query?.displayName || "Pegawai Baru"}</strong>
+              </p>
+              <ChevronDown />
+            </div>
           </div>
           <Popup
             open={showMenu}
             anchorRef={referenceElement}
             onClickOutside={() => setShowMenu(false)}
-            placement="bottom"
+            placement="bottom-end"
           >
             <div
               className="p-2"
@@ -71,9 +90,15 @@ const Navigation = (): JSX.Element => {
               }}
             >
               <div className="dropdown-menu-left">
-                <button className="dropdown-item" type="button" onClick={() => push("/profile/me")}>
+                <button className="dropdown-item position-relative" type="button" onClick={() => push("/profile/me")}>
                   Edit Profile
+                  {notification > 0 && (
+                    <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                      <span className="visually-hidden">New alerts</span>
+                    </span>
+                  )}
                 </button>
+
                 <li className="dropdown-divider" />
                 <button className="dropdown-item" type="button" onClick={handleLogout}>
                   Logout

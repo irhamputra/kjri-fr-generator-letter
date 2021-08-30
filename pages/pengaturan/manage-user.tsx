@@ -1,6 +1,6 @@
 import * as React from "react";
-import { NextPage } from "next";
-import { useMutation, useQueryClient } from "react-query";
+import { GetServerSideProps, NextPage } from "next";
+import { QueryClient, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 import { Pencil, Trash } from "react-bootstrap-icons";
 import { toast } from "react-hot-toast";
@@ -8,10 +8,12 @@ import useQueryUsers from "../../hooks/query/useQueryUsers";
 import { Auth } from "../../typings/AuthQueryClient";
 import Link from "next/link";
 import RegisterUser from "../../components/RegisterUser";
+import { useRouter } from "next/router";
 
 const ManageUser: NextPage = () => {
   const queryClient = useQueryClient();
   const query = queryClient.getQueryData<Auth>("auth");
+  const { replace, reload } = useRouter();
 
   const { data: listUsers, isLoading: loadingUser } = useQueryUsers();
 
@@ -36,7 +38,9 @@ const ManageUser: NextPage = () => {
     }
   );
 
-  if (!query?.isAdmin && query?.role !== "tu") throw Error("Invalid permission");
+  if (!query?.isAdmin && query?.role !== "tu") {
+    replace("/dashboard").then(() => reload());
+  }
 
   if (loadingUser) return <h4>Loading...</h4>;
 
