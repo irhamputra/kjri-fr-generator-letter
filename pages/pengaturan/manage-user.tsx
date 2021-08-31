@@ -48,7 +48,7 @@ const ManageUser: NextPage = () => {
     <section style={{ marginTop: "6rem" }} className="mb-5">
       <RegisterUser />
       <table className="table caption-top mt-3">
-        <caption>List Staff</caption>
+        <caption>List Staff KJRI Frankfurt</caption>
         <thead>
           <tr>
             <th scope="col">NIP</th>

@@ -45,7 +45,7 @@ const FormVerification: React.FC = () => {
                 const formattedDate = formatDate(e.currentTarget.value);
                 setFieldValue("birthday", formattedDate);
               }}
-              placeholder="DD/MM/YYYY"
+              placeholder="DD.MM.YYYY"
               maxLength={10}
               name="birthday"
               value={values.birthday}

@@ -34,7 +34,7 @@ const RegisterUser: React.FC = () => {
     }
   );
 
-  const { handleChange, handleSubmit, values, errors, touched } = useFormik({
+  const { handleChange, handleSubmit, values, errors, touched, isSubmitting } = useFormik({
     initialValues,
     validationSchema: object().shape(createSchema(initialValues)),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
@@ -51,7 +51,7 @@ const RegisterUser: React.FC = () => {
         <h4>Manage User</h4>
         <div>
           <button onClick={() => setOpen((prevState) => !prevState)} className="btn btn-dark">
-            Tambah Staff +
+            {open ? "X" : "Tambah Staff +"}
           </button>
         </div>
       </div>
@@ -59,7 +59,7 @@ const RegisterUser: React.FC = () => {
       <div>
         {open ? (
           <form onSubmit={handleSubmit}>
-            <div className="row g-3">
+            <div className="row g-3 d-flex align-items-end">
               <div className="col-3">
                 <label htmlFor="email">Email</label>
                 <input
@@ -67,14 +67,16 @@ const RegisterUser: React.FC = () => {
                   className="form-control"
                   type="email"
                   name="email"
+                  required
+                  placeholder="Masukkan email"
                   value={values.email}
                   onChange={handleChange}
                 />
                 {errors.email && touched.email && <small className="text-danger">{errors.email}</small>}
               </div>
 
-              <div className="col-12">
-                <button className="btn btn-dark">Register user</button>
+              <div className="col-3">
+                <button className="btn btn-dark">{isSubmitting ? "Sedang memproses..." : "Daftar Staff"}</button>
               </div>
             </div>
           </form>
