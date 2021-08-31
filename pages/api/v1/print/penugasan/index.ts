@@ -7,6 +7,7 @@ import { fillKwitansi, fillPernyataan, fillRampungan, fillRincian, fillCover } f
 import fs from "fs";
 import { JalDis } from "../../../../../typings/Jaldis";
 import fontkit from "@pdf-lib/fontkit";
+import { Pegawai } from "../../../../../typings/Pegawai";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
@@ -41,7 +42,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       const iPegawai = listPegawai.findIndex(({ pegawai }) => pegawai.uid === uid);
 
-      console.log(iPegawai);
       const rampungan = listPegawai[iPegawai].destinasi ?? [];
       const jaldis = await db
         .collection("JalDis")
@@ -50,6 +50,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         .get();
       const jaldisDoc = jaldis.docs[0];
       const jaldisSnap = jaldisDoc ? (jaldisDoc.data() as JalDis) : undefined;
+
+      const bendahara = (await db
+        .collection("Users")
+        .doc("P3hnXmaCZq3yt7yxdNyi")
+        .get()) as FirebaseFirestore.DocumentSnapshot<Pegawai>;
 
       if (rampungan.length > 3) {
         res.status(500).json({ error: "rampungan fill data length must be below 3" });
@@ -97,7 +102,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         );
         pdfBytes = await fillRincian(
           pdfBytes,
-          { suratTugas, pegawaiId: uid, hargaJaldis: jaldisSnap?.harga },
+          { suratTugas, pegawaiId: uid, hargaJaldis: jaldisSnap?.harga, bendahara: bendahara.data() },
           {
             font: calibriFont,
           }
@@ -111,7 +116,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         );
         pdfBytes = await fillKwitansi(
           pdfBytes,
-          { listPegawai: chosenListPegawai, pembuatKomitmen, tujuanSurat: suratTugas.tujuanDinas },
+          {
+            listPegawai: chosenListPegawai,
+            pembuatKomitmen,
+            tujuanSurat: suratTugas.tujuanDinas,
+            bendahara: bendahara.data(),
+          },
           {
             font: calibriFont,
           }

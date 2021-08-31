@@ -69,10 +69,10 @@ async function fillCover(
 
 async function fillRincian(
   form: PDFForm,
-  data: { suratTugas: SuratTugasRes; pegawaiId: string; hargaJaldis?: string },
+  data: { suratTugas: SuratTugasRes; pegawaiId: string; hargaJaldis?: string; bendahara?: Pegawai },
   option: Option
 ) {
-  const { suratTugas, pegawaiId, hargaJaldis } = data;
+  const { suratTugas, pegawaiId, hargaJaldis, bendahara } = data;
   const { nomorSurat, listPegawai = [], fullDayKurs = 0.84, pembuatKomitmen, tujuanDinas } = suratTugas;
 
   const lampiranSPDNo = form.getTextField("no_spd_rincian");
@@ -124,15 +124,11 @@ async function fillRincian(
     { fieldName: "tahun_spd", value: "DIPA KJRI FRANKFURT TA " + new Date().getFullYear() },
     { fieldName: "maksud_jalan_spd", value: tujuanDinas },
     { fieldName: "keterangan_rincian", value: pegawai.keterangan?.rincian },
+    { fieldName: "NIP_bendahara_rincian", value: bendahara?.nip },
+    { fieldName: "nama_bendahara_rincian", value: bendahara?.displayName },
   ];
 
-  enableReadOnly(form, [
-    "jumlah_total_rincian",
-    "nama_bendahara_rincian",
-    "NIP_bendahara_rincian",
-    "uang_dibayar_rincian",
-    "uang_sisa_lebih_rincian",
-  ]);
+  enableReadOnly(form, ["jumlah_total_rincian", "uang_dibayar_rincian", "uang_sisa_lebih_rincian"]);
 
   const formToFill2: FormValues[] = [
     {
@@ -255,10 +251,15 @@ async function fillPernyataan(form: PDFForm, data: { pegawai: Pegawai; nomorSura
 
 async function fillKwitansi(
   form: PDFForm,
-  data: { listPegawai: ListPegawai; tujuanSurat: string; pembuatKomitmen?: { name: string; nip: string } },
+  data: {
+    listPegawai: ListPegawai;
+    tujuanSurat: string;
+    pembuatKomitmen?: { name: string; nip: string };
+    bendahara?: Pegawai;
+  },
   option: Option
 ) {
-  const { listPegawai, pembuatKomitmen, tujuanSurat } = data;
+  const { listPegawai, pembuatKomitmen, tujuanSurat, bendahara } = data;
 
   let formData: FormValues[] = [
     {
@@ -285,11 +286,12 @@ async function fillKwitansi(
     { fieldName: "nama_penerima", value: listPegawai.pegawai.displayName },
     { fieldName: "datum", value: formattedDayjs(new Date()) },
     { fieldName: "info_pembayaran", value: tujuanSurat },
+    { fieldName: "NIP2", value: bendahara?.nip },
   ];
 
   formData = [...formData, ...data2];
   fillAndSetReadOnly(form, formData, option);
-  enableReadOnly(form, ["TA", "no_buk", "mata_anggaran", "NIP2"]);
+  enableReadOnly(form, ["TA", "no_buk", "mata_anggaran"]);
 
   return form;
 }

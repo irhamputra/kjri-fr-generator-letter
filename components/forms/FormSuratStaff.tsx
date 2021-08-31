@@ -1,26 +1,36 @@
 import React from "react";
 import { Form, FieldArray, Field, Formik, FormikTouched } from "formik";
 import { InputComponent, SelectComponent, SelectStaff } from "../../components/CustomField";
-import useQuerySuratTugas from "../../hooks/query/useQuerySuratTugas";
+import useQuerySuratTugas, { useQuerySingleSuratTugas } from "../../hooks/query/useQuerySuratTugas";
 import { object, string, array } from "yup";
 import { Trash as TrashIcon, Plus as PlusIcon, ArrowRight } from "react-bootstrap-icons";
 import useQueryUsers from "../../hooks/query/useQueryUsers";
 import { useRouter } from "next/router";
 import useCountUangHarianSPD from "../../hooks/useCountUangHarianSPD";
-import { Pegawai } from "../../typings/Pegawai";
+import { ListPegawai } from "../../typings/SuratTugas";
 
 export type ForumSuratStaffInitialValues = {
   nomorSurat: string;
   fullDayKurs: number;
-  namaPegawai: any[];
+  namaPegawai: ListPegawai[];
   tujuanDinas?: string;
 };
 
 const FormSuratStaff: React.FC<{
   onSave: (val: ForumSuratStaffInitialValues) => any;
   initialValues: ForumSuratStaffInitialValues;
-}> = ({ onSave, initialValues }) => {
+  isEdit?: boolean;
+}> = ({ onSave, initialValues, isEdit }) => {
+  const { query } = useRouter();
   const { data: listSuratTugas, isLoading: suratTugasLoading } = useQuerySuratTugas();
+
+  // Fetch suratTugas again to provide tujuanDinas and nomorSurat
+  // will be disabled if isEdit is false
+  const { data: dataSurat = { nomorSurat: "", tujuanDinas: "" } } = useQuerySingleSuratTugas(
+    query.id as string,
+    isEdit
+  );
+
   const { push } = useRouter();
   const { countToUER, jalDirLoading } = useCountUangHarianSPD();
 
@@ -64,8 +74,8 @@ const FormSuratStaff: React.FC<{
             <div className="mb-3">
               <h4 className="mb-4">Informasi Penugasan</h4>
               <label className="form-label">Nomor Surat</label>
-              {initialValues?.nomorSurat && initialValues?.tujuanDinas ? (
-                <h5>{initialValues.nomorSurat + " - " + initialValues.tujuanDinas}</h5>
+              {isEdit ? (
+                <h5>{dataSurat?.nomorSurat + " - " + dataSurat?.tujuanDinas}</h5>
               ) : (
                 <>
                   <Field
