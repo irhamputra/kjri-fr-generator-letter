@@ -45,7 +45,7 @@ const ManageUser: NextPage = () => {
   if (loadingUser) return <h4>Loading...</h4>;
 
   return (
-    <section style={{ marginTop: "6rem" }}>
+    <section style={{ marginTop: "6rem" }} className="mb-5">
       <RegisterUser />
       <table className="table caption-top mt-3">
         <caption>List Staff</caption>

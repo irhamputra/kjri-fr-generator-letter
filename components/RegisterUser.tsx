@@ -4,7 +4,6 @@ import { object } from "yup";
 import createSchema from "../utils/validation/schema";
 import { useMutation } from "react-query";
 import axios from "axios";
-import Modal from "react-modal";
 import { toast } from "react-hot-toast";
 
 const customStyles = {
@@ -21,18 +20,17 @@ const customStyles = {
 
 const RegisterUser: React.FC = () => {
   const [open, setOpen] = React.useState(false);
-  const [modalOpen, setModalOpen] = React.useState(false);
 
   const initialValues = {
     email: "",
     dob: "",
   };
 
-  const { mutateAsync, data } = useMutation(
+  const { mutateAsync } = useMutation(
     "registerUser",
     async (values: typeof initialValues) => {
       try {
-        const { data } = await axios.post<typeof initialValues & { codeId: string }>("/api/v1/users", values);
+        const { data } = await axios.post<{ message: string }>("/api/v1/users", values);
 
         return data;
       } catch (e) {
@@ -40,8 +38,8 @@ const RegisterUser: React.FC = () => {
       }
     },
     {
-      onSuccess: () => {
-        setModalOpen(true);
+      onSuccess: (data) => {
+        toast.success(data.message || "Kode verifikasi telah terkirim");
       },
       onError: () => {
         toast.error("User telah terdaftar");
@@ -59,11 +57,6 @@ const RegisterUser: React.FC = () => {
       setSubmitting(false);
     },
   });
-
-  const handleCopy = () => {
-    // create clipboard
-    console.log("Copy Code");
-  };
 
   return (
     <>
@@ -113,27 +106,6 @@ const RegisterUser: React.FC = () => {
           </form>
         ) : null}
       </div>
-
-      <Modal
-        isOpen={modalOpen}
-        onRequestClose={() => setModalOpen(false)}
-        contentLabel="User Registration Modal"
-        style={customStyles}
-      >
-        <div className="modal-dialog" role="document" style={{ width: "100vw" }}>
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title text-center">Kode Verifikasi User</h5>
-            </div>
-            <div className="modal-body text-center">
-              {data?.codeId && <h2>{data.codeId}</h2>}
-              <button onClick={handleCopy} className="btn btn-dark">
-                Copy Nomor Identifikasi
-              </button>
-            </div>
-          </div>
-        </div>
-      </Modal>
     </>
   );
 };

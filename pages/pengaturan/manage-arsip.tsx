@@ -44,7 +44,7 @@ const ManageArsip: NextPage = () => {
   if (isLoading) return <h4>Loading...</h4>;
 
   return (
-    <section style={{ marginTop: "6rem" }}>
+    <section style={{ marginTop: "6rem" }} className="mb-5">
       <NextSeo
         title="Manage Arsip | Sistem Aplikasi KJRI Frankfurt"
         description="Manage Arsip Sistem Aplikasi KJRI Frankfurt"

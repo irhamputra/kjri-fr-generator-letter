@@ -71,9 +71,9 @@ const SuratDibuat: NextPage = () => {
         title="Surat Perjalanan | Sistem Aplikasi KJRI Frankfurt"
         description="Dashboard Arsip Sistem Aplikasi KJRI Frankfurt"
       />
-      <section style={{ marginTop: "6rem" }}>
+      <section style={{ marginTop: "6rem" }} className="mb-5">
         <div className="mb-3">
-          <h3>Surat yang Telah Dibuat</h3>
+          <h3>Surat Keluarku</h3>
         </div>
         <Table
           columns={columns}

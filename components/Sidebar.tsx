@@ -33,7 +33,7 @@ const Sidebar = (): JSX.Element => {
           <li className="list-group-item text-white bg-transparent" style={{ borderColor: "#ffffff20" }}>
             <LinkWithEditPrompt href="/created-surat">
               <FileEarmarkCheck size={25} style={{ color: "white" }} />
-              <p className="my-0 mx-2 ">Surat Telah Dibuat</p>
+              <p className="my-0 mx-2 ">Surat Keluarku</p>
               {!isLoadingSuratDibuat && dataSuratDibuat.length > 0 && (
                 <span className="badge badge-danger" style={{ background: "#dc3545" }}>
                   {dataSuratDibuat.length}

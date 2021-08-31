@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { cors } from "../../../utils/middlewares";
 import { db } from "../../../utils/firebase";
-import { v4 } from "uuid";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
