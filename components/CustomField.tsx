@@ -116,8 +116,8 @@ const DatePickerComponent = ({ form, field, value }: FieldAttributes<any>) => {
     <div className="reactDateWrapper">
       <DatePicker
         minDate={minDate}
-        selected={value}
-        onChange={(val) => setFieldValue(name, val)}
+        selected={dayjs(value).toDate()}
+        onChange={(val) => setFieldValue(name, dayjs(val as Date).toISOString())}
         dateFormat="dd.MM.yyyy"
       />
       <Calendar className="icon" />

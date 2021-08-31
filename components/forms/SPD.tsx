@@ -15,6 +15,7 @@ import { Pegawai } from "../../typings/Pegawai";
 import { useRouter } from "next/router";
 import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
 import Stepper from "../Stepper";
+import { useQueryClient } from "react-query";
 
 type FormValues = {
   suratStaff: ForumSuratStaffInitialValues;
@@ -22,7 +23,11 @@ type FormValues = {
   keterangan: FormKeteranganValues;
 };
 
-const FormSPD: React.FC<{ isEdit?: boolean; editData?: Partial<SuratTugasRes> }> = ({ isEdit, editData }) => {
+const FormSPD: React.FC<{
+  isEdit?: boolean;
+  editData?: Partial<SuratTugasRes>;
+  invalidateSingleSurat?: () => Promise<void>;
+}> = ({ isEdit, editData, invalidateSingleSurat }) => {
   const [activePageIndex, setPageIndex] = useState(0);
   const { push } = useRouter();
 
@@ -35,11 +40,11 @@ const FormSPD: React.FC<{ isEdit?: boolean; editData?: Partial<SuratTugasRes> }>
     })) ?? [];
 
   const keteranganData =
-    editData?.listPegawai?.map(({ pegawai }) => ({
+    editData?.listPegawai?.map(({ pegawai, keterangan }) => ({
       nama: pegawai.displayName,
       nip: pegawai.nip,
       uid: pegawai.uid,
-      rincian: "",
+      rincian: keterangan.rincian,
     })) ?? [];
 
   const initialValues: FormValues = isEdit
@@ -89,6 +94,9 @@ const FormSPD: React.FC<{ isEdit?: boolean; editData?: Partial<SuratTugasRes> }>
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
         toast(res.data?.message);
+        if (invalidateSingleSurat) {
+          invalidateSingleSurat();
+        }
         finishEditing();
         push("/layanan/penugasan/list");
       } catch (e) {
@@ -109,21 +117,34 @@ const FormSPD: React.FC<{ isEdit?: boolean; editData?: Partial<SuratTugasRes> }>
             isEdit={isEdit}
             onSave={(val) => {
               let rampunganData: { nama: string; nip: string; rampungan: any; uid: string }[] = [];
-              let keteranganData: { nama: string; nip: string; rincian: ""; uid: string }[] = [];
+              let keteranganData: { nama: string; nip: string; rincian: string; uid: string }[] = [];
 
               val.namaPegawai?.forEach(({ pegawai }: { pegawai: Pegawai }) => {
-                rampunganData.push({
-                  nama: pegawai.displayName,
-                  nip: pegawai.nip,
-                  uid: pegawai.uid,
-                  rampungan: [createRampungan("Frankfurt")],
-                });
-                keteranganData.push({
-                  nama: pegawai.displayName,
-                  uid: pegawai.uid,
-                  nip: pegawai.nip,
-                  rincian: "",
-                });
+                const oldRampunganData = values.rampunganFill.data.filter(({ uid }) => uid === pegawai.uid)[0];
+                const oldKeteranganData = values.keterangan.data.filter(({ uid }) => uid === pegawai.uid)[0];
+
+                // If the pegawai is new, create blank value instead of pushing old Data
+                if (!oldRampunganData) {
+                  rampunganData.push({
+                    nama: pegawai.displayName,
+                    nip: pegawai.nip,
+                    uid: pegawai.uid,
+                    rampungan: [createRampungan("Frankfurt")],
+                  });
+                } else {
+                  rampunganData.push(oldRampunganData);
+                }
+
+                if (!oldKeteranganData) {
+                  keteranganData.push({
+                    nama: pegawai.displayName,
+                    uid: pegawai.uid,
+                    nip: pegawai.nip,
+                    rincian: "",
+                  });
+                } else {
+                  keteranganData.push(oldKeteranganData);
+                }
               });
 
               setSuratStaff(val);
@@ -134,6 +155,7 @@ const FormSPD: React.FC<{ isEdit?: boolean; editData?: Partial<SuratTugasRes> }>
                 rampunganFill: { ...values.rampunganFill, data: rampunganData },
                 keterangan: { ...values.keterangan, data: keteranganData },
               }));
+
               setPageIndex((val) => val + 1);
             }}
           />

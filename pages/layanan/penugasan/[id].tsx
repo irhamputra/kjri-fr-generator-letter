@@ -7,10 +7,11 @@ import { useQuerySingleSuratTugas } from "../../../hooks/query/useQuerySuratTuga
 
 const SuratPenugasanId: NextPage = () => {
   const { query, back } = useRouter();
-  const { data: dataEdit = {}, isLoading: isEditLoading } = useQuerySingleSuratTugas(
-    (query.id as string) ?? "",
-    !!query.id
-  );
+  const {
+    data: dataEdit = {},
+    isLoading: isEditLoading,
+    invalidateSingleSurat,
+  } = useQuerySingleSuratTugas((query.id as string) ?? "", !!query.id);
 
   if (isEditLoading) return <h4>Loading...</h4>;
 
@@ -19,10 +20,10 @@ const SuratPenugasanId: NextPage = () => {
       {query.edit ? (
         <>
           <h3 style={{ marginBottom: 24 }}>Surat Penugasan Perjalanan Dinas (SPD)</h3>
-          <FormSPD editData={dataEdit} isEdit />
+          <FormSPD editData={dataEdit} isEdit invalidateSingleSurat={invalidateSingleSurat} />
         </>
       ) : (
-        <DetailSuratPenugasan data={isEditLoading ? dataEdit : {}} back={back} />
+        <DetailSuratPenugasan data={!isEditLoading ? dataEdit : {}} back={back} />
       )}
     </section>
   );

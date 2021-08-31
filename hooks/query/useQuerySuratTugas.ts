@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useQueryClient } from "react-query";
 import { SuratTugasRes } from "../../typings/SuratTugas";
 import { useMyQuery } from "../useMyQuery";
 
@@ -21,7 +22,8 @@ const useQuerySuratTugas = () => {
 };
 
 const useQuerySingleSuratTugas = (suratTugasId: string, enabled: boolean = true) => {
-  return useMyQuery<SuratTugasRes>(
+  const queryClient = useQueryClient();
+  const query = useMyQuery<SuratTugasRes>(
     ["fetchSingleSurat", suratTugasId],
     async () => {
       const { data } = await axios.get(`/api/v1/surat-tugas/${suratTugasId}`);
@@ -32,6 +34,11 @@ const useQuerySingleSuratTugas = (suratTugasId: string, enabled: boolean = true)
       enabled: enabled,
     }
   );
+
+  // This code writen to avoid cache invalidation problem
+  // I think it's more clean if we define invalidator here to reduce uncertainty
+  const invalidateSingleSurat = () => queryClient.invalidateQueries(["fetchSingleSurat", suratTugasId]);
+  return { ...query, invalidateSingleSurat };
 };
 
 export { useQuerySingleSuratTugas };

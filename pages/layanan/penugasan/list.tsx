@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
-import { Eye, Printer, Search } from "react-bootstrap-icons";
+import { Eye, Pencil, Printer, Search } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Modal from "react-modal";
@@ -57,7 +57,7 @@ const ListSurat: NextPage = () => {
               <Link href={`/layanan/penugasan/${value.suratTugasId}?edit=true`} passHref>
                 <a>
                   <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
-                    <Eye size={25} />
+                    <Pencil size={25} />
                   </button>
                 </a>
               </Link>
