@@ -4,9 +4,7 @@ import { Eye, Printer, Search } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Modal from "react-modal";
-import { PropsWithChildren } from "react";
 import Table from "../../../components/Table";
-import useDeleteSPDMutation from "../../../hooks/mutation/useDeleteSPDMutation";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { useDownloadSuratPenugasan, useDownloadSuratTugas } from "../../../hooks/useDownloadSurat";
 import { SuratTugasRes } from "../../../typings/SuratTugas";
@@ -50,6 +48,13 @@ const ListSurat: NextPage = () => {
           return (
             <div style={{ display: "flex" }}>
               <Link href={`/layanan/penugasan/${value.suratTugasId}`} passHref>
+                <a>
+                  <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
+                    <Eye size={25} />
+                  </button>
+                </a>
+              </Link>
+              <Link href={`/layanan/penugasan/${value.suratTugasId}?edit=true`} passHref>
                 <a>
                   <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
                     <Eye size={25} />

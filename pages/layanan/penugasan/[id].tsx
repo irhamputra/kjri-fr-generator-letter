@@ -1,28 +1,36 @@
 import * as React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import axios from "axios";
-import { useMyQuery } from "../../../hooks/useMyQuery";
+import { SuratTugasRes } from "../../../typings/SuratTugas";
+import FormSPD from "../../../components/forms/SPD";
+import { useQuerySingleSuratTugas } from "../../../hooks/query/useQuerySuratTugas";
 
 const SuratPenugasanId: NextPage = () => {
   const { query, back } = useRouter();
-
-  const { data, isLoading } = useMyQuery(
-    ["fetchSingleSurat", query.id],
-    async () => {
-      const { data } = await axios.get(`/api/v1/surat-tugas/${query.id}`);
-
-      return data;
-    },
-    {
-      enabled: !query.edit,
-    }
+  const { data: dataEdit = {}, isLoading: isEditLoading } = useQuerySingleSuratTugas(
+    (query.id as string) ?? "",
+    !!query.id
   );
 
-  if (isLoading) return <h4>Loading...</h4>;
+  if (isEditLoading) return <h4>Loading...</h4>;
 
   return (
     <section style={{ marginTop: "6rem" }}>
+      {query.edit ? (
+        <>
+          <h3 style={{ marginBottom: 24 }}>Surat Penugasan Perjalanan Dinas (SPD)</h3>
+          <FormSPD editData={dataEdit} isEdit />
+        </>
+      ) : (
+        <DetailSuratPenugasan data={isEditLoading ? dataEdit : {}} back={back} />
+      )}
+    </section>
+  );
+};
+
+const DetailSuratPenugasan: React.FC<{ data: Partial<SuratTugasRes>; back: () => void }> = ({ data, back }) => {
+  return (
+    <>
       <button onClick={() => back()} className="btn-dark btn my-3">
         Kembali ke list
       </button>
@@ -80,7 +88,7 @@ const SuratPenugasanId: NextPage = () => {
             : null}
         </tbody>
       </table>
-    </section>
+    </>
   );
 };
 
