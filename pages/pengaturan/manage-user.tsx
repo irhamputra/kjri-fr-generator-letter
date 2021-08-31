@@ -31,7 +31,7 @@ const ManageUser: NextPage = () => {
     },
     {
       onSuccess: async (data) => {
-        await queryClient.invalidateQueries("fetchUser");
+        await queryClient.invalidateQueries();
 
         toast.success(data.message);
       },

@@ -11,7 +11,7 @@ const useRegisterAccount = <T>(initialValues: T) => {
   const { mutateAsync, ...restMutation } = useMutation(
     "registerUser",
     async (values: Omit<typeof initialValues, "identityNumber" | "birthday">) => {
-      const { data } = await axios.post("/api/v1/register", { ...values, uid: query?.id });
+      const { data } = await axios.post("/api/v1/register", { ...values, uuid: query?.id });
 
       return data;
     },

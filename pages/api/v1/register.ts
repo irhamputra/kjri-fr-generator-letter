@@ -15,7 +15,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "POST") {
-    const { email, password, uid } = req.body;
+    const { email, password, uuid } = req.body;
 
     try {
       try {
@@ -31,8 +31,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         try {
-          await db.collection("Users").doc(uid).set({
-            uid,
+          await db.collection("Users").doc(uuid).delete();
+
+          await db.collection("Users").doc(data.localId).set({
+            uid: data.localId,
             email,
             role: "default",
             nip: "",
