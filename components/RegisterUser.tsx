@@ -6,24 +6,11 @@ import { useMutation } from "react-query";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    border: "0px",
-  },
-};
-
 const RegisterUser: React.FC = () => {
   const [open, setOpen] = React.useState(false);
 
   const initialValues = {
     email: "",
-    dob: "",
   };
 
   const { mutateAsync } = useMutation(
@@ -84,19 +71,6 @@ const RegisterUser: React.FC = () => {
                   onChange={handleChange}
                 />
                 {errors.email && touched.email && <small className="text-danger">{errors.email}</small>}
-              </div>
-
-              <div className="col-3">
-                <label htmlFor="DOB">Tanggal Lahir</label>
-                <input
-                  className="form-control"
-                  id="DOB"
-                  type="date"
-                  name="dob"
-                  value={values.dob}
-                  onChange={handleChange}
-                />
-                {errors.dob && touched.dob && <small className="text-danger">{errors.dob}</small>}
               </div>
 
               <div className="col-12">

@@ -68,8 +68,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                                   cursor: pointer"
                    >
                     Verifikasi Akun Anda
-                   </button>
-                </a><br/>
+                   </button></a>  
+                <br/>
                 untuk mendaftarkan akun anda</p>
                 <p>Jika terjadi kesalahan silahkan hubungi Admin KJRI Frankfurt</p><br/><br/><p>Salam hangat dari Admin KJRI Frankfurt</p></body>`,
         });
