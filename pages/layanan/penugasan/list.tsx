@@ -76,14 +76,15 @@ const ListSurat: NextPage = () => {
 
   if (suratTugasLoading) return <p>Loading...</p>;
 
-  const data = listSuratTugas?.map?.(
-    ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl }: SuratTugasRes, index: number) => ({
-      col1: index + 1,
-      col2: nomorSurat,
-      col3: tujuanDinas,
-      col4: { suratTugasId, listPegawai, downloadUrl: downloadUrl },
-    })
-  );
+  const data =
+    listSuratTugas?.map?.(
+      ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl }: SuratTugasRes, index: number) => ({
+        col1: index + 1,
+        col2: nomorSurat,
+        col3: tujuanDinas,
+        col4: { suratTugasId, listPegawai, downloadUrl: downloadUrl },
+      })
+    ) ?? [];
 
   return (
     <div className="row mb-5">
