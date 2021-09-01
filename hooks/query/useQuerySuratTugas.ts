@@ -9,9 +9,9 @@ const useQuerySuratTugas = () => {
   const isList = pathname === "/layanan/penugasan/list";
 
   return useMyQuery(
-    "fetchSuratTugas",
+    ["fetchSuratTugas", isList ? "list" : "create"],
     async () => {
-      const { data } = await axios.get(`/api/v1/penugasan${!isList ? "/create" : ""}`);
+      const { data } = await axios.get<SuratTugasRes[]>(`/api/v1/penugasan${!isList ? "/create" : ""}`);
 
       return data ?? null;
     },
