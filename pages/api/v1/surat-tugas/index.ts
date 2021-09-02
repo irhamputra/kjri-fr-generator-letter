@@ -1,5 +1,6 @@
 import { firestore } from "firebase-admin";
 import { NextApiRequest, NextApiResponse } from "next";
+import { CreateSuratTugasReqBody } from "../../../../typings/SuratTugas";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
 
@@ -19,7 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "POST" || req.method === "PUT") {
-    const { suratTugasId } = req.body;
+    const { suratTugasId } = req.body as CreateSuratTugasReqBody;
 
     if (!suratTugasId) res.status(500).json({ error: "Id surat tugas harus diisi!" });
 

@@ -7,6 +7,8 @@ export interface SuratTugasRes {
   suratTugasId: string;
   tujuanDinas: string;
   fullDayKurs: number;
+  createdAt: Date;
+  editedAt: Date;
 
   textPembuka?: RichTextValue;
   textTengah?: RichTextValue;
@@ -35,3 +37,13 @@ export type ListPegawai = {
     rincian: string;
   };
 };
+
+export type CreateSuratTugasValues = Pick<
+  SuratTugasRes,
+  "nomorSurat" | "tujuanDinas" | "createdAt" | "textPembuka" | "textTengah" | "textPenutup"
+>;
+
+export type CreateSuratTugasReqBody = Pick<
+  SuratTugasRes,
+  "editedAt" | "suratTugasId" | "tujuanDinas" | "createdAt" | "textPembuka" | "textTengah" | "textPenutup"
+>;
