@@ -30,6 +30,7 @@ const FormSPD: React.FC<{
 }> = ({ isEdit, editData, invalidateSingleSurat }) => {
   const [activePageIndex, setPageIndex] = useState(0);
   const { push } = useRouter();
+  const queryClient = useQueryClient();
 
   const rampunganData =
     editData?.listPegawai?.map(({ destinasi, pegawai }) => ({
@@ -97,6 +98,7 @@ const FormSPD: React.FC<{
         if (invalidateSingleSurat) {
           invalidateSingleSurat();
         }
+        queryClient.invalidateQueries(["fetchSuratTugas", "list"]);
         finishEditing();
         push("/layanan/penugasan/list");
       } catch (e) {

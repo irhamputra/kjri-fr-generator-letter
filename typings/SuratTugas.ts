@@ -7,8 +7,9 @@ export interface SuratTugasRes {
   suratTugasId: string;
   tujuanDinas: string;
   fullDayKurs: number;
-  createdAt: Date;
-  editedAt: Date;
+
+  createdAt: FirebaseFirestore.Timestamp; // UTC String
+  editedAt: FirebaseFirestore.Timestamp; // UTC String
 
   textPembuka?: RichTextValue;
   textTengah?: RichTextValue;
@@ -40,10 +41,16 @@ export type ListPegawai = {
 
 export type CreateSuratTugasValues = Pick<
   SuratTugasRes,
-  "nomorSurat" | "tujuanDinas" | "createdAt" | "textPembuka" | "textTengah" | "textPenutup"
->;
+  "nomorSurat" | "tujuanDinas" | "textPembuka" | "textTengah" | "textPenutup"
+> & { createdAt: Date };
 
-export type CreateSuratTugasReqBody = Pick<
-  SuratTugasRes,
-  "editedAt" | "suratTugasId" | "tujuanDinas" | "createdAt" | "textPembuka" | "textTengah" | "textPenutup"
+export type CreateSuratTugasReqBody = Partial<Omit<SuratTugasRes, "createdAt" | "updatedAt">> & {
+  createdAt: Date;
+};
+
+export type UpdateSuratTugasReqBody = Partial<
+  Omit<SuratTugasRes, "createdAt" | "updatedAt"> & {
+    createdAt: Date;
+    updatedAt: Date;
+  }
 >;

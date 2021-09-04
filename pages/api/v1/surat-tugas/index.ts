@@ -1,6 +1,6 @@
 import { firestore } from "firebase-admin";
 import { NextApiRequest, NextApiResponse } from "next";
-import { CreateSuratTugasReqBody } from "../../../../typings/SuratTugas";
+import { CreateSuratTugasReqBody, SuratTugasRes } from "../../../../typings/SuratTugas";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
 
@@ -22,7 +22,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST" || req.method === "PUT") {
     const { suratTugasId } = req.body as CreateSuratTugasReqBody;
 
-    if (!suratTugasId) res.status(500).json({ error: "Id surat tugas harus diisi!" });
+    // Return error if no SuratTugasId supplied
+    if (!suratTugasId) {
+      res.status(500).json({ error: "Id surat tugas harus diisi!" });
+      res.end();
+      return;
+    }
+
+    console.log("DAtte", firestore.Timestamp.fromDate(new Date()));
+
+    const data: SuratTugasRes = {
+      ...req.body,
+      createdAt: firestore.Timestamp.fromDate(new Date()),
+      editedAt: firestore.Timestamp.fromDate(new Date()),
+    };
 
     try {
       const docRef = db.collection("SuratTugas").doc(suratTugasId);
@@ -30,7 +43,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const increment = firestore.FieldValue.increment(1);
 
       const batch = db.batch();
-      batch.set(docRef, req.body);
+      batch.set(docRef, data);
 
       if (req.method === "POST") {
         const counterRef = db.collection("SuratTugas").doc("--stats--");

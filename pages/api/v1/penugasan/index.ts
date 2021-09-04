@@ -1,4 +1,6 @@
+import { firestore } from "firebase-admin";
 import { NextApiRequest, NextApiResponse } from "next";
+import { UpdateSuratTugasReqBody } from "../../../../typings/SuratTugas";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
 
@@ -7,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      const snapshot = await db.collection("SuratTugas").orderBy("nomorSurat", "asc").get();
+      const snapshot = await db.collection("SuratTugas").orderBy("updatedAt").get();
 
       const result: FirebaseFirestore.DocumentData = [];
 
@@ -42,17 +44,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         id = doc.id;
       });
 
-      await db
-        .collection("SuratTugas")
-        .doc(id)
-        .update({
-          listPegawai,
-          fullDayKurs,
-          pembuatKomitmen: {
-            name: pembuatKomitmenName,
-            nip: pembuatKomitmenNIP,
-          },
-        });
+      const updateValue = {
+        updatedAt: firestore.Timestamp.now(),
+        listPegawai,
+        fullDayKurs,
+        pembuatKomitmen: {
+          name: pembuatKomitmenName,
+          nip: pembuatKomitmenNIP,
+        },
+      };
+
+      await db.collection("SuratTugas").doc(id).update(updateValue);
 
       res.status(200).json({ message: "Update Surat Tugas" });
       res.end();

@@ -78,9 +78,8 @@ const SuratTugas: NextPage = () => {
       setSubmitting(true);
       try {
         const postJson: CreateSuratTugasReqBody = {
-          suratTugasId: v4(),
-          editedAt: values.createdAt,
           ...values,
+          suratTugasId: v4(),
         };
         await axios.post("/api/v1/surat-tugas", postJson);
         toast.success("Surat Tugas berhasil dibuat");
