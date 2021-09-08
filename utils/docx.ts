@@ -17,6 +17,8 @@ import { RichTextValue } from "../typings/Common";
 import { PegawaiSuratTugas } from "../typings/Pegawai";
 import "dayjs/locale/id";
 import { storage } from "./firebase";
+import { formattedDayjs } from "./dates";
+import { firestore } from "firebase-admin";
 
 type Modify<T, TData> = T & TData;
 
@@ -28,6 +30,7 @@ type GeneratePegawaiProps = {
   waktuPerjalanan: number;
   textPembuka: RichTextValue;
   textPenutup: RichTextValue;
+  createdAt: firestore.Timestamp;
 };
 
 const styles = {
@@ -96,6 +99,7 @@ async function generateSuratTugas({
   textPembuka,
   textTengah,
   textPenutup,
+  createdAt,
 }: GeneratePegawaiProps) {
   const urlOptions = {
     version: "v4" as "v4",
@@ -215,7 +219,7 @@ async function generateSuratTugas({
             children: [
               new TextRun({
                 ...styles.normal,
-                text: `\t\t\t\t pada tanggal ${dayjs().locale("id").format("DD MMMM YYYY")}`,
+                text: `\t\t\t\t pada tanggal ${formattedDayjs(createdAt.toDate())}`,
               }),
             ],
             tabStops: tabStop,

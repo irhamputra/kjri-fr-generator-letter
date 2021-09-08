@@ -21,12 +21,14 @@ export interface SuratTugasRes {
     nip: string;
   };
 
-  downloadUrl?: {
-    suratPenugasan: {
-      [k in string]: string;
-    };
-    suratTugas: string;
-  };
+  downloadUrl?:
+    | {
+        suratPenugasan: {
+          [k in string]: string;
+        };
+        suratTugas: string;
+      }
+    | {};
 }
 
 export type ListPegawai = {
@@ -51,6 +53,6 @@ export type CreateSuratTugasReqBody = Partial<Omit<SuratTugasRes, "createdAt" | 
 export type UpdateSuratTugasReqBody = Partial<
   Omit<SuratTugasRes, "createdAt" | "updatedAt"> & {
     createdAt: Date;
-    updatedAt: Date;
+    editedAt: Date;
   }
 >;
