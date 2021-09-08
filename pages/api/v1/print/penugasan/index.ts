@@ -72,7 +72,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         };
 
         // Get downloadable url using signed url method
-        const [url] = await storage.bucket().file("template/SPD_Template.pdf").getSignedUrl(urlOptions);
+        const [url] = await storage.bucket().file("template/SPD_Template_v2.pdf").getSignedUrl(urlOptions);
         const formPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
         const pdfDoc = await PDFDocument.load(formPdfBytes);
@@ -109,7 +109,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         );
         pdfBytes = await fillPernyataan(
           pdfBytes,
-          { pegawai, nomorSuratTugas: nomorSurat },
+          { pegawai, nomorSuratTugas: nomorSurat, createdAt: suratTugas.createdAt, listPegawai: chosenListPegawai },
           {
             font: calibriFont,
           }
@@ -121,6 +121,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             pembuatKomitmen,
             tujuanSurat: suratTugas.tujuanDinas,
             bendahara: bendahara.data(),
+            createdAt: suratTugas.createdAt,
           },
           {
             font: calibriFont,
