@@ -28,7 +28,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const { fullDayKurs, nomorSurat, listPegawai, pembuatKomitmenName, pembuatKomitmenNIP } = req.body;
+    const { fullDayKurs, nomorSurat, listPegawai, pembuatKomitmenName, pembuatKomitmenNIP, downloadUrl } = req.body;
 
     if (listPegawai.length <= 0) {
       res.status(404).json({ error: "Tidak ada data yang tersimpan" });
@@ -45,13 +45,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       const updateValue = {
-        updatedAt: firestore.Timestamp.now(),
+        editedAt: firestore.Timestamp.now(),
         listPegawai,
         fullDayKurs,
         pembuatKomitmen: {
           name: pembuatKomitmenName,
           nip: pembuatKomitmenNIP,
         },
+        downloadUrl,
       };
 
       await db.collection("SuratTugas").doc(id).update(updateValue);

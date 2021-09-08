@@ -72,7 +72,8 @@ const FormSPD: React.FC<{
       const { data, ...restVal } = val.rampunganFill;
       const { namaPegawai, fullDayKurs } = val.suratStaff;
       try {
-        const newValues: Omit<SuratTugasRes, "tujuanDinas" | "suratTugasId"> = {
+        const newValues: Omit<SuratTugasRes, "tujuanDinas" | "suratTugasId" | "createdAt" | "editedAt"> = {
+          ...restVal,
           nomorSurat: values.suratStaff.nomorSurat,
           fullDayKurs,
           listPegawai: namaPegawai.map((v) => {
@@ -88,10 +89,9 @@ const FormSPD: React.FC<{
               keterangan: {
                 rincian: keterangan.rincian,
               },
-              downloadUrl: {},
             };
           }),
-          ...restVal,
+          downloadUrl: {},
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
         toast(res.data?.message);
