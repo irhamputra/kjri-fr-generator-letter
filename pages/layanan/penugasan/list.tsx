@@ -7,8 +7,9 @@ import Modal from "react-modal";
 import Table from "../../../components/Table";
 import useQuerySuratTugas from "../../../hooks/query/useQuerySuratTugas";
 import { useDownloadSuratPenugasan, useDownloadSuratTugas } from "../../../hooks/useDownloadSurat";
-import { SuratTugasRes } from "../../../typings/SuratTugas";
+import { SuratTugas, SuratTugasRes } from "../../../typings/SuratTugas";
 import { Pegawai } from "../../../typings/Pegawai";
+import { formattedDayjs } from "../../../utils/dates";
 
 const customStyles = {
   content: {
@@ -41,9 +42,13 @@ const ListSurat: NextPage = () => {
         accessor: "col3",
       },
       {
-        Header: "Opsi",
+        Header: "Tanggal edit",
         accessor: "col4",
-        Cell: ({ value }: { value: Pick<SuratTugasRes, "listPegawai" | "suratTugasId" | "downloadUrl"> }) => {
+      },
+      {
+        Header: "Opsi",
+        accessor: "col5",
+        Cell: ({ value }: { value: Pick<SuratTugas, "listPegawai" | "suratTugasId" | "downloadUrl"> }) => {
           const listPegawai = value.listPegawai?.map(({ pegawai }) => pegawai) as Pegawai[];
           return (
             <div style={{ display: "flex" }}>
@@ -78,11 +83,15 @@ const ListSurat: NextPage = () => {
 
   const data =
     listSuratTugas?.map?.(
-      ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl }: SuratTugasRes, index: number) => ({
+      (
+        { nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl, editedAt }: SuratTugasRes,
+        index: number
+      ) => ({
         col1: index + 1,
         col2: nomorSurat,
         col3: tujuanDinas,
-        col4: { suratTugasId, listPegawai, downloadUrl: downloadUrl },
+        col4: formattedDayjs(editedAt),
+        col5: { suratTugasId, listPegawai, downloadUrl: downloadUrl },
       })
     ) ?? [];
 

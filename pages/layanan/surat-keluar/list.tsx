@@ -63,14 +63,13 @@ const ListSuratKeluar: NextPage = () => {
 
   if (isLoading) return <p>Loading...</p>;
 
-  const data = listSuratKeluar?.listSurat.map?.(
-    ({ nomorSurat, content, url }: SuratKeluarCollection, index: number) => ({
+  const data =
+    listSuratKeluar?.listSurat?.map?.(({ nomorSurat, content, url }: SuratKeluarCollection, index: number) => ({
       col1: index + 1,
       col2: nomorSurat,
       col3: content,
       col4: url,
-    })
-  );
+    })) ?? [];
 
   return (
     <div style={{ marginTop: "6rem" }} className="mb-5">

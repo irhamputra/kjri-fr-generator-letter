@@ -21,15 +21,18 @@ export interface SuratTugasRes {
     nip: string;
   };
 
-  downloadUrl?:
-    | {
-        suratPenugasan: {
-          [k in string]: string;
-        };
-        suratTugas: string;
-      }
-    | {};
+  downloadUrl?: {
+    suratPenugasan: {
+      [k in string]: string;
+    };
+    suratTugas: string;
+  };
 }
+
+export type SuratTugas = Omit<SuratTugasRes, "createdAt" | "editedAt"> & {
+  createdAt: Date;
+  editedAt: Date;
+};
 
 export type ListPegawai = {
   uangHarian: string;
@@ -46,12 +49,12 @@ export type CreateSuratTugasValues = Pick<
   "nomorSurat" | "tujuanDinas" | "textPembuka" | "textTengah" | "textPenutup"
 > & { createdAt: Date };
 
-export type CreateSuratTugasReqBody = Partial<Omit<SuratTugasRes, "createdAt" | "updatedAt">> & {
+export type CreateSuratTugasReqBody = Partial<Omit<SuratTugasRes, "createdAt" | "editedAt">> & {
   createdAt: Date;
 };
 
 export type UpdateSuratTugasReqBody = Partial<
-  Omit<SuratTugasRes, "createdAt" | "updatedAt"> & {
+  Omit<SuratTugasRes, "createdAt" | "editedAt"> & {
     createdAt: Date;
     editedAt: Date;
   }

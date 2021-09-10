@@ -1,3 +1,5 @@
+import { firestore } from "firebase-admin";
+
 export type SuratKeluarCollection = {
   arsipId: string;
   author: string;
@@ -7,4 +9,6 @@ export type SuratKeluarCollection = {
   nomorSurat: string;
   url: string;
   recipient: string;
+  createdAt: firestore.Timestamp;
+  editedAt: firestore.Timestamp;
 };

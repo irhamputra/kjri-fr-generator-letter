@@ -29,8 +29,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
-    console.log("DAtte", firestore.Timestamp.fromDate(new Date()));
-
     const data: SuratTugasRes = {
       ...req.body,
       createdAt: firestore.Timestamp.fromDate(new Date()),
@@ -39,17 +37,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
       const docRef = db.collection("SuratTugas").doc(suratTugasId);
-
       const increment = firestore.FieldValue.increment(1);
-
       const batch = db.batch();
-      batch.set(docRef, data);
 
       if (req.method === "POST") {
+        batch.set(docRef, data);
         const counterRef = db.collection("SuratTugas").doc("--stats--");
         batch.set(counterRef, { counter: increment }, { merge: true });
+      } else {
+        batch.update(docRef, data);
       }
-
       await batch.commit();
 
       res.status(201).json({ message: "Surat Tugas berhasil dibuat", data: { suratTugasId, ...req.body } });

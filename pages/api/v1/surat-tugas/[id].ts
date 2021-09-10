@@ -7,12 +7,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      const data = await db
+      const docs = await db
         .collection("SuratTugas")
         .doc(req.query.id as string)
         .get();
 
-      const result = data.data();
+      const data = docs.data();
+      const time = {
+        createdAt: data?.createdAt.toDate() ?? new Date(),
+        editedAt: data?.editedAt.toDate() ?? new Date(),
+      };
+      const result = { ...data, ...time };
 
       res.status(200).json(result);
       res.end();

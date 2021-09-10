@@ -1,6 +1,5 @@
 import { firestore } from "firebase-admin";
 import { NextApiRequest, NextApiResponse } from "next";
-import { UpdateSuratTugasReqBody } from "../../../../typings/SuratTugas";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
 
@@ -9,13 +8,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      const snapshot = await db.collection("SuratTugas").orderBy("updatedAt").get();
+      const snapshot = await db.collection("SuratTugas").orderBy("editedAt", "desc").get();
 
       const result: FirebaseFirestore.DocumentData = [];
 
       snapshot.forEach((docs) => {
         if (docs.get("listPegawai")) {
-          result.push(docs.data());
+          const data = docs.data();
+          const time = {
+            createdAt: data.createdAt?.toDate(),
+            editedAt: data.editedAt?.toDate(),
+          };
+          result.push({ ...data, ...time });
         }
       });
 
