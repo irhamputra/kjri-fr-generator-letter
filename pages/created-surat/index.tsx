@@ -5,8 +5,9 @@ import { Pencil, Printer, Search } from "react-bootstrap-icons";
 import Link from "next/link";
 import Table from "../../components/Table";
 import useQuerySuratDibuat from "../../hooks/query/useQuerySuratDibuat";
-import { SuratKeluarCollection } from "../../typings/SuratKeluar";
+import { SuratKeluarCollection, SuratKeluarResBody } from "../../typings/SuratKeluar";
 import { useDownloadFile } from "../../hooks/useDownloadSurat";
+import { formattedDayjs } from "../../utils/dates";
 
 const SuratDibuat: NextPage = () => {
   const { data: suratDibuat = [], isLoading } = useQuerySuratDibuat();
@@ -31,8 +32,12 @@ const SuratDibuat: NextPage = () => {
         accessor: "col3",
       },
       {
-        Header: "Opsi",
+        Header: "Tanggal Edit",
         accessor: "col4",
+      },
+      {
+        Header: "Opsi",
+        accessor: "col5",
         Cell: ({ value }: { value: Pick<SuratKeluarCollection, "id" | "url"> }) => (
           <div style={{ display: "flex" }}>
             <Link href={`/layanan/surat-keluar/${value.id}?edit=true&originUrl=/created-surat`} passHref>
@@ -56,11 +61,12 @@ const SuratDibuat: NextPage = () => {
     []
   );
 
-  const data = suratDibuat?.map?.(({ nomorSurat, content, id, url }: SuratKeluarCollection, index: number) => ({
+  const data = suratDibuat?.map?.(({ nomorSurat, content, id, url, editedAt }: SuratKeluarResBody, index: number) => ({
     col1: index + 1,
     col2: nomorSurat,
     col3: content,
-    col4: { id, url },
+    col4: formattedDayjs(editedAt),
+    col5: { id, url },
   }));
 
   if (isLoading) return <p>Loading...</p>;
