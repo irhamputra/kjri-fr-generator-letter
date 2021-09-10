@@ -42,7 +42,7 @@ const ListSurat: NextPage = () => {
         accessor: "col3",
       },
       {
-        Header: "Tanggal edit",
+        Header: "Tanggal Edit",
         accessor: "col4",
       },
       {
