@@ -62,16 +62,16 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
           url = data.url;
         }
 
-        await updateSuratKeluar({ ...rest, url });
+        await updateSuratKeluar(url ? { ...rest, url } : rest);
         await queryClient.invalidateQueries(["fetchSuratKeluarId", values.id]);
       } catch (e) {
         toast.error("Gagal membuat surat keluar!");
         throw new Error(e.message);
       }
 
+      finishEditing();
       resetForm();
       setSubmitting(false);
-      finishEditing();
     },
   });
 
