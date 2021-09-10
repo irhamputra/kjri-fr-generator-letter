@@ -22,6 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         textPembuka = [],
         textPenutup = [],
         downloadUrl,
+        createdAt,
       } = snapshot.data() as SuratTugasRes;
 
       if (downloadUrl?.suratTugas && !forceRecreate) {
@@ -55,6 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         waktuPelaksanaan: +maxDay,
         waktuPerjalanan: +maxDay,
         textTengah,
+        createdAt,
       });
 
       await Packer.toBuffer(docx).then(async (buffer) => {

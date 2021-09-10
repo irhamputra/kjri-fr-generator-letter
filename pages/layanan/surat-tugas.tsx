@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NextPage } from "next";
-import { useFormik, FormikProvider } from "formik";
+import { useFormik, FormikProvider, Field } from "formik";
 import { object } from "yup";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -13,8 +13,9 @@ import { v4 } from "uuid";
 import { Auth } from "../../typings/AuthQueryClient";
 import { useMyQuery } from "../../hooks/useMyQuery";
 import RichTextField from "../../components/rich-text-field/RichTextField";
-import { useAppState } from "../../contexts/app-state-context";
 import useWarnUnsavedChange from "../../hooks/useWarnUnsavedChange";
+import { DatePickerComponent } from "../../components/CustomField";
+import { CreateSuratTugasReqBody, CreateSuratTugasValues } from "../../typings/SuratTugas";
 
 const SuratTugas: NextPage = () => {
   const queryClient = useQueryClient();
@@ -36,9 +37,10 @@ const SuratTugas: NextPage = () => {
 
   const hintList = ["/images/e1.png", "/images/e2.png", "/images/e3.png"];
 
-  const initialValues = {
+  const initialValues: CreateSuratTugasValues = {
     nomorSurat: "",
     tujuanDinas: "",
+    createdAt: new Date(),
     textPembuka: [
       {
         children: [{ text: "" }],
@@ -75,10 +77,11 @@ const SuratTugas: NextPage = () => {
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        await axios.post("/api/v1/surat-tugas", {
-          suratTugasId: v4(),
+        const postJson: CreateSuratTugasReqBody = {
           ...values,
-        });
+          suratTugasId: v4(),
+        };
+        await axios.post("/api/v1/surat-tugas", postJson);
         toast.success("Surat Tugas berhasil dibuat");
       } catch (e) {
         toast.error("Terjadi masalah teknis");
@@ -154,29 +157,41 @@ const SuratTugas: NextPage = () => {
                     </div>
                   )}
                 </div>
+                <div className="row">
+                  <div className="mt-3 col-8">
+                    <label className="form-label">Nama Dinas / Tujuan Dinas</label>
+                    <input
+                      disabled={isSubmitting}
+                      className="form-control"
+                      name="tujuanDinas"
+                      onChange={handleChange}
+                      onFocus={() => setHint(-1)}
+                      value={values.tujuanDinas}
+                    />
+                    {errors.tujuanDinas && touched.tujuanDinas && (
+                      <small className="text-danger">{errors.tujuanDinas}</small>
+                    )}
+                  </div>
+                  <div className="mt-3 col-4">
+                    <label className="form-label">Tanggal dibuat</label>
 
-                <div className="mt-3">
-                  <label className="form-label">Nama Dinas / Tujuan Dinas</label>
-                  <input
-                    disabled={isSubmitting}
-                    className="form-control"
-                    name="tujuanDinas"
-                    onChange={handleChange}
-                    onFocus={() => setHint(-1)}
-                    value={values.tujuanDinas}
-                  />
-                  {errors.tujuanDinas && touched.tujuanDinas && (
-                    <small className="text-danger">{errors.tujuanDinas}</small>
-                  )}
-                </div>
-                <div className="mt-3">
-                  <label className="form-label">Text pembuka</label>
-                  <RichTextField
-                    onFocus={() => setHint(0)}
-                    onChange={(value) => {
-                      setFieldValue("textPembuka", value);
-                    }}
-                  />
+                    <Field
+                      className="form-control"
+                      name={`createdAt`}
+                      component={DatePickerComponent}
+                      value={values.createdAt}
+                    />
+                    {errors.createdAt && touched.createdAt && <small className="text-danger">{errors.createdAt}</small>}
+                  </div>
+                  <div className="mt-3">
+                    <label className="form-label">Text pembuka</label>
+                    <RichTextField
+                      onFocus={() => setHint(0)}
+                      onChange={(value) => {
+                        setFieldValue("textPembuka", value);
+                      }}
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-3">

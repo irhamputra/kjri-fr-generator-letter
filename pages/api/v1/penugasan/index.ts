@@ -1,3 +1,4 @@
+import { firestore } from "firebase-admin";
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
@@ -7,13 +8,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     try {
-      const snapshot = await db.collection("SuratTugas").orderBy("nomorSurat", "asc").get();
+      const snapshot = await db.collection("SuratTugas").orderBy("editedAt", "desc").get();
 
       const result: FirebaseFirestore.DocumentData = [];
 
       snapshot.forEach((docs) => {
         if (docs.get("listPegawai")) {
-          result.push(docs.data());
+          const data = docs.data();
+          const time = {
+            createdAt: data.createdAt?.toDate(),
+            editedAt: data.editedAt?.toDate(),
+          };
+          result.push({ ...data, ...time });
         }
       });
 
@@ -26,7 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === "PUT") {
-    const { fullDayKurs, nomorSurat, listPegawai, pembuatKomitmenName, pembuatKomitmenNIP } = req.body;
+    const { fullDayKurs, nomorSurat, listPegawai, pembuatKomitmenName, pembuatKomitmenNIP, downloadUrl } = req.body;
 
     if (listPegawai.length <= 0) {
       res.status(404).json({ error: "Tidak ada data yang tersimpan" });
@@ -42,17 +48,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         id = doc.id;
       });
 
-      await db
-        .collection("SuratTugas")
-        .doc(id)
-        .update({
-          listPegawai,
-          fullDayKurs,
-          pembuatKomitmen: {
-            name: pembuatKomitmenName,
-            nip: pembuatKomitmenNIP,
-          },
-        });
+      const updateValue = {
+        editedAt: firestore.Timestamp.now(),
+        listPegawai,
+        fullDayKurs,
+        pembuatKomitmen: {
+          name: pembuatKomitmenName,
+          nip: pembuatKomitmenNIP,
+        },
+        downloadUrl,
+      };
+
+      await db.collection("SuratTugas").doc(id).update(updateValue);
 
       res.status(200).json({ message: "Update Surat Tugas" });
       res.end();

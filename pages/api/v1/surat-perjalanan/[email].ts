@@ -11,7 +11,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const snapshot = await db.collection("SuratTugas").get();
 
       snapshot.forEach((docs) => {
-        result.push(docs.data());
+        const data = docs.data();
+        const time = {
+          createdAt: data.createdAt?.toDate(),
+          editedAt: data.editedAt?.toDate(),
+        };
+        result.push({ ...data, ...time });
       });
 
       const data = result.filter((v: { listPegawai: Array<{ pegawai: { email: string } }> }) =>

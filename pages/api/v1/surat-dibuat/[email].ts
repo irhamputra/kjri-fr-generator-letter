@@ -2,27 +2,26 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../../utils/firebase";
 import { cors } from "../../../../utils/middlewares";
 
-interface SuratKeluar {
-  arsipId: string;
-  author: string;
-  content: string;
-  id: string;
-  jenisSurat: string;
-  nomorSurat: string;
-  recipient: string;
-}
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res);
 
   if (req.method === "GET") {
     try {
       const result: FirebaseFirestore.DocumentData = [];
-      const snapshot = await db.collection("SuratKeluar").where("author", "==", req.query.email).get();
+      const snapshot = await db
+        .collection("SuratKeluar")
+        .orderBy("editedAt", "desc")
+        .where("author", "==", req.query.email)
+        .get();
 
       snapshot.forEach((docs) => {
         if (docs.get("content") || docs.get("recepient")) {
-          result.push(docs.data());
+          const data = docs.data();
+          const time = {
+            createdAt: data.createdAt?.toDate(),
+            editedAt: data.editedAt?.toDate(),
+          };
+          result.push({ ...data, ...time });
         }
       });
 

@@ -30,6 +30,7 @@ const FormSPD: React.FC<{
 }> = ({ isEdit, editData, invalidateSingleSurat }) => {
   const [activePageIndex, setPageIndex] = useState(0);
   const { push } = useRouter();
+  const queryClient = useQueryClient();
 
   const rampunganData =
     editData?.listPegawai?.map(({ destinasi, pegawai }) => ({
@@ -71,7 +72,8 @@ const FormSPD: React.FC<{
       const { data, ...restVal } = val.rampunganFill;
       const { namaPegawai, fullDayKurs } = val.suratStaff;
       try {
-        const newValues: Omit<SuratTugasRes, "tujuanDinas" | "suratTugasId"> = {
+        const newValues: Omit<SuratTugasRes, "tujuanDinas" | "suratTugasId" | "createdAt" | "editedAt"> = {
+          ...restVal,
           nomorSurat: values.suratStaff.nomorSurat,
           fullDayKurs,
           listPegawai: namaPegawai.map((v) => {
@@ -87,16 +89,19 @@ const FormSPD: React.FC<{
               keterangan: {
                 rincian: keterangan.rincian,
               },
-              downloadUrl: {},
             };
           }),
-          ...restVal,
+          downloadUrl: {
+            suratPenugasan: {},
+            suratTugas: "",
+          },
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
         toast(res.data?.message);
         if (invalidateSingleSurat) {
           invalidateSingleSurat();
         }
+        queryClient.invalidateQueries(["fetchSuratTugas", "list"]);
         finishEditing();
         push("/layanan/penugasan/list");
       } catch (e) {

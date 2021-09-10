@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
-import { SuratTugasRes } from "../../typings/SuratTugas";
+import { SuratTugas, SuratTugasRes } from "../../typings/SuratTugas";
 import { useMyQuery } from "../useMyQuery";
 
 const useQuerySuratTugas = () => {
@@ -9,9 +9,9 @@ const useQuerySuratTugas = () => {
   const isList = pathname === "/layanan/penugasan/list";
 
   return useMyQuery(
-    "fetchSuratTugas",
+    ["fetchSuratTugas", isList ? "list" : "create"],
     async () => {
-      const { data } = await axios.get(`/api/v1/penugasan${!isList ? "/create" : ""}`);
+      const { data } = await axios.get<SuratTugas[]>(`/api/v1/penugasan${!isList ? "/create" : ""}`);
 
       return data ?? null;
     },
@@ -23,7 +23,7 @@ const useQuerySuratTugas = () => {
 
 const useQuerySingleSuratTugas = (suratTugasId: string, enabled: boolean = true) => {
   const queryClient = useQueryClient();
-  const query = useMyQuery<SuratTugasRes>(
+  const query = useMyQuery<SuratTugas>(
     ["fetchSingleSurat", suratTugasId],
     async () => {
       const { data } = await axios.get(`/api/v1/surat-tugas/${suratTugasId}`);

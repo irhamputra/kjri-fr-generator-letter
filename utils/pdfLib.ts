@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { firestore } from "firebase-admin";
 import { PDFForm, PDFFont } from "pdf-lib";
 import { string } from "yup/lib/locale";
 import { JalDis } from "../typings/Jaldis";
@@ -22,7 +23,7 @@ async function fillCover(
   option: Option
 ) {
   const { suratTugas, jaldis, pegawaiId } = data;
-  const { listPegawai = [], pembuatKomitmen, nomorSurat } = suratTugas;
+  const { listPegawai = [], pembuatKomitmen, nomorSurat, createdAt } = suratTugas;
 
   const { pegawai, durasi, destinasi = [] } = listPegawai.filter(({ pegawai }) => pegawai.uid === pegawaiId)[0];
 
@@ -37,7 +38,7 @@ async function fillCover(
       fieldName: "tanggal_berangkat_spd",
       value: destinasi[0]?.tanggalPergi ? formattedDayjs(destinasi[0].tanggalPergi) : "",
     },
-    { fieldName: "tanggal_dikeluarkan_spd", value: formattedDayjs(new Date()) },
+    { fieldName: "tanggal_dikeluarkan_spd", value: formattedDayjs(createdAt.toDate()) },
     { fieldName: "tempat_tujuan_spd", value: destinasi.map(({ tibaDi }) => tibaDi).toString() },
     {
       fieldName: "tanggal_pulang_spd",
@@ -73,13 +74,13 @@ async function fillRincian(
   option: Option
 ) {
   const { suratTugas, pegawaiId, hargaJaldis, bendahara } = data;
-  const { nomorSurat, listPegawai = [], fullDayKurs = 0.84, pembuatKomitmen, tujuanDinas } = suratTugas;
+  const { nomorSurat, listPegawai = [], fullDayKurs = 0.84, pembuatKomitmen, tujuanDinas, createdAt } = suratTugas;
 
   const lampiranSPDNo = form.getTextField("no_spd_rincian");
   const tglSPD = form.getTextField("tanggal_rincian");
 
   lampiranSPDNo.setText(nomorSurat);
-  tglSPD.setText(formattedDayjs(new Date()));
+  tglSPD.setText(formattedDayjs(createdAt.toDate()));
   lampiranSPDNo.enableReadOnly();
   tglSPD.enableReadOnly();
 
@@ -121,7 +122,7 @@ async function fillRincian(
     { fieldName: "terbilang_rincian", value: nilaiTerbilang + " Euro" },
     { fieldName: "nama_penerima_rincian", value: pegawai.pegawai.displayName },
     { fieldName: "NIP_penerima_rincian", value: pegawai.pegawai.nip.toString() },
-    { fieldName: "tahun_spd", value: "DIPA KJRI FRANKFURT TA " + new Date().getFullYear() },
+    { fieldName: "tahun_spd", value: createdAt.toDate().getFullYear().toString().slice(2) },
     { fieldName: "maksud_jalan_spd", value: tujuanDinas },
     { fieldName: "keterangan_rincian", value: pegawai.keterangan?.rincian },
     { fieldName: "NIP_bendahara_rincian", value: bendahara?.nip },
@@ -226,8 +227,12 @@ async function fillRampungan(
   return form;
 }
 
-async function fillPernyataan(form: PDFForm, data: { pegawai: Pegawai; nomorSuratTugas: string }, option: Option) {
-  const { pegawai, nomorSuratTugas } = data;
+async function fillPernyataan(
+  form: PDFForm,
+  data: { pegawai: Pegawai; nomorSuratTugas: string; createdAt: firestore.Timestamp; listPegawai: ListPegawai },
+  option: Option
+) {
+  const { pegawai, nomorSuratTugas, createdAt, listPegawai } = data;
 
   const formData: FormValues[] = [
     {
@@ -237,10 +242,20 @@ async function fillPernyataan(form: PDFForm, data: { pegawai: Pegawai; nomorSura
     { fieldName: "nip_surat_pernyataan", value: pegawai?.nip.toString() },
     { fieldName: "jabatan_surat_pernyataan", value: pegawai?.jabatan },
     {
-      fieldName: "text_pembuka_surat",
-      value: `sesuai dengan Surat Perjalanan Dinas (SPD) Nomor ${nomorSuratTugas} tanggal ${formattedDayjs(
-        new Date()
-      )}`,
+      fieldName: "nomor_spd_surat_pernyataan",
+      value: nomorSuratTugas,
+    },
+    {
+      fieldName: "tanggal_jaldis_surat_pernyataan",
+      value: formattedDayjs(createdAt.toDate()),
+    },
+    {
+      fieldName: "tanggal_pulang_jaldis_surat_pernyataan",
+      value:
+        listPegawai?.destinasi?.[0]?.tanggalPergi &&
+        dayjs(listPegawai?.destinasi[0].tanggalPergi)
+          .add(Math.round(+listPegawai?.durasi.replace(/,/g, ".")), "day")
+          .format("DD.MM.YYYY"),
     },
   ];
 
@@ -256,10 +271,11 @@ async function fillKwitansi(
     tujuanSurat: string;
     pembuatKomitmen?: { name: string; nip: string };
     bendahara?: Pegawai;
+    createdAt: firestore.Timestamp;
   },
   option: Option
 ) {
-  const { listPegawai, pembuatKomitmen, tujuanSurat, bendahara } = data;
+  const { listPegawai, pembuatKomitmen, tujuanSurat, bendahara, createdAt } = data;
 
   let formData: FormValues[] = [
     {
@@ -272,19 +288,10 @@ async function fillKwitansi(
   const nilaiTerbilang = +listPegawai.uangHarian.slice(1).replace(/,/g, "");
 
   const data2 = [
-    {
-      fieldName: "tanggal_pulang_jaldis_surat_pernyataan",
-      value:
-        listPegawai?.destinasi?.[0]?.tanggalPergi &&
-        dayjs(listPegawai?.destinasi[0].tanggalPergi)
-          .add(Math.round(+listPegawai?.durasi.replace(/,/g, ".")), "day")
-          .format("DD.MM.YYYY"),
-    },
-
     { fieldName: "jumlah_uang", value: listPegawai.uangHarian },
     { fieldName: "terbilang", value: terbilangWithKoma(nilaiTerbilang) + " Euro" },
     { fieldName: "nama_penerima", value: listPegawai.pegawai.displayName },
-    { fieldName: "datum", value: formattedDayjs(new Date()) },
+    { fieldName: "datum", value: formattedDayjs(createdAt.toDate()) },
     { fieldName: "info_pembayaran", value: tujuanSurat },
     { fieldName: "NIP2", value: bendahara?.nip },
   ];
@@ -306,6 +313,7 @@ function fillAndSetReadOnly(form: PDFForm, data: FormValues[], option: Option) {
 }
 
 function enableReadOnly(form: PDFForm, fieldNames: string[]) {
+  // Make rest field read only
   fieldNames.forEach((fieldName) => form.getTextField(fieldName ?? "").enableReadOnly());
 }
 

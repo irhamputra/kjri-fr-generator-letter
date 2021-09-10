@@ -7,8 +7,9 @@ import Table from "../../../components/Table";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../../typings/AuthQueryClient";
 import toast from "react-hot-toast";
-import { SuratKeluarCollection } from "../../../typings/SuratKeluar";
+import { SuratKeluarResBody } from "../../../typings/SuratKeluar";
 import { useDownloadFile } from "../../../hooks/useDownloadSurat";
+import { formattedDayjs } from "../../../utils/dates";
 
 const ListSuratKeluar: NextPage = () => {
   const { push } = useRouter();
@@ -42,8 +43,12 @@ const ListSuratKeluar: NextPage = () => {
         accessor: "col3",
       },
       {
-        Header: "Opsi",
+        Header: "Tanggal Edit",
         accessor: "col4",
+      },
+      {
+        Header: "Opsi",
+        accessor: "col5",
         Cell: ({ value }: { value: string }) => (
           <div style={{ display: "flex" }}>
             <button
@@ -63,14 +68,14 @@ const ListSuratKeluar: NextPage = () => {
 
   if (isLoading) return <p>Loading...</p>;
 
-  const data = listSuratKeluar?.listSurat.map?.(
-    ({ nomorSurat, content, url }: SuratKeluarCollection, index: number) => ({
+  const data =
+    listSuratKeluar?.listSurat?.map?.(({ nomorSurat, content, url, editedAt }: SuratKeluarResBody, index: number) => ({
       col1: index + 1,
       col2: nomorSurat,
       col3: content,
-      col4: url,
-    })
-  );
+      col4: formattedDayjs(editedAt),
+      col5: url,
+    })) ?? [];
 
   return (
     <div style={{ marginTop: "6rem" }} className="mb-5">
