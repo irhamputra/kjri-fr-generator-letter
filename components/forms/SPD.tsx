@@ -91,7 +91,10 @@ const FormSPD: React.FC<{
               },
             };
           }),
-          downloadUrl: {},
+          downloadUrl: {
+            suratPenugasan: {},
+            suratTugas: "",
+          },
         };
         const res = await axios.put("/api/v1/penugasan", newValues);
         toast(res.data?.message);
