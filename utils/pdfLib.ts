@@ -122,7 +122,7 @@ async function fillRincian(
     { fieldName: "terbilang_rincian", value: nilaiTerbilang + " Euro" },
     { fieldName: "nama_penerima_rincian", value: pegawai.pegawai.displayName },
     { fieldName: "NIP_penerima_rincian", value: pegawai.pegawai.nip.toString() },
-    { fieldName: "tahun_spd", value: createdAt.toDate().getFullYear().toString() },
+    { fieldName: "tahun_spd", value: createdAt.toDate().getFullYear().toString().slice(2) },
     { fieldName: "maksud_jalan_spd", value: tujuanDinas },
     { fieldName: "keterangan_rincian", value: pegawai.keterangan?.rincian },
     { fieldName: "NIP_bendahara_rincian", value: bendahara?.nip },
