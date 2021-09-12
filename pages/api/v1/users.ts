@@ -56,7 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 <h2>${codeId}</h2>
                 <p>dan klik button dibawah ini untuk melanjutkan verifikasi
                 <br/>
-                <a href="https://sistem-nomor-surat-kjri-frankfurt.vercel.app/register">
+                <a href="https://surat-generator.vercel.app/register">
                    <button style="color: #444444;
                                   background: #F3F3F3;
                                   border: 1px #DADADA solid;

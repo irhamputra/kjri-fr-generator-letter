@@ -2,9 +2,7 @@ import axios from "axios";
 import { serviceAccount } from "./serviceAccount";
 
 const BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : "https://sistem-nomor-surat-kjri-frankfurt.vercel.app";
+  process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://surat-generator.vercel.app/";
 
 const apiInstance = axios.create({
   baseURL: BASE_URL,
