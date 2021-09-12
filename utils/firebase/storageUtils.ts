@@ -1,15 +1,10 @@
 import { storage } from ".";
+import { serviceAccount } from "./serviceAccount";
 
-function createUrl(fileName: string, publicToken: string) {
-  const bucketName = "kjri-fr-dev.appspot.com";
-  return (
-    "https://firebasestorage.googleapis.com/v0/b/" +
-    bucketName +
-    "/o/" +
-    encodeURIComponent(fileName) +
-    "?alt=media&token=" +
-    publicToken
-  );
+function createUrl(fileName: string) {
+  return `https://firebasestorage.googleapis.com/v0/b/${serviceAccount.bucket_name}/o/${encodeURIComponent(
+    fileName
+  )}?alt=media`;
 }
 
 async function createSignedUrl(url: string) {
