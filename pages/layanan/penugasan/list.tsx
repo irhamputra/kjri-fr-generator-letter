@@ -83,10 +83,7 @@ const ListSurat: NextPage = () => {
 
   const data =
     listSuratTugas?.map?.(
-      (
-        { nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl, editedAt }: SuratTugasRes,
-        index: number
-      ) => ({
+      ({ nomorSurat, tujuanDinas, suratTugasId, listPegawai, downloadUrl, editedAt }, index: number) => ({
         col1: index + 1,
         col2: nomorSurat,
         col3: tujuanDinas,

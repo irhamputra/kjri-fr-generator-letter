@@ -9,7 +9,7 @@ try {
       clientEmail: serviceAccount.client_email,
     }),
     projectId: serviceAccount.project_id,
-    storageBucket: "kjri-fr-dev.appspot.com",
+    storageBucket: serviceAccount.bucket_name,
   });
 } catch (error) {
   admin.app();
