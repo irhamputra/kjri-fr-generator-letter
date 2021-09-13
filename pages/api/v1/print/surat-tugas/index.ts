@@ -53,8 +53,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         pegawai,
         textPembuka,
         textPenutup,
-        waktuPelaksanaan: +maxDay,
-        waktuPerjalanan: +maxDay,
+        waktuPelaksanaan: maxDay,
+        waktuPerjalanan: maxDay,
         textTengah,
         createdAt,
       });
