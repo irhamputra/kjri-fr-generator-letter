@@ -2,6 +2,7 @@ import * as React from "react";
 import { NextPage } from "next";
 import {
   People as UserIcon,
+  Journals,
   FileEarmarkWord as ArsipIcon,
   Tag as GolonganIcon,
   Window as WindowIcon,
@@ -33,9 +34,15 @@ const Index: NextPage = () => {
               <Card icon={<UserIcon {...iconProps} />} title="Manage User" link="/pengaturan/manage-user" />
             </div>
           )}
+
+          <div className="col-md-4 col-sm-6 col-lg-3">
+            <Card icon={<Journals {...iconProps} />} title="Manage Jenis Surat" link="/pengaturan/manage-jenis-surat" />
+          </div>
+
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card icon={<ArsipIcon {...iconProps} />} title="Manage Arsip" link="/pengaturan/manage-arsip" />
           </div>
+
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card icon={<GolonganIcon {...iconProps} />} title="Manage Golongan" link="/pengaturan/manage-golongan" />
           </div>

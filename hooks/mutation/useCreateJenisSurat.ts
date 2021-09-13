@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "react-query";
 import axios from "axios";
 
-const useCreateJenisSurat = () => {
+const useCreateJenisSurat = <T>() => {
   const queryClient = useQueryClient();
 
   return useMutation(
     "createJenisSurat",
-    async () => {
-      const { data } = await axios.post("/api/v1/jenisSurat");
+    async (val: T) => {
+      const { data } = await axios.post("/api/v1/jenisSurat", val);
 
       return data;
     },

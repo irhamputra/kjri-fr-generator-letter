@@ -7,7 +7,7 @@ const schema = (type: string) => {
     // common schema
     case "displayName":
     case "arsipId":
-    case "jenisSurat":
+    case "label":
     case "recipient":
     case "content":
     case "jenisArsip":
@@ -62,7 +62,7 @@ const schema = (type: string) => {
       return string().matches(/^[0-9]?,[5]$/, "Value bukan angka dan koma");
 
     case "pangkat":
-      return string().matches(/^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$/)
+      return string().matches(/^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$/);
 
     default:
       return undefined;
@@ -74,11 +74,11 @@ const createSchema = <T>(initialValues: T) => {
   return !Array.isArray(fieldNames) || fieldNames.length === 0
     ? {}
     : fieldNames.reduce((acc, type) => {
-      return {
-        ...acc,
-        [type]: schema(type),
-      };
-    }, {});
+        return {
+          ...acc,
+          [type]: schema(type),
+        };
+      }, {});
 };
 
 export default createSchema;
