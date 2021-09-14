@@ -136,8 +136,8 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
     let suffixFRA = false;
     let suratKeputusan = "";
 
-    if (labelJenisSurat === "Pengumuman") {
-      jenisSurat = "PEN KP";
+    if (new RegExp("Pengumuman").test(labelJenisSurat)) {
+      jenisSurat = "PEN";
     }
 
     if (labelJenisSurat === "Surat Keterangan") {
