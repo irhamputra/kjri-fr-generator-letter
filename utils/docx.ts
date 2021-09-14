@@ -25,9 +25,9 @@ type Modify<T, TData> = T & TData;
 type GeneratePegawaiProps = {
   nomorSurat: string;
   pegawai: Modify<PegawaiSuratTugas, { pangkat: string }>[];
-  waktuPelaksanaan: number;
+  waktuPelaksanaan: string;
   textTengah: RichTextValue;
-  waktuPerjalanan: number;
+  waktuPerjalanan: string;
   textPembuka: RichTextValue;
   textPenutup: RichTextValue;
   createdAt: firestore.Timestamp;
