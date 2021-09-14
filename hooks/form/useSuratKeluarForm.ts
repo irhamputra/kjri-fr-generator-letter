@@ -142,12 +142,20 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
       jenisSurat = "SUKET";
     }
 
-    if (!["Nota Dinas", "Surat Edaran", "Surat Keputusan"].includes(labelJenisSurat)) {
-      suffixFRA = true;
+    if (labelJenisSurat === "Nota Dinas") {
+      jenisSurat = "ND";
+    }
+
+    if (labelJenisSurat === "Surat Edaran") {
+      jenisSurat = "SE";
     }
 
     if (labelJenisSurat === "Surat Keputusan") {
       suratKeputusan = "SK-FRA";
+    }
+
+    if (!["Surat Keputusan"].includes(labelJenisSurat)) {
+      suffixFRA = true;
     }
 
     const nomorSurat = `${incrementNumber}/${suratKeputusan ? `${suratKeputusan}/` : ""}${
