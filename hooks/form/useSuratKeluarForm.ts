@@ -127,15 +127,17 @@ const useSuratKeluarForm = (initialValues: useSuratKeluarFormValues, backUrl: st
 
   const createNomorSurat = (counter: number, arsipId: string, labelJenisSurat: string) => {
     const incrementNumber = `00${counter + 1}`;
-    const thisMonth = dayjs().month() + 1;
+    const getMonth = dayjs().month() + 1;
     const thisYear = dayjs().year();
+
+    const thisMonth = `${getMonth}`.length >= 2 ? getMonth : `0${getMonth}`;
 
     let jenisSurat = "";
     let suffixFRA = false;
     let suratKeputusan = "";
 
-    if (labelJenisSurat === "Surat Pengumuman") {
-      jenisSurat = "PEN";
+    if (labelJenisSurat === "Pengumuman") {
+      jenisSurat = "PEN KP";
     }
 
     if (labelJenisSurat === "Surat Keterangan") {
