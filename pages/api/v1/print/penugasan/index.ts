@@ -53,7 +53,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       const bendahara = (await db
         .collection("Users")
-        .doc("P3hnXmaCZq3yt7yxdNyi")
+        .doc("A1y9s9WWhkpPoI2H8Tc7")
         .get()) as FirebaseFirestore.DocumentSnapshot<Pegawai>;
 
       if (rampungan.length > 3) {

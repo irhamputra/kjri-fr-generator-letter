@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import {
   People as UserIcon,
   Journals,
+  ExclamationDiamondFill,
   FileEarmarkWord as ArsipIcon,
   Tag as GolonganIcon,
   Window as WindowIcon,
@@ -11,6 +12,8 @@ import Card from "../../components/Card";
 import { NextSeo } from "next-seo";
 import { useQueryClient } from "react-query";
 import { Auth } from "../../typings/AuthQueryClient";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const Index: NextPage = () => {
   const iconProps = { height: 32, width: 32 };
@@ -18,6 +21,17 @@ const Index: NextPage = () => {
   const query = queryClient.getQueryData<Auth>("auth");
 
   if (!query?.isAdmin) throw Error("Invalid permission");
+
+  const handleResetSurat = async () => {
+    if (window.confirm("Anda yakin ingin me-reset ulang nomor surat KJRI?")) {
+      try {
+        const { data } = await axios.post("/api/v1/reset");
+        toast.success(data.message);
+      } catch (e) {
+        throw new Error(e.message);
+      }
+    }
+  };
 
   return (
     <>
@@ -49,6 +63,15 @@ const Index: NextPage = () => {
 
           <div className="col-md-4 col-sm-6 col-lg-3">
             <Card icon={<WindowIcon {...iconProps} />} title="Manage Media" link="/pengaturan/manage-media" />
+          </div>
+
+          <div className="col-md-4 col-sm-6 col-lg-3">
+            <Card
+              icon={<ExclamationDiamondFill {...iconProps} />}
+              title="Reset Semua Nomor Surat"
+              link="/#"
+              onClick={handleResetSurat}
+            />
           </div>
         </div>
       </section>

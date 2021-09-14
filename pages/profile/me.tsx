@@ -16,8 +16,6 @@ const MyProfile = () => {
   const initialValues = {
     displayName: query?.displayName ?? "",
     nip: query?.nip ?? "",
-    jabatan: "",
-    golongan: "",
   };
 
   const { mutateAsync, isLoading } = useEditUser();
@@ -61,22 +59,6 @@ const MyProfile = () => {
             <label className="form-label">NIP</label>
             <input name="nip" value={values.nip} onChange={handleChange} className="form-control" />
             {errors.nip && touched.nip && <small className="text-danger">{errors.nip}</small>}
-          </div>
-        </div>
-
-        <div className="row mt-2">
-          <div className="col">
-            <label className="form-label">Jabatan</label>
-            <input name="jabatan" value={values.jabatan} onChange={handleChange} className="form-control" />
-            {errors.jabatan && touched.jabatan && <small className="text-danger">{errors.jabatan}</small>}
-          </div>
-        </div>
-
-        <div className="row mt-2">
-          <div className="col">
-            <label className="form-label">Golongan</label>
-            <input name="golongan" value={values.golongan} onChange={handleChange} className="form-control" />
-            {errors.golongan && touched.golongan && <small className="text-danger">{errors.golongan}</small>}
           </div>
         </div>
 
