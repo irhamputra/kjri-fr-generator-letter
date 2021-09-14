@@ -65,14 +65,16 @@ const Index: NextPage = () => {
             <Card icon={<WindowIcon {...iconProps} />} title="Manage Media" link="/pengaturan/manage-media" />
           </div>
 
-          <div className="col-md-4 col-sm-6 col-lg-3">
-            <Card
-              icon={<ExclamationDiamondFill {...iconProps} />}
-              title="Reset Semua Nomor Surat"
-              link="/#"
-              onClick={handleResetSurat}
-            />
-          </div>
+          {query?.role !== "tu" && (
+            <div className="col-md-4 col-sm-6 col-lg-3">
+              <Card
+                icon={<ExclamationDiamondFill {...iconProps} />}
+                title="Reset Semua Nomor Surat"
+                link="/#"
+                onClick={handleResetSurat}
+              />
+            </div>
+          )}
         </div>
       </section>
     </>
