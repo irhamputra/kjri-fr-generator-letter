@@ -212,7 +212,7 @@ async function generateSuratTugas({
           }),
           ...blankSpace(spaceLeft),
           ...parsedPenutup,
-          ...blankSpace(4),
+          ...blankSpace(1),
           new Paragraph({
             children: [new TextRun({ ...styles.normal, text: "\t\t\t\t Dikeluarkan di Frankfurt" })],
             tabStops: tabStop,
@@ -230,8 +230,13 @@ async function generateSuratTugas({
             children: [new TextRun({ ...styles.normal, text: "\t\t\t\t Kepala Perwakilan RI" })],
             tabStops: tabStop,
           }),
+          ...blankSpace(3),
           new Paragraph({
             children: [new TextRun({ ...styles.normal, text: `\t\t\t\t ${konjen}` })],
+            tabStops: tabStop,
+          }),
+          new Paragraph({
+            children: [new TextRun({ ...styles.normal, text: "\t\t\t\t Konsul Jendral" })],
             tabStops: tabStop,
           }),
         ],
