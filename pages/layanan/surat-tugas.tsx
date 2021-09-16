@@ -37,9 +37,10 @@ const SuratTugas: NextPage = () => {
 
   const hintList = ["/images/e1.png", "/images/e2.png", "/images/e3.png"];
 
-  const initialValues: CreateSuratTugasValues = {
+  const initialValues: CreateSuratTugasValues & { konjen: string } = {
     nomorSurat: "",
     tujuanDinas: "",
+    konjen: "",
     createdAt: new Date(),
     textPembuka: [
       {
@@ -212,6 +213,19 @@ const SuratTugas: NextPage = () => {
                       setFieldValue("textPenutup", value);
                     }}
                   />
+                </div>
+
+                <div className="mt-3">
+                  <label className="form-label">Nama Konjen</label>
+                  <input
+                    disabled={isSubmitting}
+                    className="form-control"
+                    name="konjen"
+                    onChange={handleChange}
+                    onFocus={() => setHint(-1)}
+                    value={values.konjen}
+                  />
+                  {errors.konjen && touched.konjen && <small className="text-danger">{errors.konjen}</small>}
                 </div>
 
                 <div className="mt-3">

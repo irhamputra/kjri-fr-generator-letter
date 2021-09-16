@@ -23,7 +23,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         textPenutup = [],
         downloadUrl,
         createdAt,
-      } = snapshot.data() as SuratTugasRes;
+        konjen,
+      } = snapshot.data() as SuratTugasRes & { konjen: string };
 
       if (downloadUrl?.suratTugas && !forceRecreate) {
         const fileRef = storageRef.file(downloadUrl?.suratTugas);
@@ -57,6 +58,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         waktuPerjalanan: maxDay,
         textTengah,
         createdAt,
+        konjen,
       });
 
       await Packer.toBuffer(docx).then(async (buffer) => {

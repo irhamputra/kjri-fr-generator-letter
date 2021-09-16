@@ -21,6 +21,7 @@ const schema = (type: string) => {
     case "jabatan":
     case "role":
     case "pangkat":
+    case "konjen":
       return string()
         .trim()
         .required(`${type === "displayName" ? "Nama Pegawai" : capitalizeFirstLetter(type)} wajib diisi!`);

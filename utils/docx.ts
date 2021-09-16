@@ -31,6 +31,7 @@ type GeneratePegawaiProps = {
   textPembuka: RichTextValue;
   textPenutup: RichTextValue;
   createdAt: firestore.Timestamp;
+  konjen: string;
 };
 
 const styles = {
@@ -100,6 +101,7 @@ async function generateSuratTugas({
   textTengah,
   textPenutup,
   createdAt,
+  konjen,
 }: GeneratePegawaiProps) {
   const urlOptions = {
     version: "v4" as "v4",
@@ -226,6 +228,10 @@ async function generateSuratTugas({
           }),
           new Paragraph({
             children: [new TextRun({ ...styles.normal, text: "\t\t\t\t Kepala Perwakilan RI" })],
+            tabStops: tabStop,
+          }),
+          new Paragraph({
+            children: [new TextRun({ ...styles.normal, text: `\t\t\t\t ${konjen}` })],
             tabStops: tabStop,
           }),
         ],

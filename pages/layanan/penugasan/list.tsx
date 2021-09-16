@@ -51,7 +51,7 @@ const ListSurat: NextPage = () => {
         Cell: ({ value }: { value: Pick<SuratTugas, "listPegawai" | "suratTugasId" | "downloadUrl"> }) => {
           const listPegawai = value.listPegawai?.map(({ pegawai }) => pegawai) as Pegawai[];
           return (
-            <div style={{ display: "flex" }}>
+            <div key={value.suratTugasId} style={{ display: "flex" }}>
               <Link href={`/layanan/penugasan/${value.suratTugasId}`} passHref>
                 <a>
                   <button type="button" className="btn btn-primary" style={{ marginRight: 16 }} data-dismiss="modal">
@@ -157,7 +157,7 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
     await mutateSuratPenugasan({ suratTugasId, uid, forceRecreate });
   };
   return (
-    <>
+    <section key={suratTugasId}>
       <button
         className="btn btn-outline-primary"
         onClick={() => {
@@ -226,7 +226,7 @@ const ButtonPrint: React.FC<Pick<SuratTugasRes, "suratTugasId" | "downloadUrl"> 
           </div>
         </div>
       </Modal>
-    </>
+    </section>
   );
 };
 
