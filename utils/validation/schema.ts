@@ -20,6 +20,7 @@ const schema = (type: string) => {
     case "golongan":
     case "jabatan":
     case "role":
+    case "pangkat":
       return string()
         .trim()
         .required(`${type === "displayName" ? "Nama Pegawai" : capitalizeFirstLetter(type)} wajib diisi!`);
@@ -60,9 +61,6 @@ const schema = (type: string) => {
 
     case "durasi":
       return string().matches(/^[0-9]?,[5]$/, "Value bukan angka dan koma");
-
-    case "pangkat":
-      return string().matches(/^(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$/);
 
     default:
       return undefined;

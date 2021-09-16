@@ -43,7 +43,7 @@ const DetailSuratPenugasan: React.FC<{ data: Partial<SuratTugasRes>; back: () =>
         </div>
 
         <div className="col">
-          <h5>Tujuan Dinas</h5>
+          <h5>Perihal Dinas</h5>
           <p>{data.tujuanDinas}</p>
         </div>
       </div>

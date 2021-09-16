@@ -28,7 +28,7 @@ const SuratDibuat: NextPage = () => {
         accessor: "col2", // accessor is the "key" in the data
       },
       {
-        Header: "Tujuan Dinas",
+        Header: "Perihal Dinas",
         accessor: "col3",
       },
       {

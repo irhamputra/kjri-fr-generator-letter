@@ -26,7 +26,7 @@ const Home: NextPage = () => {
         <div className="text-center">
           <img src="/kjri-frankfurt.jpg" width="50%" alt="logo" />
           <h1>KJRI Frankfurt</h1>
-          <p className="fw-bold">Sistem Aplikasi Pembuatan Surat</p>
+          <p className="fw-bold">Sistem Informasi Kearsipan Terpadu</p>
         </div>
 
         <div className="mb-3">

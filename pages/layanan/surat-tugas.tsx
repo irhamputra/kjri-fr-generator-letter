@@ -159,7 +159,7 @@ const SuratTugas: NextPage = () => {
                 </div>
                 <div className="row">
                   <div className="mt-3 col-8">
-                    <label className="form-label">Nama Dinas / Tujuan Dinas</label>
+                    <label className="form-label">Nama Dinas / Perihal Dinas</label>
                     <input
                       disabled={isSubmitting}
                       className="form-control"
